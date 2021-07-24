@@ -1,0 +1,13 @@
+<div id="search_forms">
+    <div id="search_form_simple">
+        <%= form_with url: "/search", method: "get" do %>
+            <%= label_tag :q, "Search for:" %>
+            <%= text_field_tag :q, @solr_params.nil? ? nil : @solr_params[:q] %>
+            <%= submit_tag "Search", name: nil %>
+        <% end %>
+    </div>
+    <hr/>
+    <div id="search_form_advanced">
+
+    </div>
+</div>

@@ -1,0 +1,19 @@
+<% set_page_title "Search" %>
+
+<div class="row">
+    <div id="sidebar" class="col-3">
+        <% if @results %>
+            <%= render partial: "sidebar" %>
+        <% end %>
+    </div>
+    <div id="sidebar" class="col-9">
+        <div class="row">
+            <%= render partial: 'search_form' %>
+        </div>
+        <% if @results %>
+            <div class="row">
+                <%= render partial: 'results_list' %>
+            </div>
+        <% end %>
+    </div>
+</div>

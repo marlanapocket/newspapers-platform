@@ -1,0 +1,31 @@
+<div class="accordion" id="facets">
+    <% @results['facet_counts']['facet_fields'].each do |k,v| %>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="facet_<%= k %>">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#facet_collapse_<%= k %>" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                    <%= k %>
+                </button>
+            </h2>
+            <div id="facet_collapse_<%= k %>" class="accordion-collapse collapse show" aria-labelledby="facet_<%= k %>">
+                <% per_page = 15 %>
+                <% total = v.size/2 %>
+                <% nb_pages = (total/per_page.to_f).ceil %>
+                <div class="accordion-body"
+                     data-controller="facets"
+                     data-facets-index-value="1"
+                     data-facets-pages-value="<%= nb_pages %>"
+                     data-facets-per-page-value="<%= per_page %>">
+                    <ul>
+                        <% v.each_slice(2).each_with_index do |facet, index| %>
+                            <li<%= index < per_page ? "" : " hidden" %> data-facets-target="item"><%= facet[0] %><span class="badge rounded-pill bg-primary"><%= facet[1] %></span></li>
+                        <% end %>
+                    </ul>
+                    <div class="facet_pagination"></div>
+                    <%# if total > per_page %>
+                        <%#= render partial: 'paginate', locals: {per_page: per_page, total: total, current_page: 1} %>
+                    <%# end %>
+                </div>
+            </div>
+        </div>
+    <% end %>
+</div>

@@ -1,0 +1,9 @@
+development:
+    # url: http://localhost:8991/solr/hydra-development
+    url: http://localhost:8080/solr/newseye_collection
+
+test:
+  url: http://localhost:8991/solr/hydra-development
+
+production:
+  url: http://localhost:8991/solr/hydra-development
