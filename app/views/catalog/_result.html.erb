@@ -1,0 +1,14 @@
+<div class="list-group-item row">
+    <div class="col-8">
+        <h5><%= result.title.nil? ? result.id : result.title %></h5>
+        <dl>
+            <dt>Publication date</dt>
+            <dd><%= result.date_created %></dd>
+            <dt>Newspaper</dt>
+            <dd><%= result.newspaper %></dd>
+        </dl>
+    </div>
+    <div class="col-4">
+        <a href="#"><img src="<%= result.thumbnail_url %>"/></a>
+    </div>
+</div>

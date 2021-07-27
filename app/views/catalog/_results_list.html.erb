@@ -3,11 +3,7 @@
 <% else %>
     <div class="list-group list-group-flush">
         <% @resulting_docs.each do |result| %>
-            <div class="list-group-item">
-                <h5><%= result.title %></h5>
-                <dt>Publication date</dt>
-                <dd><%= result.date_created %></dd>
-            </div>
+            <%= render partial: 'result', locals: {result: result} %>
         <% end %>
     </div>
 <% end %>

@@ -6,7 +6,7 @@ class Issue
         i = Issue.new
         i.id = solr_doc['id']
         i.language = solr_doc['language_ssi']
-        i.newspaper_id = solr_doc['member_of_collection_ids_ssim'][0]
+        i.newspaper = solr_doc['member_of_collection_ids_ssim'][0]
         i.title = solr_doc['title_ssi']
         i.date_created = solr_doc['date_created_ssi']
         i.original_uri = solr_doc['original_uri_ss']

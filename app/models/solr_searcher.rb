@@ -12,9 +12,9 @@ class SolrSearcher
         @@connection = RSolr.connect(url: Rails.configuration.solr['url']) unless @@connection
     end
 
-    def get_doc_by_id(id)
+    def self.get_doc_by_id(id)
         connect unless @@connection
-        docs = @@connection.send_and_receive("select", data: {id:"#{id}"}, method: :post)['results']['docs']
+        docs = @@connection.send_and_receive("select", data: {q: "id:#{id}"}, method: :post)['response']['docs']
         if docs.empty?
             nil
         else

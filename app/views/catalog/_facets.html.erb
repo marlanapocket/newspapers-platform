@@ -17,13 +17,13 @@
                      data-facets-per-page-value="<%= per_page %>">
                     <ul>
                         <% v.each_slice(2).each_with_index do |facet, index| %>
-                            <li<%= index < per_page ? "" : " hidden" %> data-facets-target="item"><%= facet[0] %><span class="badge rounded-pill bg-primary"><%= facet[1] %></span></li>
+                            <li<%= index < per_page ? "" : " hidden" %> data-facets-target="item">
+                                <%= facet[0] %>
+                                <span class="badge rounded-pill bg-primary float-end"><%= facet[1] %></span>
+                            </li>
                         <% end %>
                     </ul>
                     <div class="facet_pagination"></div>
-                    <%# if total > per_page %>
-                        <%#= render partial: 'paginate', locals: {per_page: per_page, total: total, current_page: 1} %>
-                    <%# end %>
                 </div>
             </div>
         </div>

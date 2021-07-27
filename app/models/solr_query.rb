@@ -3,7 +3,7 @@ class SolrQuery
     attr_accessor :defType, :sort, :start, :rows, :fq, :fl,  # common parameters
                   :q, :q_dot_alt, :qf, :mm, :pf, :ps, :qs, :tie, :bq, :bf,  # Dismax parameters
                   :sow, :mm_dot_autorelax, :boost, :lowercaseOperators, :pf2, :ps2, :pf3, :ps3, :stopwords, :uf,  # Edismax parameters
-                  :facet, :facet_dot_field,
+                  :facet, :facet_dot_field, :facet_dot_threads
                   :hl,
                   :mlt
 
@@ -28,6 +28,7 @@ class SolrQuery
         @facet_dot_field = ["language_ssi", "member_of_collection_ids_ssim", "linked_persons_ssim", "linked_locations_ssim"]
         @f_dot_linked_persons_ssim_dot_facet_dot_limit = 10000
         @f_dot_linked_locations_ssim_dot_facet_dot_limit = 10000
+        @facet_dot_threads = 4
     end
 
     def to_params
