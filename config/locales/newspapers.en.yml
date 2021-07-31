@@ -1,0 +1,10 @@
+en:
+  newspapers:
+    solr_fields:
+      date: "date_created_dtsi"
+      title: "title_ssi"
+      score: "score"
+    human_readable_solr_fields:
+      date: "Publication date"
+      title: "Title"
+      score: "Score"

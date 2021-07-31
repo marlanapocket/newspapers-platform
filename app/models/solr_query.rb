@@ -3,7 +3,7 @@ class SolrQuery
     attr_accessor :defType, :sort, :start, :rows, :fq, :fl,  # common parameters
                   :q, :q_dot_alt, :qf, :mm, :pf, :ps, :qs, :tie, :bq, :bf,  # Dismax parameters
                   :sow, :mm_dot_autorelax, :boost, :lowercaseOperators, :pf2, :ps2, :pf3, :ps3, :stopwords, :uf,  # Edismax parameters
-                  :facet, :facet_dot_field, :facet_dot_threads
+                  :facet, :facet_dot_field, :facet_dot_threads,
                   :hl,
                   :mlt
 

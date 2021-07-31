@@ -1,6 +1,6 @@
 class Issue
 
-    attr_accessor :id, :title, :date_created, :language, :original_uri, :nb_pages, :all_text, :thumbnail_url, :newspaper_id, :pages, :articles
+    attr_accessor :id, :title, :date_created, :language, :original_uri, :nb_pages, :all_text, :thumbnail_url, :newspaper, :pages, :articles
 
     def self.from_solr_doc(solr_doc, with_pages: false, with_articles: false)
         i = Issue.new
