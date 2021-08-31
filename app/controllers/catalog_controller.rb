@@ -3,6 +3,7 @@ class CatalogController < ApplicationController
     before_action :authenticate_user!, :strip_input_fields
 
     def index
+        console
         if params[:q]
             @solr_params = SolrQuery.new.to_params
             @solr_params[:q] = params[:q]
@@ -10,6 +11,13 @@ class CatalogController < ApplicationController
             @current_page = params[:page].to_i != 0 ? params[:page].to_i : 1
             @solr_params[:start] = params[:page].to_i != 0 ? @solr_params[:rows] * (params[:page].to_i-1) : 0
             @solr_params[:sort] = params[:sort] if params[:sort]
+            if params[:f]
+                params[:f].each do |k,v|
+                    v.each do |val|
+                        @solr_params[:fq] << "#{k}:#{val}"
+                    end
+                end
+            end
             puts @solr_params
             @results = SolrSearcher.query @solr_params
             @resulting_docs = @results['response']['docs'].map do |solr_doc|
@@ -21,21 +29,16 @@ class CatalogController < ApplicationController
                 end
             end
         end
-
     end
 
     def show
     end
 
-    def paginate
-        render partial: 'paginate_results', locals: {total: params[:total], per_page: params[:per_page], current_page: params[:page]}
+    def paginate_facets
+        render partial: 'paginate_facets', locals: {total: params[:total], per_page: params[:per_page], current_page: params[:page]}
     end
 
     private
-
-    def search_parameters
-        params.permit :q, :page, :f
-    end
 
     def strip_input_fields
         params.each do |key, value|

@@ -20,3 +20,5 @@ application.load(definitionsFromContext(context))
 
 require("bootstrap");
 require("@fortawesome/fontawesome-free");
+
+import "./stylesheets/catalog.scss"

@@ -1,10 +1,28 @@
 en:
   newspapers:
+    titles:
+      le_matin: "Le Matin"
+      l_oeuvre: "L'Œuvre"
+      le_gaulois: "Le Gaulois"
+      la_presse: "La Presse"
+      la_fronde: "La Fronde"
+    languages:
+      fr: "French"
+      en: "English"
+      de: "German"
     solr_fields:
       date: "date_created_dtsi"
       title: "title_ssi"
       score: "score"
+      language: "language_ssi"
+      newspaper: "member_of_collection_ids_ssim"
+      persons: "linked_persons_ssim"
+      locations: "linked_locations_ssim"
     human_readable_solr_fields:
       date: "Publication date"
       title: "Title"
       score: "Score"
+      language: "Language"
+      newspaper: "Newspaper"
+      persons: "Persons"
+      locations: "Locations"

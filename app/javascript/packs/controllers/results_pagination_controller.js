@@ -10,35 +10,8 @@ export default class extends Controller {
     connect() {
     }
 
-    // previous_page(event) {
-    //     event.preventDefault()
-    //     if (this.indexValue > 1) {
-    //         this.indexValue--
-    //         this.updatePagination()
-    //     }
-    // }
-    //
-    // next_page(event) {
-    //     event.preventDefault()
-    //     if (this.indexValue < this.pagesValue)
-    //         this.indexValue++
-    //     this.updatePagination()
-    // }
-    //
-    // page_button(event) {
-    //     console.log("total: ", this.totalValue)
-    //     event.preventDefault()
-    //     this.indexValue = event.target.textContent
-    //     this.updatePagination()
-    //
-    // }
-
     updatePagination() {
-        // fetch(window.location.protocol + "//" + window.location.host + "/")
-        //     .then(response => response.text())
-        //     .then(html => this.element.innerHTML = html)
         self = this
-        console.log("total: ", this.totalValue)
         const csrfToken = document.querySelector("[name='csrf-token']").content
         fetch(window.location.protocol + "//" + window.location.host + "/paginate_results",
             {

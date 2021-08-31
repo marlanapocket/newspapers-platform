@@ -3,7 +3,7 @@
 <div class="row">
     <div id="sidebar" class="col-3">
         <% if @results %>
-            <%= render partial: "sidebar" %>
+            <%= render partial: 'sidebar' %>
         <% end %>
     </div>
     <div id="sidebar" class="col-9">
@@ -11,6 +11,9 @@
             <%= render partial: 'search_form' %>
         </div>
         <% if @results %>
+            <div class="row">
+                <%= render partial: 'query_filters' %>
+            </div>
             <div class="row">
                 <%= render partial: 'results_list' %>
             </div>

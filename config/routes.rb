@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   root to: 'home#index'
 
   get '/search', to: 'catalog#index'
-  post '/paginate_results', to: 'catalog#paginate'
+  post '/paginate_facets', to: 'catalog#paginate_facets'
 
   get '/datasets', to: 'dataset#index'
   get '/experiments', to: 'experiment#index'

@@ -1,10 +1,32 @@
-<div class="card mb-2">
-    <div class="card-header">
-        Filters
+<% unless search_constraints.empty? %>
+    <div class="card mb-2">
+            <div class="card-body">
+                Filters:
+                <% search_constraints.each do |constraint| %>
+                    <% field = t('newspapers.solr_fields').find { |key,value| value == constraint[:label] }[0].to_s %>
+                    <span class="btn-group">
+                        <button class="btn btn-sm btn-outline-primary" disabled>
+                            <span class="filter_name">
+                                <%= t("newspapers.human_readable_solr_fields." + field) %>
+                                <i class="fas fa-chevron-right"></i>
+                            </span>
+                            <span class="filter_value">
+                                <% case field %>
+                                <% when 'language' %>
+                                    <%= t("newspapers.languages." + constraint[:value]) %>
+                                <% when 'newspaper' %>
+                                    <%= t("newspapers.titles." + constraint[:value]) %>
+                                <% else %>
+                                    <%= "" %>
+                                <% end %>
+                            </span>
+                        </button>
+                        <% new_params = Marshal.load(Marshal.dump(current_page_params)) %>
+                        <a class="btn btn-sm btn-outline-primary" href="<%= url_for new_params.tap{|h| h[:f].delete(constraint[:label].to_sym)} %>">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </span>
+                <% end %>
+            </div>
     </div>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item">An item</li>
-        <li class="list-group-item">A second item</li>
-        <li class="list-group-item">A third item</li>
-    </ul>
-</div>
+<% end %>

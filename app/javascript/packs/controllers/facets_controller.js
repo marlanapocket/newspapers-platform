@@ -78,8 +78,8 @@ export default class extends Controller {
                     }
                     else if ( (i === 2 && this.indexValue >= 5) || (i === this.pagesValue-1 && this.indexValue <= this.pagesValue-4) ) {
                         const skipButton = document.createElement('li')
-                        skipButton.setAttribute("data-facets-target", "pageButton")
-                        skipButton.setAttribute('data-action', "click->facets#page_button")
+                        // skipButton.setAttribute("data-facets-target", "pageButton")
+                        // skipButton.setAttribute('data-action', "click->facets#page_button")
                         skipButton.setAttribute('class', "page-item disabled")
                         a = document.createElement("a")
                         a.setAttribute('class', 'page-link')
