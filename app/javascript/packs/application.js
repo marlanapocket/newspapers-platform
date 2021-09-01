@@ -20,5 +20,6 @@ application.load(definitionsFromContext(context))
 
 require("bootstrap");
 require("@fortawesome/fontawesome-free");
+window.OpenSeadragon = require('openseadragon');
 
 import "./stylesheets/catalog.scss"

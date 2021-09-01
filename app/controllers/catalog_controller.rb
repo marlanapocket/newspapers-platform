@@ -32,6 +32,18 @@ class CatalogController < ApplicationController
     end
 
     def show
+        if params[:id].include? "_article_"
+            @article = Article.from_solr params[:id]
+            @issue = Issue.from_solr @article.issue_id, with_pages: true, with_articles: true
+        else
+            @article = nil
+            @issue = Issue.from_solr params[:id], with_pages: true, with_articles: true
+        end
+        # @pages_links = @issue.pages.map do |p|
+        #     url = "#{p.iiif_url}/info.json"
+        #     url = url.gsub("platform.newseye.eu", "localhost:3000").gsub("https://", "http://") if Rails.env == "development"
+        #     url
+        # end
     end
 
     def paginate_facets

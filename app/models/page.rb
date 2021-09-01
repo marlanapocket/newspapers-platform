@@ -4,7 +4,7 @@ class Page
 
     def self.from_solr id
         attrs = SolrSearcher.get_doc_by_id id
-        p = PageFileSet2.new
+        p = Page.new
         p.id = attrs['id']
         p.page_number = attrs['page_number_isi']
         p.width = attrs['width_isi']

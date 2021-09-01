@@ -2,6 +2,11 @@ class Issue
 
     attr_accessor :id, :title, :date_created, :language, :original_uri, :nb_pages, :all_text, :thumbnail_url, :newspaper, :pages, :articles
 
+    def self.from_solr(id, with_pages: false, with_articles: false)
+        solr_doc = SolrSearcher.get_doc_by_id id
+        Issue.from_solr_doc(solr_doc, with_pages: with_pages, with_articles: with_articles)
+    end
+
     def self.from_solr_doc(solr_doc, with_pages: false, with_articles: false)
         i = Issue.new
         i.id = solr_doc['id']
@@ -21,7 +26,7 @@ class Issue
         end
         if with_articles
             i.articles = []
-            ids = SolrSearcher.query({q:"from_issue_ssi:#{id} AND has_model_ssim:Article", fl:"id", rows:100000000})['response']['docs'].map {|o| o['id']}
+            ids = SolrSearcher.query({q:"from_issue_ssi:#{i.id} AND has_model_ssim:Article", fl:"id", rows:100000000})['response']['docs'].map {|o| o['id']}
             ids.each do |solr_article_id|
                 i.articles << Article.from_solr(solr_article_id)
             end
