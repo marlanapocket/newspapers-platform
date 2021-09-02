@@ -16,4 +16,30 @@ li.selected_constraint {
   border-width: 2px;
   background-color: #AAAAAA;
 }
+#viewer_container {
+  position: relative;
+}
+#page_counter {
+  position: absolute;
+  background-color: #8AF;
+  border-color: #000;
+  border-style: solid;
+  font-weight: bold;
+  border-width: 2px;
+  top: 1vh;
+  right: 3.5vh;
+  padding: 0px 2px;
+  z-index: 1;
+}
+.article_overlay {
+  background-color: #AAAAAA;
+  opacity: 0.2;
+  outline-style: solid;
+  outline-width: 1px;
+  z-index: 3;
+}
+.article_overlay:hover {
+  background-color: #CCCCCC;
+  opacity: 0.6;
+}
 ///////////////////////////////////////////////
