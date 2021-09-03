@@ -21,5 +21,6 @@ application.load(definitionsFromContext(context))
 require("bootstrap");
 require("@fortawesome/fontawesome-free");
 window.OpenSeadragon = require('openseadragon');
+window.$ = $
 
 import "./stylesheets/catalog.scss"

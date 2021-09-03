@@ -1,19 +1,26 @@
 <% set_page_title "Show" %>
 
-<div class="row">
+<div class="row" data-controller="viewer"
+     data-viewer-nbpages-value="<%= @issue.nb_pages %>"
+     data-viewer-pages-value="<%= @issue.pages.map{|p| "#{p.iiif_url}/info.json" }.to_json %>"
+     data-viewer-articles-value="<%= @issue.articles.map{|art| art.to_json }.to_json %>"
+     data-viewer-current-page-value="1"
+     data-viewer-selected-articles-value="[]">
     <div id="sidebar" class="col-3">
         <%= render partial: 'metadata' %>
     </div>
     <div id="viewer_container" class="col-6">
-        <div data-controller="viewer"
-             data-viewer-nbpages-value="<%= @issue.nb_pages %>"
-             data-viewer-pages-value="<%= @issue.pages.map{|p| "#{p.iiif_url}/info.json" }.to_json %>"
-             data-viewer-articles-value="<%= @issue.articles.map{|art| art.to_json }.to_json %>"
-             data-viewer-current-page-value="1">
+        <div >
             <div id="page_counter"><span data-viewer-target="currentPage"></span> out of <%= @issue.nb_pages %></div>
             <div id="openseadragon_view"></div>
         </div>
     </div>
     <div class="col-3">
+        <div class="card" data-viewer-target="selectedArticlePanel">
+            <div class="card-body">
+                <h5 class="card-title"></h5>
+                <p class="card-text"></p>
+            </div>
+        </div>
     </div>
 </div>

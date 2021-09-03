@@ -29,6 +29,8 @@ class SolrQuery
         @f_dot_linked_persons_ssim_dot_facet_dot_limit = 10000
         @f_dot_linked_locations_ssim_dot_facet_dot_limit = 10000
         @facet_dot_threads = 4
+        @hl = true
+        @hl_dot_fl = "all_text_tfr_siv"
     end
 
     def to_params

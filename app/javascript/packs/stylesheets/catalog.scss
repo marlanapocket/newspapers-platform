@@ -8,7 +8,7 @@ li.selected_constraint {
 }
 ////////////////////////////////////////////
 
-////////////////// Show page //////////////////
+////////////////// Show page - Viewer //////////////////
 #openseadragon_view {
   width: auto;
   height: 85vh;
@@ -36,10 +36,22 @@ li.selected_constraint {
   opacity: 0.2;
   outline-style: solid;
   outline-width: 1px;
-  z-index: 3;
+  z-index: 1;
+}
+.article_overlay_selected {
+  background-color: #9999FF;
+  opacity: 0.2;
+  outline-style: solid;
+  outline-width: 2px;
+  z-index: 1;
 }
 .article_overlay:hover {
   background-color: #CCCCCC;
   opacity: 0.6;
+}
+.selection_mask {
+  background-color: #000000;
+  opacity: 0.4;
+  z-index: 0;
 }
 ///////////////////////////////////////////////

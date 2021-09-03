@@ -58,7 +58,10 @@
     </div>
     <div class="list-group list-group-flush">
         <% @resulting_docs.each_with_index do |result, idx| %>
-            <%= render partial: 'result', locals: {result: result, doc_index: (@current_page-1) * @solr_params[:rows].to_i + idx + 1} %>
+            <%= render partial: 'result', locals: {result: result,
+                                                   doc_index: (@current_page-1) * @solr_params[:rows].to_i + idx + 1,
+                                                   highlight: @results["highlighting"][result.id]} %>
+            <hr/>
         <% end %>
     </div>
 <% end %>
