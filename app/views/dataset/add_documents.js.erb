@@ -1,0 +1,23 @@
+<% content = "<p>#{@nb_added_docs} documents were added to your dataset <strong>\"#{@title}\"</strong></p>" %>
+$("#notifications").append("<%= j render(partial: "shared/notification",
+                                         locals: {
+                                            notif_title: "Dataset modified",
+                                            notif_content: content
+                                         }) %>")
+
+for(const notif of $('.toast')) {
+    const notifToast = bootstrap.Toast.getOrCreateInstance(notif)
+    notifToast.show()
+    notif.addEventListener('hidden.bs.toast', (event) => {
+        bootstrap.Toast.getOrCreateInstance(event.target).dispose()
+        event.target.remove()
+    })
+}
+
+{ // Update the datasets list (from the dataset handling panel) to reflect the change in the number of documents
+    const options = `
+    <%= session[:working_dataset] ||= current_user.datasets.first.id%>
+    <%= options_for_select(current_user.datasets.map{|d| ["#{d.title} (#{d.documents.size} docs)", d.id]}, session[:working_dataset]) %>
+`
+    $("#working_dataset_select").html(options)
+}

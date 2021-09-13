@@ -1,0 +1,7 @@
+<div class="list-group list-group-flush">
+    <% docs.each_with_index do |doc, idx| %>
+        <%# Highlight will be used when searching into a dataset %>
+        <%= render partial: "document", locals: {doc: doc, highlight: nil, doc_index: (pagenum-1) * rows + idx + 1} %>
+        <hr/>
+    <% end %>
+</div>

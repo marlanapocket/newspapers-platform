@@ -1,0 +1,33 @@
+<div class="dataset_document"
+     data-show-dataset-selected-value="false"
+     data-action="click->show-dataset#toggleResultSelection"
+     data-doc-id="<%= doc.id %>">
+    <h5>
+        <a href="/catalog/<%= doc.id %>">
+            <span class="doc_index"><%= doc_index %>.</span>
+            <%= doc.title.nil? ? doc.id : doc.title %>
+        </a>
+    </h5>
+    <div class="row">
+        <div class="col-4">
+            <dl class="row">
+                <div class="col-1"></div>
+                <dt class="col-5">Publication date</dt>
+                <dd class="col-6"><%= doc.date_created %></dd>
+                <div class="col-1"></div>
+                <dt class="col-5">Newspaper</dt>
+                <dd class="col-6"><%= t("newspapers.titles.#{doc.newspaper}") %></dd>
+            </dl>
+        </div>
+        <div class="col-4">
+            <% if !highlight.nil? and !highlight.first.nil? %>
+                <% highlight.first[1].each do |extract| %>
+                    <p>...<%= extract.gsub(/\n/,'<br/>').gsub('<br/><br/>','<br/>').html_safe %>...</p>
+                <% end %>
+            <% end %>
+        </div>
+        <div class="col-4">
+            <a href="/catalog/<%= doc.id %>"><img src="<%= doc.thumbnail_url %>"/></a>
+        </div>
+    </div>
+</div>

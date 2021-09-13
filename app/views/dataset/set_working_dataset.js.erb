@@ -1,0 +1,15 @@
+<% content = "<p><strong>\"#{@title}\"</strong> was set as the current working dataset.</p>" %>
+$("#notifications").append("<%= j render(partial: "shared/notification",
+                                         locals: {
+                                            notif_title: "Working dataset",
+                                            notif_content: content
+                                         }) %>")
+
+for(let notif of $('.toast')) {
+    const notifToast = bootstrap.Toast.getOrCreateInstance(notif)
+    notifToast.show()
+    notif.addEventListener('hidden.bs.toast', (event) => {
+        bootstrap.Toast.getOrCreateInstance(event.target).dispose()
+        event.target.remove()
+    })
+}
