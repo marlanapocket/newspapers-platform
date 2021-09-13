@@ -2,8 +2,11 @@ class CatalogController < ApplicationController
 
     before_action :authenticate_user!, :strip_input_fields
 
+    def home
+
+    end
+
     def index
-        console
         if params[:q]
             @solr_params = SolrQuery.new.to_params
             @solr_params[:q] = params[:q]

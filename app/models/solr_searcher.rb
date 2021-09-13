@@ -5,6 +5,7 @@ class SolrSearcher
 
     def self.query params
         connect unless @@connection
+        puts "[SolrSearcher.Query] #{params}" if Rails.env == "development"
         @@connection.send_and_receive("select", data: params, method: :post)
     end
 

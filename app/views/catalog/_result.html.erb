@@ -1,28 +1,33 @@
-<h5>
-    <a href="/catalog/<%= result.id %>">
-        <span class="doc_index"><%= doc_index %>.</span>
-        <%= result.title.nil? ? result.id : result.title %>
-    </a>
-</h5>
-<div class="row">
-    <div class="col-4">
-        <dl class="row">
-            <div class="col-1"></div>
-            <dt class="col-5">Publication date</dt>
-            <dd class="col-6"><%= result.date_created %></dd>
-            <div class="col-1"></div>
-            <dt class="col-5">Newspaper</dt>
-            <dd class="col-6"><%= t("newspapers.titles.#{result.newspaper}") %></dd>
-        </dl>
-    </div>
-    <div class="col-4">
-        <% if !highlight.nil? and !highlight.first.nil? %>
-            <% highlight.first[1].each do |extract| %>
-                <p>...<%= extract.gsub(/\n/,'<br/>').gsub('<br/><br/>','<br/>').html_safe %>...</p>
+<div class="search_result"
+     data-search-results-selected-value="false"
+     data-action="click->search-results#toggleResultSelection"
+     data-doc-id="<%= result.id %>">
+    <h5>
+        <a href="/catalog/<%= result.id %>">
+            <span class="doc_index"><%= doc_index %>.</span>
+            <%= result.title.nil? ? result.id : result.title %>
+        </a>
+    </h5>
+    <div class="row">
+        <div class="col-4">
+            <dl class="row">
+                <div class="col-1"></div>
+                <dt class="col-5">Publication date</dt>
+                <dd class="col-6"><%= result.date_created %></dd>
+                <div class="col-1"></div>
+                <dt class="col-5">Newspaper</dt>
+                <dd class="col-6"><%= t("newspapers.titles.#{result.newspaper}") %></dd>
+            </dl>
+        </div>
+        <div class="col-4">
+            <% if !highlight.nil? and !highlight.first.nil? %>
+                <% highlight.first[1].each do |extract| %>
+                    <p>...<%= extract.gsub(/\n/,'<br/>').gsub('<br/><br/>','<br/>').html_safe %>...</p>
+                <% end %>
             <% end %>
-        <% end %>
-    </div>
-    <div class="col-4">
-        <a href="/catalog/<%= result.id %>"><img src="<%= result.thumbnail_url %>"/></a>
+        </div>
+        <div class="col-4">
+            <a href="/catalog/<%= result.id %>"><img src="<%= result.thumbnail_url %>"/></a>
+        </div>
     </div>
 </div>

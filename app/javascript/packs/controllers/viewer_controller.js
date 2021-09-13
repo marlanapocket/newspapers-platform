@@ -8,7 +8,7 @@ export default class extends Controller {
     viewer = null
 
     connect() {
-        self = this
+        let self = this
         self.viewer = OpenSeadragon({
             id: "openseadragon_view",
             prefixUrl: "/openseadragon/images/",
@@ -49,7 +49,7 @@ export default class extends Controller {
     }
 
     article_clicked(event) {
-        self = this
+        let self = this
         if(self.isDragged) {
             self.isDragged = false
         }
@@ -62,7 +62,6 @@ export default class extends Controller {
                 self.selectedArticlesValue = self.selectedArticlesValue.filter(item => item !== $(event.target).attr('id'))
             }
             else {  // If the article is not yet selected
-                console.log($(event.target).attr('id'))
                 $(".article_overlay_selected").removeClass("article_overlay_selected")
                 $(".article_overlay_selected").addClass("article_overlay")
                 $(event.target).addClass("article_overlay_selected")
@@ -78,8 +77,7 @@ export default class extends Controller {
     }
 
     updateSelectedArticlePanel() {
-        console.log(self.selectedArticlesValue)
-        self = this
+        let self = this
         if(self.selectedArticlesValue.length == 0) {
             self.selectedArticlePanelTarget.hidden = true
         }
@@ -96,7 +94,7 @@ export default class extends Controller {
     }
 
     display_mask(overlay_loc) {
-        self = this
+        let self = this
         let maskN = $("<div id=\"mask_north\" class=\"selection_mask\"></div>")
         let maskE = $("<div id=\"mask_east\" class=\"selection_mask\"></div>")
         let maskS = $("<div id=\"mask_south\" class=\"selection_mask\"></div>")
@@ -112,7 +110,7 @@ export default class extends Controller {
     }
 
     hide_mask(){
-        self = this
+        let self = this
         self.viewer.removeOverlay("mask_north")
         self.viewer.removeOverlay("mask_east")
         self.viewer.removeOverlay("mask_south")
@@ -120,7 +118,7 @@ export default class extends Controller {
     }
 
     setOSDDragHandler(element) {
-        self = this
+        let self = this
         let tracker = new OpenSeadragon.MouseTracker({
             clickDistThreshold: 5,
             element: element,

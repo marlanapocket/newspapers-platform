@@ -5,7 +5,10 @@
         <div class="col p-2">
             Results <%= (@current_page-1)*@solr_params[:rows].to_i+1 %>-<%= @current_page*@solr_params[:rows].to_i %> out of <%= @results['response']['numFound'] %>.
         </div>
-        <div class="col" id="results_navigation" data-controller="results-pagination" data-results-pagination-total-value="<%= @results['response']['numFound'] %>">
+        <div class="col"
+             id="results_navigation"
+             data-controller="results-pagination"
+             data-results-pagination-total-value="<%= @results['response']['numFound'] %>">
             <%= render partial: 'paginate_results', locals: {total: @results['response']['numFound'],
                                                              per_page: @solr_params[:rows].to_f,
                                                              current_page: @current_page} %>
@@ -56,7 +59,7 @@
             </div>
         </div>
     </div>
-    <div class="list-group list-group-flush">
+    <div id="search-results-list" class="list-group list-group-flush" data-controller="search-results">
         <% @resulting_docs.each_with_index do |result, idx| %>
             <%= render partial: 'result', locals: {result: result,
                                                    doc_index: (@current_page-1) * @solr_params[:rows].to_i + idx + 1,
