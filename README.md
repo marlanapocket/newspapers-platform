@@ -8,3 +8,6 @@ Create a docker container and create an empty database named "newspapers"
 `docker exec -it newspapers_platform_database createdb -U postgres newspapers`
 
 Modify the content of `config/database.yml` accordingly.
+
+## Setting up a IIIF server
+Cantaloupe

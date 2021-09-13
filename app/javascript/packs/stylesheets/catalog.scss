@@ -1,3 +1,31 @@
+////////////////// General //////////////////
+html, body {
+  height: 100%;
+}
+body .container-fluid {
+  height:100%;
+}
+#navigation {
+  height: 8%;
+}
+#main-content {
+  height: 92%;
+}
+/////////////////////////////////////////////
+
+////////////////// Catalog index //////////////////
+.search_result {
+  padding: 0.5em;
+}
+.search_result:hover {
+  background-color: #EEE;
+}
+.search_result.selected {
+  border: 2px solid #32a1ce;
+  padding: calc(0.5em - 2px);
+}
+////////////////////////////////////////////
+
 ////////////////// Facets //////////////////
 #facets .constrained {
   background: lightgreen;
@@ -55,3 +83,66 @@ li.selected_constraint {
   z-index: 0;
 }
 ///////////////////////////////////////////////
+
+////////////////// Show Experiment /////////////////////
+.tool:hover {
+  cursor: grab;
+}
+.tf-nc.tool-slot {
+  border-style: dashed;
+  width:8vw;
+  height:10vh;
+  padding: 0;
+}
+.tf-nc.possible-tool-slot {
+  border-color: cornflowerblue;
+  border-width: 3px;
+}
+.tf-nc.tool-slot-hover {
+  border: 1em solid blue !important;
+}
+
+.tool-status {
+  height: 1em;
+  width: 1em;
+  border-radius: 50%;
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  display: inline-block;
+}
+.tool-status-created {
+  background-color: gray;
+}
+.tool-status-configured {
+  background-color: white;
+}
+.tool-status-error {
+  background-color: red;
+}
+.tool-status-running {
+  background-color: gold;
+}
+.tool-status-finished {
+  background-color: green;
+}
+
+.tool-slot-occupied {
+  width:12vw;
+  height:15vh;
+  padding: 0;
+}
+#experiment_area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#experiment_canvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  overflow: visible;
+}
+////////////////////////////////////////////////////////

@@ -18,9 +18,12 @@ const application = Application.start()
 const context = require.context("./controllers", true, /\.js$/)
 application.load(definitionsFromContext(context))
 
-require("bootstrap");
+import 'jquery'
+import 'popper.js'
+import 'bootstrap'
 require("@fortawesome/fontawesome-free");
 window.OpenSeadragon = require('openseadragon');
 window.$ = $
-
-import "./stylesheets/catalog.scss"
+window.bootstrap = require('bootstrap/dist/js/bootstrap.bundle.js')
+window.Panzoom = require('@panzoom/panzoom')
+import "./application.scss"

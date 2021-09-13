@@ -10,10 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_21_081005) do
+ActiveRecord::Schema.define(version: 2021_09_09_142841) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "datasets", force: :cascade do |t|
+    t.string "title"
+    t.bigint "user_id"
+    t.jsonb "documents", default: [], null: false
+    t.boolean "public", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["title", "user_id"], name: "index_datasets_on_title_and_user_id", unique: true
+    t.index ["user_id"], name: "index_datasets_on_user_id"
+  end
+
+  create_table "experiments", force: :cascade do |t|
+    t.string "title"
+    t.bigint "user_id"
+    t.jsonb "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_experiments_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -27,4 +47,6 @@ ActiveRecord::Schema.define(version: 2021_07_21_081005) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "datasets", "users"
+  add_foreign_key "experiments", "users"
 end
