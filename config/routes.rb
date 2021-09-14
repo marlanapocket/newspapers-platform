@@ -13,10 +13,13 @@ Rails.application.routes.draw do
   get '/datasets/update', to: 'dataset#update_datasets_list'
   post '/datasets/working_dataset', to: 'dataset#set_working_dataset'
   post "/datasets/add_documents", to: "dataset#add_documents"
+  get "/datasets/list", to: "dataset#list_datasets"
   get '/dataset/:id', to: 'dataset#show'
   post "/dataset/:id/paginate", to: "dataset#paginate"
   post '/dataset/create', to: 'dataset#create_dataset'
 
   get '/experiments', to: 'experiment#index'
   get '/experiment/:id', to: "experiment#show"
+  get '/experiment/:id/load', to: "experiment#load"
+  post '/experiment/:id/save', to: "experiment#save"
 end

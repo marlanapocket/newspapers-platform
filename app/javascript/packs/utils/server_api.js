@@ -84,5 +84,48 @@ export class ServerAPI {
             }
         })
     }
+
+    static getDatasets(callback) {
+        $.ajax({
+            type: "GET",
+            url: `/datasets/list`,
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: "script",
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            }
+        })
+    }
+
+    static saveExperiment(experimentId, experimentGraph, callback) {
+        $.ajax({
+            type: "POST",
+            url: `/experiment/${experimentId}/save`,
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {description: experimentGraph},
+            dataType: "json",
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            }
+        })
+    }
+
+    static loadExperiment(experimentId, callback) {
+        $.ajax({
+            type: "GET",
+            url: `/experiment/${experimentId}/load`,
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: "json",
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            }
+        })
+    }
 }
 

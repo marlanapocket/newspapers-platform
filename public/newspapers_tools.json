@@ -1,0 +1,59 @@
+{
+  "tools": {
+    "source": [
+      {
+        "type": "source_dataset",
+        "name": "Source Dataset",
+        "parameters": [
+          {
+            "name": "dataset",
+            "type": "select",
+            "description": "Set the dataset to study.",
+            "default": null,
+            "values": []
+          }
+        ]
+      },
+      {
+        "type": "source_search",
+        "name": "Source Search",
+        "parameters": [
+          {
+            "name": "search",
+            "type": "select",
+            "description": "Set the search to study.",
+            "default": null,
+            "values": []
+          }
+        ]
+      }
+    ],
+    "statistics": [
+      {
+        "type": "ngrams",
+        "name": "N-Grams Extractor",
+        "parameters": [
+          {
+            "name": "n",
+            "type": "integer",
+            "description": "How many tokens should be part of the generated subsequences.",
+            "default": 2
+          }
+        ]
+      },
+      {
+        "type": "split",
+        "name": "Source Splitter",
+        "parameters": [
+          {
+            "name": "metadata",
+            "type": "select",
+            "values": ["Publication date", "Language"],
+            "description": "Split the input source into multiples ones.",
+            "default": "Publication date"
+          }
+        ]
+      }
+    ]
+  }
+}

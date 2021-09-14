@@ -62,4 +62,8 @@ class DatasetController < ApplicationController
         @pagenum = params[:page].to_i
         # @counter = (params[:page].to_i - 1) * params[:per_page].to_i
     end
+
+    def list_datasets
+        render json: current_user.datasets.to_json
+    end
 end
