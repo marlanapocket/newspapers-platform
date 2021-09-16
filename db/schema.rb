@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_09_142841) do
+ActiveRecord::Schema.define(version: 2021_09_15_140752) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,10 +29,22 @@ ActiveRecord::Schema.define(version: 2021_09_09_142841) do
   create_table "experiments", force: :cascade do |t|
     t.string "title"
     t.bigint "user_id"
-    t.jsonb "description"
+    t.jsonb "description", default: {"children"=>[]}
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["title", "user_id"], name: "index_experiments_on_title_and_user_id", unique: true
     t.index ["user_id"], name: "index_experiments_on_user_id"
+  end
+
+  create_table "tools", force: :cascade do |t|
+    t.bigint "experiment_id"
+    t.string "tool_type"
+    t.jsonb "parameters", default: {}
+    t.jsonb "results", default: {}
+    t.string "status", default: "created"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["experiment_id"], name: "index_tools_on_experiment_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -49,4 +61,5 @@ ActiveRecord::Schema.define(version: 2021_09_09_142841) do
 
   add_foreign_key "datasets", "users"
   add_foreign_key "experiments", "users"
+  add_foreign_key "tools", "experiments"
 end

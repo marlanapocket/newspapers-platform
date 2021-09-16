@@ -1,32 +1,43 @@
 <% set_page_title "Experiments" %>
 
-<div class="row">
+<div class="row" data-controller="experiments">
     <div class="col-3">
         <div class="card">
             <div class="card-header">
                 Utilities
             </div>
             <div class="card-body">
-                <button class="btn btn-primary" type="button">Create a new experiment</button>
+                <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#createExperimentModal">
+                    Create a new experiment
+                </button>
+                <div class="modal fade" id="createExperimentModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Create a new experiment</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="experiment-title" class="form-label">Give a name to your new experiment:</label>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon3">Experiment title</span>
+                                    <input type="text" class="form-control" id="experiment-title" autocomplete="off">
+                                </div>
+                                <span id="message"></span>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button id="create-experiment-button" type="button" class="btn btn-primary" data-action="click->experiments#createExperiment">Create</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-9">
-        <div class="card">
-            <div class="card-header">
-                Experiments
-            </div>
-            <div class="card-body">
-                <ul class="list-group">
-                    <% current_user.experiments.each do |experiment| %>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <%= experiment.id %>
-                            <a href="/experiment/<%= experiment.id %>">Access experiment</a>
-                            <span class="badge bg-primary rounded-pill">1</span>
-                        </li>
-                    <% end %>
-                </ul>
-            </div>
+        <div id="experiments_list">
+            <%= render partial: 'experiments_list' %>
         </div>
     </div>
 </div>

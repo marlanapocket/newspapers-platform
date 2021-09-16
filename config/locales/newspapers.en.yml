@@ -26,3 +26,6 @@ en:
       newspaper: "Newspaper"
       persons: "Persons"
       locations: "Locations"
+    tools:
+      type:
+        source_dataset: "Source Dataset"

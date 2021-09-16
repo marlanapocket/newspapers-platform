@@ -9,15 +9,14 @@ export class Templates {
                 <div class="h-100 w-100 card text-center">
                     <div class="card-header px-1 d-flex align-items-center justify-content-between">
                         <span>${ tool.name }</span>
-                        <span class="tool-status tool-status-created float-end"></span>
+                        <button type="button" class="btn btn-danger px-2 my-1" data-action="click->experiment#delete_tool">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                     <div class="card-body h-100">
-                        <div class="d-flex justify-content-around align-items-center">
+                        <div class="h-100 d-flex justify-content-around align-items-center">
                             <button type="button" class="btn btn-secondary px-2 d-flex align-items-center justify-content-between" data-action="click->experiment#display_tool_config">
                                 <i class="fas fa-cog me-2"></i>Configure
-                            </button>
-                            <button type="button" class="btn btn-danger px-2 d-flex align-items-center justify-content-between" data-action="click->experiment#delete_tool">
-                                <i class="fas fa-trash me-2"></i>Delete
                             </button>
                         </div>
                     </div>

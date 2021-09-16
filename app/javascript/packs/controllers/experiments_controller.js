@@ -10,30 +10,30 @@ export default class extends Controller {
     }
 
     initModal() {
-        const modal = document.getElementById('createDatasetModal')
-        const modalButton = document.getElementById('create-dataset-button')
+        const modal = document.getElementById('createExperimentModal')
+        const modalButton = document.getElementById('create-experiment-button')
         modal.addEventListener('hidden.bs.modal', (event) => {
-            $("#dataset-title").val("")
+            $("#experiment-title").val("")
             modalButton.innerHTML = "Create"
             modalButton.removeAttribute('disabled')
             $(document.body).removeClass("modal-open")
             $(".modal-backdrop").remove()
         })
         modal.addEventListener('shown.bs.modal', (event) => {
-            document.getElementById('dataset-title').focus()
+            document.getElementById('experiment-title').focus()
         })
     }
 
-    createDataset(event) {
+    createExperiment(event) {
         $("#message").html("")
-        const title = $("#dataset-title").val()
+        const title = $("#experiment-title").val()
         event.target.setAttribute('disabled', 'disabled')
         event.target.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Loading`
-        ServerAPI.create_dataset(title, (data) => {
+        ServerAPI.create_experiment(title, (data) => {
             if(data['status'] === 'ok') {
                 //close modal + update list
-                bootstrap.Modal.getInstance(document.getElementById('createDatasetModal')).hide()
-                ServerAPI.update_datasets_list((data) => {})
+                bootstrap.Modal.getInstance(document.getElementById('createExperimentModal')).hide()
+                ServerAPI.update_experiments_list((data) => {})
 
             }
             else {

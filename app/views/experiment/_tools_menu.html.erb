@@ -1,0 +1,29 @@
+<div class="card h-100">
+    <div class="card-header">
+        Tools
+    </div>
+    <div class="card-body">
+        <nav>
+            <div class="nav nav-tabs" id="tools-nav" role="tablist">
+                <button class="nav-link active" id="nav-source-tab" data-bs-toggle="tab" data-bs-target="#nav-source" type="button" role="tab" aria-controls="nav-source" aria-selected="true">Source</button>
+                <button class="nav-link" id="nav-stats-tab" data-bs-toggle="tab" data-bs-target="#nav-stats" type="button" role="tab" aria-controls="nav-stats" aria-selected="false">Statistics</button>
+                <button class="nav-link" id="nav-analysis-tab" data-bs-toggle="tab" data-bs-target="#nav-analysis" type="button" role="tab" aria-controls="nav-analysis" aria-selected="false">Analysis</button>
+            </div>
+        </nav>
+        <div class="tab-content" id="tools-nav-content">
+            <div class="tab-pane fade show active" id="nav-source" role="tabpanel" aria-labelledby="nav-source-tab">
+                <% tools['tools']['source'].each do |tool| %>
+                    <%= render partial: "tool/menu_tool", locals: {tool_data: tool}.with_indifferent_access %>
+                <% end %>
+            </div>
+            <div class="tab-pane fade" id="nav-stats" role="tabpanel" aria-labelledby="nav-stats-tab">
+                <% tools['tools']['statistics'].each do |tool| %>
+                    <%= render partial: "tool/menu_tool", locals: {tool_data: tool}.with_indifferent_access %>
+                <% end %>
+            </div>
+            <div class="tab-pane fade" id="nav-analysis" role="tabpanel" aria-labelledby="nav-analysis-tab">
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,5 +1,107 @@
 export class ServerAPI {
 
+    static create_experiment(title, callback) {
+        $.ajax({
+            type: "POST",
+            url: "/experiment/create",
+            data: {title: title},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
+
+    static update_experiments_list(callback) {
+        $.ajax({
+            type: "GET",
+            url: "/experiments/update",
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: "script",
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
+
+    static addTool(tool, parentId, experimentId, callback) {
+        $.ajax({
+            type: "POST",
+            url: `/experiment/${experimentId}/add_tool`,
+            data: {tool: tool, parent_id: parentId},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback()
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
+
+    static deleteTool(toolId, experimentId, callback) {
+        $.ajax({
+            type: "POST",
+            url: `/experiment/${experimentId}/delete_tool`,
+            data: {tool_id: toolId},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback()
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
+
+    static openToolConfig(toolId, experimentId, callback) {
+        $.ajax({
+            type: "POST",
+            url: `/experiment/${experimentId}/edit_tool_form`,
+            data: {tool_id: toolId},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
+
+    static editTool(toolId, parameters, experimentId, callback) {
+        $.ajax({
+            type: "POST",
+            url: `/experiment/${experimentId}/edit_tool`,
+            data: {tool_id: toolId, parameters: parameters},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback()
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
+
     static create_dataset(title, callback) {
         $.ajax({
             type: "POST",
@@ -44,7 +146,6 @@ export class ServerAPI {
             data: {
                 dataset_id: datasetId
             },
-            dataType: "script",
             success: (data, textStatus, jqXHR) => {
                 callback(data)
             }
@@ -93,35 +194,6 @@ export class ServerAPI {
                 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
             },
             dataType: "script",
-            success: (data, textStatus, jqXHR) => {
-                callback(data)
-            }
-        })
-    }
-
-    static saveExperiment(experimentId, experimentGraph, callback) {
-        $.ajax({
-            type: "POST",
-            url: `/experiment/${experimentId}/save`,
-            headers: {
-                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {description: experimentGraph},
-            dataType: "json",
-            success: (data, textStatus, jqXHR) => {
-                callback(data)
-            }
-        })
-    }
-
-    static loadExperiment(experimentId, callback) {
-        $.ajax({
-            type: "GET",
-            url: `/experiment/${experimentId}/load`,
-            headers: {
-                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-            },
-            dataType: "json",
             success: (data, textStatus, jqXHR) => {
                 callback(data)
             }
