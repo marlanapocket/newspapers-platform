@@ -36,6 +36,8 @@ class ExperimentController < ApplicationController
         tool_params = JSON.parse params[:tool]
         tool = Tool.new
         tool.tool_type = tool_params['type']
+        tool.input_type = tool_params['input_type']
+        tool.output_type = tool_params['output_type']
         tool.parameters = tool_params['parameters']
         tool.status = "created"
         tool.experiment = @experiment
@@ -61,12 +63,27 @@ class ExperimentController < ApplicationController
     def edit_tool
         @experiment = Experiment.find(params[:id])
         @tool = Tool.find(params[:tool_id])
+        modified = false
         @tool.parameters.map! do |param|
+            if param['value'] != params[:parameters][param['name']]
+                modified = true
+            end
             param['value'] = params[:parameters][param['name']]
             param
         end
-        @tool.status = "configured"
+        @tool.status = "configured" if modified
         @tool.save!
         render 'experiment/update_experiment_area'
+    end
+
+    def run_tool
+        @experiment = Experiment.find(params[:id])
+        @tool = Tool.find(params[:tool_id])
+        @tool.run()
+        render 'experiment/update_experiment_area'
+    end
+
+    def run_experiment
+
     end
 end

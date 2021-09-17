@@ -2,6 +2,7 @@ import { Controller } from "stimulus"
 import { Draggable } from "@shopify/draggable"
 import { Templates } from "../utils/templates"
 import { ServerAPI } from "../utils/server_api"
+import {ExperimentAPI} from "../utils/experiment_api"
 
 export default class extends Controller {
     static targets = []
@@ -11,10 +12,20 @@ export default class extends Controller {
         this.panzoom = this.initPanzoom()
         this.draggable = this.initDraggable()
         new bootstrap.Offcanvas($("#params_offcanvas")[0])
+
+        const observer = new MutationObserver((mutations) => {
+            this.refresh_display()
+        })
+        observer.observe(document.getElementById("experiment_area"), {attributes: true})
     }
 
     run_experiment(event) {
-        
+
+    }
+
+    run_tool(event) {
+        const toolId = $(event.target).closest(".tool-slot-occupied").attr('id').substring(5)
+        ExperimentAPI.runTool(toolId, this.experimentIdValue, (data) => {})
     }
 
     display_tool_config(event) {
@@ -57,11 +68,19 @@ export default class extends Controller {
         })
     }
 
+    refresh_display() {
+        this.panzoom.destroy()
+        this.draggable.destroy()
+        this.panzoom = this.initPanzoom()
+        this.draggable = this.initDraggable()
+    }
+
     initPanzoom() {
         const canvas_elem = $("#experiment_canvas")[0]
         const panzoom = Panzoom.default(canvas_elem, {
             cursor: "auto"
         })
+        canvas_elem.parentElement.removeEventListener('wheel', panzoom.zoomWithWheel)
         canvas_elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
         // panzoom.pan(10, 10)
         // panzoom.zoom(2, { animate: true })
@@ -78,13 +97,12 @@ export default class extends Controller {
         let toolsMenu = document.querySelector("#tools_menu")
         draggable.on('mirror:created', (event) => {
             $('html,body').css('cursor','grabbing')
-            let isSource = $(event.originalSource).parent().parent().attr('id') == "nav-source"
+            const draggedInputType = $(event.originalSource).data('tool')['input_type']
             mirror2 = event.mirror.cloneNode(true)
             for(const toolslot of $(".tool-slot")) {
-                if($(toolslot).parentsUntil(".tree", "ul").length == 0 && isSource) {
-                    $(toolslot).addClass("possible-tool-slot")
-                }
-                if($(toolslot).parentsUntil(".tree", "ul").length != 0 && !isSource) {
+                let toolSlotParentOutputType = $(toolslot.parentElement.parentElement.parentElement.firstChild).data('output-type')
+                toolSlotParentOutputType = (toolSlotParentOutputType == undefined) ? "" : toolSlotParentOutputType
+                if(toolSlotParentOutputType == draggedInputType) {
                     $(toolslot).addClass("possible-tool-slot")
                 }
             }

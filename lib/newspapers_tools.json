@@ -3,6 +3,8 @@
     "source": [
       {
         "type": "source_dataset",
+        "input_type": "",
+        "output_type": "documents",
         "name": "Source Dataset",
         "parameters": [
           {
@@ -16,6 +18,8 @@
       },
       {
         "type": "source_search",
+        "input_type": "",
+        "output_type": "documents",
         "name": "Source Search",
         "parameters": [
           {
@@ -28,9 +32,50 @@
         ]
       }
     ],
+    "processors": [
+      {
+        "type": "splitter",
+        "input_type": "documents",
+        "output_type": "datasets",
+        "name": "Source Splitter",
+        "parameters": [
+          {
+            "name": "metadata",
+            "type": "select",
+            "values": [
+              "Publication date",
+              "Language"
+            ],
+            "description": "Split the input source into multiples ones.",
+            "default": null
+          }
+        ]
+      },
+      {
+        "type": "stem",
+        "input_type": "documents",
+        "output_type": "documents",
+        "name": "Stemmer",
+        "parameters": [
+          {
+            "name": "language",
+            "type": "select",
+            "values": [
+              "French",
+              "English",
+              "German"
+            ],
+            "description": "Transform the text of documents so that every word is replaced by its stem.",
+            "default": null
+          }
+        ]
+      }
+    ],
     "statistics": [
       {
         "type": "ngrams",
+        "input_type": "documents",
+        "output_type": "ngrams",
         "name": "N-Grams Extractor",
         "parameters": [
           {
@@ -38,19 +83,6 @@
             "type": "integer",
             "description": "How many tokens should be part of the generated subsequences.",
             "default": 2
-          }
-        ]
-      },
-      {
-        "type": "split",
-        "name": "Source Splitter",
-        "parameters": [
-          {
-            "name": "metadata",
-            "type": "select",
-            "values": ["Publication date", "Language"],
-            "description": "Split the input source into multiples ones.",
-            "default": "Publication date"
           }
         ]
       }

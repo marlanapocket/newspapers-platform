@@ -39,6 +39,8 @@ ActiveRecord::Schema.define(version: 2021_09_15_140752) do
   create_table "tools", force: :cascade do |t|
     t.bigint "experiment_id"
     t.string "tool_type"
+    t.string "input_type"
+    t.string "output_type"
     t.jsonb "parameters", default: {}
     t.jsonb "results", default: {}
     t.string "status", default: "created"

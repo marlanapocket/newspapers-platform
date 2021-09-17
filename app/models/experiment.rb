@@ -19,8 +19,8 @@ class Experiment < ActiveRecord::Base
 
     def load_tools
         ids = gather_ids self.description
-        Tool.where(id: ids).pluck(:id, :status, :tool_type).map do |t|
-            [t[0], {id: t[0], status: t[1], type: t[2]}]
+        Tool.where(id: ids).pluck(:id, :status, :tool_type, :input_type, :output_type).map do |t|
+            [t[0], {id: t[0], status: t[1], type: t[2], input_type: t[3], output_type: t[4]}]
         end.to_h
     end
 

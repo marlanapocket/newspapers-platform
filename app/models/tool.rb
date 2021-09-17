@@ -14,4 +14,8 @@ class Tool < ActiveRecord::Base
         }
     end
 
+    def run
+        ToolRunnerWorker.perform_async(self.id, self.experiment.user.id, self.tool_type, self.parameters)
+    end
+
 end

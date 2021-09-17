@@ -6,8 +6,8 @@
         <nav>
             <div class="nav nav-tabs" id="tools-nav" role="tablist">
                 <button class="nav-link active" id="nav-source-tab" data-bs-toggle="tab" data-bs-target="#nav-source" type="button" role="tab" aria-controls="nav-source" aria-selected="true">Source</button>
+                <button class="nav-link" id="nav-processors-tab" data-bs-toggle="tab" data-bs-target="#nav-processors" type="button" role="tab" aria-controls="nav-analysis" aria-selected="false">Processors</button>
                 <button class="nav-link" id="nav-stats-tab" data-bs-toggle="tab" data-bs-target="#nav-stats" type="button" role="tab" aria-controls="nav-stats" aria-selected="false">Statistics</button>
-                <button class="nav-link" id="nav-analysis-tab" data-bs-toggle="tab" data-bs-target="#nav-analysis" type="button" role="tab" aria-controls="nav-analysis" aria-selected="false">Analysis</button>
             </div>
         </nav>
         <div class="tab-content" id="tools-nav-content">
@@ -16,13 +16,15 @@
                     <%= render partial: "tool/menu_tool", locals: {tool_data: tool}.with_indifferent_access %>
                 <% end %>
             </div>
+            <div class="tab-pane fade" id="nav-processors" role="tabpanel" aria-labelledby="nav-processors-tab">
+                <% tools['tools']['processors'].each do |tool| %>
+                    <%= render partial: "tool/menu_tool", locals: {tool_data: tool}.with_indifferent_access %>
+                <% end %>
+            </div>
             <div class="tab-pane fade" id="nav-stats" role="tabpanel" aria-labelledby="nav-stats-tab">
                 <% tools['tools']['statistics'].each do |tool| %>
                     <%= render partial: "tool/menu_tool", locals: {tool_data: tool}.with_indifferent_access %>
                 <% end %>
-            </div>
-            <div class="tab-pane fade" id="nav-analysis" role="tabpanel" aria-labelledby="nav-analysis-tab">
-
             </div>
         </div>
     </div>

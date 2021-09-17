@@ -28,6 +28,8 @@ Rails.application.routes.draw do
     post '/experiment/:id/delete_tool', to: "experiment#delete_tool"
     post '/experiment/:id/edit_tool', to: "experiment#edit_tool"
     post '/experiment/:id/edit_tool_form', to: "experiment#edit_tool_form"
+    post '/experiment/:id/run_tool', to: "experiment#run_tool"
+    post '/experiment/:id/run_experiment', to: "experiment#run_experiment"
 
     resources :tool, only: [:show, :create, :update, :destroy]
 
