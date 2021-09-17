@@ -69,11 +69,11 @@ class Experiment < ActiveRecord::Base
     end
 
     def gather_ids(tree, ids=[])
-        if tree.has_key?('tool')
-            ids << tree['tool']['id']
-        end
         tree['children'].each do |subtree|
             ids.concat(gather_ids(subtree))
+        end
+        if tree.has_key?('tool')
+            ids << tree['tool']['id']
         end
         return ids
     end

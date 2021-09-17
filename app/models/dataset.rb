@@ -7,7 +7,7 @@ class Dataset < ActiveRecord::Base
     def add_documents(documents_ids)
         documents_ids.each do |doc_id|
             unless self.documents.any?{ |doc| doc['id'] == doc_id }
-                doc_type = doc_id.index("_article_") >= 0 ? "article" : "issue"
+                doc_type = doc_id.index("_article_").nil? ? "issue" : "article"
                 self.documents << {id: doc_id, type: doc_type}
             end
         end

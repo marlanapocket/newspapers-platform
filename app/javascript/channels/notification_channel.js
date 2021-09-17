@@ -15,10 +15,11 @@ consumer.subscriptions.create("NotificationChannel", {
         // console.log("received: ", data)
         if (data.type === "update_experiment_view") {
             $("#experiment_area").html(data.html)
-            $("#experiment_area").attr("data-refresh", ($("#experiment_area").attr("data-refresh") == true) ? false : true)
+            $("#experiment_area").attr("data-refresh", (!$("#experiment_area").attr("data-refresh")))
         }
-        else if (data.type === "") {
-
+        else if (data.type === "refresh_display") {
+            $("#experiment_area").html(data.html)
+            $("#experiment_area").attr("data-refresh", (!$("#experiment_area").attr("data-refresh")))
         }
     }
 });

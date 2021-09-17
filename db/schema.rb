@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 2021_09_15_140752) do
 
   create_table "tools", force: :cascade do |t|
     t.bigint "experiment_id"
+    t.bigint "parent_id"
     t.string "tool_type"
     t.string "input_type"
     t.string "output_type"
@@ -47,6 +48,7 @@ ActiveRecord::Schema.define(version: 2021_09_15_140752) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["experiment_id"], name: "index_tools_on_experiment_id"
+    t.index ["parent_id"], name: "index_tools_on_parent_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -64,4 +66,5 @@ ActiveRecord::Schema.define(version: 2021_09_15_140752) do
   add_foreign_key "datasets", "users"
   add_foreign_key "experiments", "users"
   add_foreign_key "tools", "experiments"
+  add_foreign_key "tools", "tools", column: "parent_id"
 end

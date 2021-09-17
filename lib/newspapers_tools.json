@@ -83,6 +83,12 @@
             "type": "integer",
             "description": "How many tokens should be part of the generated subsequences.",
             "default": 2
+          },
+          {
+            "name": "minimum_frequency",
+            "type": "integer",
+            "description": "Discard tokens with less frequency that this",
+            "default": 1
           }
         ]
       }

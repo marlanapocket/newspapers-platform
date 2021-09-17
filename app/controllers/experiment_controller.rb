@@ -40,6 +40,7 @@ class ExperimentController < ApplicationController
         tool.output_type = tool_params['output_type']
         tool.parameters = tool_params['parameters']
         tool.status = "created"
+        tool.parent_id = params[:parent_id]#(params[:parent_id] == "") ? nil : Tool.find(params[:parent_id])
         tool.experiment = @experiment
         tool.save!
         @experiment.add_tool(params[:parent_id].to_i, tool)
