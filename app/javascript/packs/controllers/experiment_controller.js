@@ -13,6 +13,10 @@ export default class extends Controller {
         new bootstrap.Offcanvas($("#params_offcanvas")[0])
     }
 
+    run_experiment(event) {
+        
+    }
+
     display_tool_config(event) {
         const toolId = $(event.target).closest(".tool-slot-occupied").attr('id').substring(5)
         ServerAPI.openToolConfig(toolId, this.experimentIdValue, (data) => {
@@ -24,16 +28,23 @@ export default class extends Controller {
     }
 
     apply_tool_config(event) {
-        // TODO: Check if all config fields are valid
         const offcanvasElement = $("#params_offcanvas")
         const toolId = offcanvasElement.attr("data-tool-slot-id")
-        const parameters = {}
-        $("#params_offcanvas").find(".tool-param").find("input,select").map( (i, e) => {
-            parameters[e.getAttribute("data-param")] = $(e).val()
-        })
-        ServerAPI.editTool(toolId, parameters, this.experimentIdValue, () => {
-            bootstrap.Offcanvas.getInstance(offcanvasElement[0]).hide()
-        })
+        const DOMParameters = $("#params_offcanvas").find(".tool-param").find("input,select")
+        if(DOMParameters.toArray().some( (elt) => { return !$(elt).val() } )) {
+            offcanvasElement.find("#params_message").html("Make sure to select valid parameters.")
+        }
+        else {
+            const parameters = {}
+            DOMParameters.map( (i, e) => {
+                parameters[e.getAttribute("data-param")] = $(e).val()
+            })
+            ServerAPI.editTool(toolId, parameters, this.experimentIdValue, () => {
+                this.panzoom.destroy()
+                this.panzoom = this.initPanzoom()
+                this.draggable.destroy()
+                this.draggable = this.initDraggable()})
+        }
     }
 
     delete_tool(event) {

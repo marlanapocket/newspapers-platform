@@ -6,8 +6,9 @@ class Tool < ActiveRecord::Base
         {
           "tool": {
             "id": self.id,
-            "type": self.tool_type,
-            "parameters": self.parameters
+            # "type": self.tool_type,
+            # "status": self.status,
+            # "parameters": self.parameters
           },
           "children": []
         }

@@ -21,8 +21,8 @@ class ExperimentController < ApplicationController
 
     def show
         @experiment = Experiment.find params[:id]
-        # TODO: I'm not satisfied with the following
-        @tools_description = File.read("#{Rails.root}/public/newspapers_tools.json")
+        @tools = @experiment.load_tools
+        @tools_description = File.read("#{Rails.root}/lib/newspapers_tools.json")
     end
 
     def update_experiments_list
@@ -54,7 +54,6 @@ class ExperimentController < ApplicationController
     end
 
     def edit_tool_form
-        @experiment = Experiment.find(params[:id])
         @tool = Tool.find(params[:tool_id])
         render partial: 'tool/parameters', locals: {tool: @tool}
     end
@@ -66,9 +65,8 @@ class ExperimentController < ApplicationController
             param['value'] = params[:parameters][param['name']]
             param
         end
+        @tool.status = "configured"
         @tool.save!
-        @experiment.update_tool(params[:tool_id].to_i, params[:parameters])
-        @experiment.save!
-        render json: {}
+        render 'experiment/update_experiment_area'
     end
 end
