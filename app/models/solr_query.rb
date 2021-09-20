@@ -12,7 +12,8 @@ class SolrQuery
         @sort = 'score desc'
         @start = 0
         @rows = 10
-        @fq = ["has_model_ssim:(Article OR Issue)"]
+        # @fq = ["has_model_ssim:(Article OR Issue)"]
+        @fq = ["has_model_ssim:(Article)"]
         @fl = '*,score'
         @q = '*:*'
         @q_dot_alt = '*:*'

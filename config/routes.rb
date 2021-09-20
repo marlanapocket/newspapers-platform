@@ -12,7 +12,8 @@ Rails.application.routes.draw do
     get '/datasets', to: 'dataset#index'
     get '/datasets/update', to: 'dataset#update_datasets_list'
     post '/datasets/working_dataset', to: 'dataset#set_working_dataset'
-    post "/datasets/add_documents", to: "dataset#add_documents"
+    post "/datasets/add_selected_documents", to: "dataset#add_selected_documents"
+    post "/datasets/add_all_documents", to: "dataset#add_all_documents"
     get "/datasets/list", to: "dataset#list_datasets"
     get '/dataset/:id', to: 'dataset#show'
     post "/dataset/:id/paginate", to: "dataset#paginate"

@@ -1,5 +1,5 @@
 import { Controller } from "stimulus"
-import {ServerAPI} from "../utils/server_api"
+import {ExperimentAPI} from "../utils/experiment_api"
 
 export default class extends Controller {
     static targets = []
@@ -29,11 +29,11 @@ export default class extends Controller {
         const title = $("#experiment-title").val()
         event.target.setAttribute('disabled', 'disabled')
         event.target.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Loading`
-        ServerAPI.create_experiment(title, (data) => {
+        ExperimentAPI.create_experiment(title, (data) => {
             if(data['status'] === 'ok') {
                 //close modal + update list
                 bootstrap.Modal.getInstance(document.getElementById('createExperimentModal')).hide()
-                ServerAPI.update_experiments_list((data) => {})
+                ExperimentAPI.update_experiments_list((data) => {})
 
             }
             else {

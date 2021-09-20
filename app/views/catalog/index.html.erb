@@ -1,6 +1,6 @@
 <% set_page_title "Search" %>
 
-<div class="row">
+<div class="row" data-controller="search-results">
     <div id="sidebar" class="col-3">
         <% if @results %>
             <%= render partial: 'sidebar' %>

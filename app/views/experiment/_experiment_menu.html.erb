@@ -4,6 +4,10 @@
     </div>
     <div class="card-body">
         <h4><%= @experiment.title %></h4>
-        <button type="button" class="btn btn-primary" data-action="click->experiment#run_experiment">Run experiment</button>
+        <button type="button"
+                class="btn btn-success d-flex align-items-center justify-content-between"
+                data-action="click->experiment#run_experiment">
+            <i class="fas fa-play me-2"></i>Run experiment
+        </button>
     </div>
 </div>

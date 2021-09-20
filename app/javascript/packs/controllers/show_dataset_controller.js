@@ -1,5 +1,5 @@
 import { Controller } from "stimulus"
-import {ServerAPI} from "../utils/server_api"
+import {DatasetAPI} from "../utils/dataset_api"
 import {Popover} from "bootstrap"
 
 export default class extends Controller {
@@ -12,7 +12,7 @@ export default class extends Controller {
     }
 
     loadDocuments(datasetId, page, per_page, sort, sort_order, type) {
-        ServerAPI.paginateDataset(datasetId, page, per_page, sort, sort_order, type, (data) => {})
+        DatasetAPI.paginateDataset(datasetId, page, per_page, sort, sort_order, type, (data) => {})
     }
 
 }

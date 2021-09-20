@@ -4,7 +4,8 @@
 </div>
 <div class="offcanvas-body">
     <% tool.parameters.each do |param| %>
-        <div class="tool-param input-group">
+        <label class="form-label"><%= param['description'] %></label>
+        <div class="tool-param input-group mb-3">
             <span title="<%= param['description'] %>" class="input-group-text"><%= param['name'] %></span>
             <% case param['type'] %>
             <% when "string" %>

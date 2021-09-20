@@ -20,10 +20,10 @@ application.load(definitionsFromContext(context))
 
 import 'jquery'
 import 'popper.js'
-import 'bootstrap'
+import * as bootstrap from 'bootstrap'
 require("@fortawesome/fontawesome-free");
 window.OpenSeadragon = require('openseadragon');
 window.$ = $
-window.bootstrap = require('bootstrap/dist/js/bootstrap.bundle.js')
+window.bootstrap = bootstrap
 window.Panzoom = require('@panzoom/panzoom')
 import "./application.scss"

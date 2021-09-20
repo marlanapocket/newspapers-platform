@@ -21,5 +21,21 @@ consumer.subscriptions.create("NotificationChannel", {
             $("#experiment_area").html(data.html)
             $("#experiment_area").attr("data-refresh", (!$("#experiment_area").attr("data-refresh")))
         }
+        else if (data.type === "notify") {
+            if(window.location.pathname == "/search") {
+                const selected_dataset = $("#working_dataset_select").val()
+                $("#working_dataset_select").html(data.dataset_options)
+                $("#working_dataset_select").val(selected_dataset)
+            }
+            $("#notifications").append(data.html)
+            for(const notif of $('.toast')) {
+                const notifToast = bootstrap.Toast.getOrCreateInstance(notif)
+                notifToast.show()
+                notif.addEventListener('hidden.bs.toast', (event) => {
+                    bootstrap.Toast.getOrCreateInstance(event.target).dispose()
+                    event.target.remove()
+                })
+            }
+        }
     }
 });

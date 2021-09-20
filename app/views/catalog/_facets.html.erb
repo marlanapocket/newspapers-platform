@@ -3,7 +3,6 @@
     <% @results['facet_counts']['facet_fields'].each do |k,v| %>
         <% unless v.empty? %>
             <% facet_constraint = all_constraints.find{ |h| h[:label] == k } %>
-            <% puts facet_constraint %>
             <div class="accordion-item">
                 <h2 class="accordion-header" id="facet_<%= k %>">
                     <% button_classes = "" %>

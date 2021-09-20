@@ -1,5 +1,5 @@
 import { Controller } from "stimulus"
-import {ServerAPI} from "../utils/server_api"
+import { DatasetAPI } from "../utils/dataset_api"
 
 export default class extends Controller {
     static targets = []
@@ -29,11 +29,10 @@ export default class extends Controller {
         const title = $("#dataset-title").val()
         event.target.setAttribute('disabled', 'disabled')
         event.target.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Loading`
-        ServerAPI.create_dataset(title, (data) => {
+        DatasetAPI.create_dataset(title, (data) => {
             if(data['status'] === 'ok') {
-                //close modal + update list
                 bootstrap.Modal.getInstance(document.getElementById('createDatasetModal')).hide()
-                ServerAPI.update_datasets_list((data) => {})
+                DatasetAPI.update_datasets_list((data) => {})
 
             }
             else {

@@ -21,7 +21,6 @@ class CatalogController < ApplicationController
                     end
                 end
             end
-            puts @solr_params
             @results = SolrSearcher.query @solr_params
             @resulting_docs = @results['response']['docs'].map do |solr_doc|
                 case solr_doc['has_model_ssim']
@@ -42,11 +41,6 @@ class CatalogController < ApplicationController
             @article = nil
             @issue = Issue.from_solr params[:id], with_pages: true, with_articles: true
         end
-        # @pages_links = @issue.pages.map do |p|
-        #     url = "#{p.iiif_url}/info.json"
-        #     url = url.gsub("platform.newseye.eu", "localhost:3000").gsub("https://", "http://") if Rails.env == "development"
-        #     url
-        # end
     end
 
     def paginate_facets

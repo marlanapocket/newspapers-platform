@@ -3,7 +3,14 @@
         <div class="card-header">
             Datasets handling
         </div>
-        <div class="card-body">
+        <div class="card-body d-flex align-items-center justify-content-center flex-column">
+            <div class="input-group">
+                <span class="input-group-text">Working dataset</span>
+                <select id="working_dataset_select" class="form-select" data-action="change->search-results#selectWorkingDataset">
+                    <%= session[:working_dataset] ||= current_user.datasets.first.id%>
+                    <%= options_for_select(current_user.datasets.map{|d| ["#{d.title} (#{d.documents.size} docs)", d.id]}, session[:working_dataset]) %>
+                </select>
+            </div>
             <button type="button"
                     class="btn btn-sm btn-outline-primary rounded-circle p-0"
                     data-toggle="popover"
@@ -15,13 +22,11 @@
             <button class="btn btn-sm btn-primary" data-action="click->search-results#addSelectedDocumentsToWorkingDataset">
                 Add selected documents
             </button>
-            <div class="input-group">
-                <span class="input-group-text">Working dataset</span>
-                <select id="working_dataset_select" class="form-select" data-action="change->search-results#selectWorkingDataset">
-                    <%= session[:working_dataset] ||= current_user.datasets.first.id%>
-                    <%= options_for_select(current_user.datasets.map{|d| ["#{d.title} (#{d.documents.size} docs)", d.id]}, session[:working_dataset]) %>
-                </select>
-            </div>
+            <button class="btn btn-sm btn-primary"
+                    data-search-params="<%= @solr_params.to_json %>"
+                    data-action="click->search-results#addAllDocumentsToWorkingDataset">
+                Add all documents
+            </button>
         </div>
     </div>
 <% end %>

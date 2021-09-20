@@ -1,0 +1,58 @@
+<div id="pagination" class="d-flex align-items-center justify-content-evenly">
+    <div class="p-2">
+        Results <%= (@current_page-1)*@solr_params[:rows].to_i+1 %>-<%= [@current_page*@solr_params[:rows].to_i, @results['response']['numFound']].min %> out of <%= @results['response']['numFound'] %>.
+    </div>
+    <div class=""
+         id="results_navigation"
+         data-controller="results-pagination"
+         data-results-pagination-total-value="<%= @results['response']['numFound'] %>">
+        <%= render partial: 'paginate_results', locals: {total: @results['response']['numFound'],
+                                                         per_page: @solr_params[:rows].to_f,
+                                                         current_page: @current_page} %>
+    </div>
+    <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="per_page_button" data-bs-toggle="dropdown">
+            <%= @solr_params[:rows] %>
+            <span class="">per page</span>
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="per_page_button">
+            <li><a class="dropdown-item" href="<%= url_for current_page_params.merge({page: 1, per_page: 10}) %>">10</a></li>
+            <li><a class="dropdown-item" href="<%= url_for current_page_params.merge({page: 1, per_page: 20}) %>">20</a></li>
+            <li><a class="dropdown-item" href="<%= url_for current_page_params.merge({page: 1, per_page: 50}) %>">50</a></li>
+            <li><a class="dropdown-item" href="<%= url_for current_page_params.merge({page: 1, per_page: 100}) %>">100</a></li>
+        </ul>
+    </div>
+    <div class="">
+        <button class="btn btn-outline-secondary dropdown-toggle" id="sort_button" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="">Sort by</span>
+            <% field, sort_order = @solr_params[:sort].split(' ') %>
+            <% field = I18n.t('newspapers.solr_fields').find { |k,v| v == field }[0].to_s %>
+            <%= t("newspapers.human_readable_solr_fields." + field) %>
+            <% if (sort_order == "asc") %>
+                <i class='fas fa-arrow-down'></i>
+            <% else %>
+                <i class='fas fa-arrow-up'></i>
+            <% end %>
+            <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="<%= url_for current_page_params.merge({page: 1, sort: "#{t("newspapers.solr_fields.score")} desc"}) %>">
+                <%= t("newspapers.human_readable_solr_fields.score") %>
+                <i class='fas fa-arrow-up'></i>
+            </a>
+            <a class="dropdown-item" href="<%= url_for current_page_params.merge({page: 1, sort: "#{t("newspapers.solr_fields.score")} asc"}) %>">
+                <%= t("newspapers.human_readable_solr_fields.score") %>
+                <i class='fas fa-arrow-down'></i>
+            </a>
+            <a class="dropdown-item" href="<%= url_for current_page_params.merge({page: 1, sort: "#{t("newspapers.solr_fields.date")} desc"}) %>">
+                <%= t("newspapers.human_readable_solr_fields.date") %>
+                <i class='fas fa-arrow-up'></i>
+            </a>
+            <a class="dropdown-item" href="<%= url_for current_page_params.merge({page: 1, sort: "#{t("newspapers.solr_fields.date")} asc"}) %>">
+                <%= t("newspapers.human_readable_solr_fields.date") %>
+                <i class='fas fa-arrow-down'></i>
+            </a>
+        </div>
+    </div>
+</div>

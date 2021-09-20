@@ -1,16 +1,11 @@
 import { Controller } from "stimulus"
-import {ServerAPI} from "../utils/server_api"
-import {Popover} from "bootstrap"
-import {Toast} from "bootstrap"
+import { DatasetAPI } from "../utils/dataset_api"
 
 export default class extends Controller {
-    static targets = [ ]
-    static values = { selected: Boolean }
+    static targets = [  ]
+    static values = {  }
 
     connect() {
-        $('[data-toggle="popover"]').popover({
-            trigger: "hover"
-        })
     }
 
     toggleResultSelection(event){
@@ -21,14 +16,29 @@ export default class extends Controller {
 
     selectWorkingDataset(event) {
         const datasetID = parseInt($(event.target).find("option:selected").val())
-        ServerAPI.setCurrentWorkingDataset(datasetID, (data) => {})
+        DatasetAPI.setCurrentWorkingDataset(datasetID, (data) => {})
     }
 
     addSelectedDocumentsToWorkingDataset(event) {
         const documentsIds = $(".search_result.selected").map((index, document) => {
             return document.getAttribute("data-doc-id")
         }).get()
-        ServerAPI.addSelectedDocumentsToWorkingDataset(documentsIds, (data)=> {})
+        DatasetAPI.addSelectedDocumentsToWorkingDataset(documentsIds, (data)=> {})
+    }
+
+    addAllDocumentsToWorkingDataset(event) {
+        const params = JSON.parse($(event.target).attr('data-search-params'))
+        DatasetAPI.addAllDocumentsToWorkingDataset(params, (data) => {
+            $("#notifications").append(data)
+            for(const notif of $('.toast')) {
+                const notifToast = bootstrap.Toast.getOrCreateInstance(notif)
+                notifToast.show()
+                notif.addEventListener('hidden.bs.toast', (event) => {
+                    bootstrap.Toast.getOrCreateInstance(event.target).dispose()
+                    event.target.remove()
+                })
+            }
+        })
     }
 
 }

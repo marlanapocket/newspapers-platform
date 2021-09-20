@@ -37,7 +37,7 @@ class DatasetController < ApplicationController
         end
     end
 
-    def add_documents
+    def add_selected_documents
         @nb_added_docs = params[:documents_ids].size
         dataset = Dataset.find(session[:working_dataset])
         dataset.add_documents params[:documents_ids]
@@ -45,6 +45,13 @@ class DatasetController < ApplicationController
         respond_to do |format|
             format.js
         end
+    end
+
+    def add_all_documents
+        SearchToDatasetWorker.perform_async(current_user.id, session[:working_dataset], params[:search_params].to_unsafe_h)
+        title = Dataset.find(session[:working_dataset]).title
+        message = "<p>Documents are being added to your dataset. You will be notified when the operation is done.</p>"
+        render(partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe})
     end
 
     def paginate

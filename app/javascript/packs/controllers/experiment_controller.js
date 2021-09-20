@@ -1,7 +1,5 @@
 import { Controller } from "stimulus"
 import { Draggable } from "@shopify/draggable"
-import { Templates } from "../utils/templates"
-import { ServerAPI } from "../utils/server_api"
 import {ExperimentAPI} from "../utils/experiment_api"
 
 export default class extends Controller {
@@ -30,7 +28,7 @@ export default class extends Controller {
 
     display_tool_config(event) {
         const toolId = $(event.target).closest(".tool-slot-occupied").attr('id').substring(5)
-        ServerAPI.openToolConfig(toolId, this.experimentIdValue, (data) => {
+        ExperimentAPI.openToolConfig(toolId, this.experimentIdValue, (data) => {
             const offcanvasElement = $("#params_offcanvas")[0]
             offcanvasElement.innerHTML = data
             offcanvasElement.setAttribute("data-tool-slot-id", toolId)
@@ -50,7 +48,7 @@ export default class extends Controller {
             DOMParameters.map( (i, e) => {
                 parameters[e.getAttribute("data-param")] = $(e).val()
             })
-            ServerAPI.editTool(toolId, parameters, this.experimentIdValue, () => {
+            ExperimentAPI.editTool(toolId, parameters, this.experimentIdValue, () => {
                 this.panzoom.destroy()
                 this.panzoom = this.initPanzoom()
                 this.draggable.destroy()
@@ -60,7 +58,7 @@ export default class extends Controller {
 
     delete_tool(event) {
         const toolId = $(event.target).closest('.tool-slot-occupied').attr('id').substring(5)
-        ServerAPI.deleteTool(toolId, this.experimentIdValue, (data) => {
+        ExperimentAPI.deleteTool(toolId, this.experimentIdValue, (data) => {
             this.panzoom.destroy()
             this.panzoom = this.initPanzoom()
             this.draggable.destroy()
@@ -135,7 +133,7 @@ export default class extends Controller {
                     const tool = $(event.originalSource).data('tool')
                     const parent = final_dropzone.parentElement.parentElement.previousElementSibling
                     const parentId = (parent == null) ? null : parent.getAttribute('id').substring(5)
-                    ServerAPI.addTool(JSON.stringify(tool), parentId, this.experimentIdValue, (data) => {
+                    ExperimentAPI.addTool(JSON.stringify(tool), parentId, this.experimentIdValue, (data) => {
                         final_dropzone = null
                         this.panzoom.destroy()
                         this.panzoom = this.initPanzoom()

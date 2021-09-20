@@ -1,4 +1,4 @@
-class DatasetAPI {
+export class DatasetAPI {
     static create_dataset(title, callback) {
         $.ajax({
             type: "POST",
@@ -52,7 +52,7 @@ class DatasetAPI {
     static addSelectedDocumentsToWorkingDataset(documentsIds, callback) {
         $.ajax({
             type: "POST",
-            url: "/datasets/add_documents",
+            url: "/datasets/add_selected_documents",
             headers: {
                 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
             },
@@ -60,6 +60,23 @@ class DatasetAPI {
                 documents_ids: documentsIds
             },
             dataType: "script",
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            }
+        })
+    }
+
+    static addAllDocumentsToWorkingDataset(searchParams, callback) {
+        $.ajax({
+            type: "POST",
+            url: "/datasets/add_all_documents",
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                search_params: searchParams
+            },
+            dataType: 'json',
             success: (data, textStatus, jqXHR) => {
                 callback(data)
             }
