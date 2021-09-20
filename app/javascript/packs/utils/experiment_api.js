@@ -85,6 +85,23 @@ export class ExperimentAPI {
         })
     }
 
+    static openToolResults(toolId, experimentId, callback) {
+        $.ajax({
+            type: "POST",
+            url: `/experiment/${experimentId}/tool_results`,
+            data: {tool_id: toolId},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
+
     static editTool(toolId, parameters, experimentId, callback) {
         $.ajax({
             type: "POST",

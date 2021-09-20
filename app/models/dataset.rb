@@ -26,65 +26,27 @@ class Dataset < ActiveRecord::Base
         end.size
     end
 
-    def fetch_paginated_documents(page, per_page, sort, sort_order, type)
-        out = []
+    def fetch_paginated_documents(page, per_page, sort, sort_order, type, recursive=false)
         docs = self.documents.select {|doc| type == "all" || doc['type'] == type }
+
         nb_pages = (docs.size / per_page.to_f).ceil
         nb_pages = 1 if nb_pages == 0
-        if sort == "date"  # we need to preload dates for sorting before pagination
-            # To modify if multiple types can be selected
-            if docs[0]['type'] == "compound"
-                dates = SolrSearcher.query({q: "*:*",
-                                                  fl: "id,date_created_dtsi",
-                                                  fq: "id:(#{docs.map{ |d| d['parts'][0] }.join(' ')})",
-                                                  rows: 99999}).each_with_index.map{ |d,i| {id: docs[i]['id'], date_created_dtsi: d['date_created_dtsi']} }
-            else
-                dates = SolrSearcher.query({q: "*:*", fl: "id,date_created_dtsi", fq: "id:(#{docs.map{ |d| d['id'] }.join(' ')})", rows: 99999})
-            end
-        end
-        if sort != "default"
-            docs = docs.sort_by do |doc|
-                case sort
-                when "date"
-                    Date.parse(dates.select{|d| d['id'] == doc['id']}[0]['date_created_dtsi'])
-                when "relevancy"  # not used
-                    doc['relevancy']
-                end
-            end
-        end
-        docs.reverse! if sort_order == "desc"
-        docs.each_slice(per_page).with_index do |slice, page_idx|
-            next if page_idx+1 != page
-            slice.each_with_index do |doc, idx|
-                doc_idx = page_idx * per_page + idx
-                if doc['type'] != "compound"
-                    out << doc['id']
-                else
-                    # if CompoundArticle.exists? doc['id']
-                    #     ca = CompoundArticle.find doc['id']
-                    #     solr_doc = ca.to_solr_doc
-                    #     solr_doc['relevancy'] = doc['relevancy']
-                    #     out << solr_doc
-                    # end
-                end
-            end
-        end
-        solr_ids = out.select {|d| d.class == String }
+        solr_ids = docs.map{ |d| d['id'] }
+        sort = (sort == "default") ? "score" : sort
+        solr_docs = nil
         unless solr_ids.empty?
-            solr_docs = SolrSearcher.query({q: "*:*", fq: "id:(#{solr_ids.join(' ')})", rows: 9999})['response']['docs']
-            # solr_docs.map! do |solr_doc|
-            #     solr_doc['relevancy'] = self.relevancy_for_doc solr_doc['id']
-            #     solr_doc
-            # end
-            out.map! do |doc|
-                if doc.class == String
-                    solr_docs.select {|d| d['id'] == doc }[0]
-                else
-                    doc
-                end
-            end
+            solr_docs = SolrSearcher.query({
+                                             q: "*:*",
+                                             fq: "id:(#{solr_ids.join(' ')})",
+                                             rows: per_page,
+                                             sort: "#{sort} #{sort_order}",
+                                             start: (page-1)*per_page
+                                           })['response']['docs']
         end
-        return {docs: out, nb_pages: nb_pages}
+        if recursive and page <= nb_pages and !solr_docs.nil?
+            solr_docs = solr_docs.concat fetch_paginated_documents(page+1, per_page, sort, sort_order, type, true)[:docs]
+        end
+        return {docs: solr_docs.nil? ? [] : solr_docs, nb_pages: nb_pages}
     end
 
 end

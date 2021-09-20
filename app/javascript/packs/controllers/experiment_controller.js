@@ -26,12 +26,24 @@ export default class extends Controller {
         ExperimentAPI.runTool(toolId, this.experimentIdValue, (data) => {})
     }
 
+    display_results(event) {
+        const toolId = $(event.target).closest(".tool-slot-occupied").attr('id').substring(5)
+        ExperimentAPI.openToolResults(toolId, this.experimentIdValue, (data) => {
+            const offcanvasElement = $("#params_offcanvas")[0]
+            offcanvasElement.innerHTML = data
+            offcanvasElement.setAttribute("data-tool-slot-id", toolId)
+            offcanvasElement.setAttribute("style", "width: 75vw;")
+            bootstrap.Offcanvas.getInstance(offcanvasElement).show()
+        })
+    }
+
     display_tool_config(event) {
         const toolId = $(event.target).closest(".tool-slot-occupied").attr('id').substring(5)
         ExperimentAPI.openToolConfig(toolId, this.experimentIdValue, (data) => {
             const offcanvasElement = $("#params_offcanvas")[0]
             offcanvasElement.innerHTML = data
             offcanvasElement.setAttribute("data-tool-slot-id", toolId)
+            offcanvasElement.setAttribute("style", "width: 400px;")
             bootstrap.Offcanvas.getInstance(offcanvasElement).show()
         })
     }

@@ -77,6 +77,12 @@ class ExperimentController < ApplicationController
         render 'experiment/update_experiment_area'
     end
 
+    def tool_results
+        @experiment = Experiment.find(params[:id])
+        @tool = Tool.find(params[:tool_id])
+        render partial: 'tool/results', locals: {tool: @tool, experiment: @experiment}
+    end
+
     def run_tool
         @experiment = Experiment.find(params[:id])
         @tool = Tool.find(params[:tool_id])

@@ -43,7 +43,7 @@ class ToolRunnerWorker
 
     def fetch_docs_from_dataset dataset_id
         d = Dataset.find(dataset_id)
-        docs = d.fetch_paginated_documents(1, 99, "default", "asc", "all")
+        docs = d.fetch_paginated_documents(1, 100, "default", "asc", "all", recursive=true)
         docs[:docs].map do |doc|
             {
               id: doc['id'],
