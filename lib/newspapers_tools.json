@@ -15,21 +15,6 @@
             "values": []
           }
         ]
-      },
-      {
-        "type": "source_search",
-        "input_type": "",
-        "output_type": "documents",
-        "name": "Source Search",
-        "parameters": [
-          {
-            "name": "search",
-            "type": "select",
-            "description": "Set the search to study.",
-            "default": null,
-            "values": []
-          }
-        ]
       }
     ],
     "processors": [
@@ -67,6 +52,38 @@
             ],
             "description": "Transform the text of documents so that every word is replaced by its stem.",
             "default": null
+          }
+        ]
+      },
+      {
+        "type": "preprocess",
+        "input_type": "documents",
+        "output_type": "documents",
+        "name": "Text preprocessor",
+        "parameters": [
+          {
+            "name": "lowercase",
+            "type": "boolean",
+            "description": "Turn all the text to lowercase.",
+            "default": true
+          },
+          {
+            "name": "punctuation",
+            "type": "boolean",
+            "description": "Remove punctuation.",
+            "default": true
+          },
+          {
+            "name": "stopwords",
+            "type": "boolean",
+            "description": "Remove stop words.",
+            "default": true
+          },
+          {
+            "name": "numbers",
+            "type": "boolean",
+            "description": "Remove numbers.",
+            "default": true
           }
         ]
       }

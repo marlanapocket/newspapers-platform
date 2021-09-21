@@ -7,9 +7,18 @@ class SearchToDatasetWorker
         dataset = Dataset.find(dataset_id)
         search_params['fl'] = 'id'
         search_params['facet'] = false
-        search_params['rows'] = 99999
-        doc_ids = SolrSearcher.query search_params
-        doc_ids = doc_ids['response']['docs'].map{|d| d['id']}
+        search_params['rows'] = 100
+        search_params['start'] = 0
+        doc_ids = []
+        res = SolrSearcher.query search_params
+        numFound = res['response']['numFound']
+        doc_ids.concat res['response']['docs'].map{|d| d['id']}
+        while(doc_ids.size < numFound)
+            search_params['start'] += 100
+            res = SolrSearcher.query search_params
+            numFound = res['response']['numFound']
+            doc_ids.concat res['response']['docs'].map{|d| d['id']}
+        end
         dataset.add_documents doc_ids
         content = "<p>#{doc_ids.size} documents were added to your dataset <strong>\"#{dataset.title}\"</strong></p>"
         # TODO: next line may cause bugs with the working dataset

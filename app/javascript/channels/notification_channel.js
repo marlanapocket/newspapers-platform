@@ -37,5 +37,13 @@ consumer.subscriptions.create("NotificationChannel", {
                 })
             }
         }
+        else if (data.type === "completion_rate") {
+            if(window.location.pathname == `/experiment/${data.experiment_id}`) {
+                const progress_bar = $(`#tool_${data.tool_id}`).find(".completion-rate").find('.progress-bar')
+                progress_bar.attr("style", `width: ${data.completion}%;`)
+                progress_bar.attr("aria-valuenow", data.completion)
+                progress_bar.html(`${data.completion}%`)
+            }
+        }
     }
 });

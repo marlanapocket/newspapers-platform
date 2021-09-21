@@ -86,7 +86,7 @@ export default class extends Controller {
     }
 
     initPanzoom() {
-        const canvas_elem = $("#experiment_canvas")[0]
+        const canvas_elem = document.getElementById("experiment_canvas")
         const panzoom = Panzoom.default(canvas_elem, {
             cursor: "auto"
         })
