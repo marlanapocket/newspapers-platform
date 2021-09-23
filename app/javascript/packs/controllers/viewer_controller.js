@@ -1,4 +1,5 @@
 import { Controller } from "stimulus"
+import { SearchAPI } from "../utils/search_api"
 
 export default class extends Controller {
     static targets = ['currentPage', 'articleOverlay', 'selectedArticlePanel']
@@ -8,43 +9,8 @@ export default class extends Controller {
     viewer = null
 
     connect() {
-        this.viewer = OpenSeadragon({
-            id: "openseadragon_view",
-            prefixUrl: "/openseadragon/images/",
-            sequenceMode: true,
-            initialPage: 0,
-            tileSources: this.pagesValue,
-        });
-        // Set the page counter on the osd viewer
-        this.currentPageValue = this.viewer.currentPage()+1;
-        this.currentPageTarget.innerHTML = this.currentPageValue;
-
-        // Handler when the current page is changed
-        this.viewer.addHandler("page", (data) => {
-            this.currentPageValue = data.page + 1;
-            this.currentPageTarget.innerHTML = this.currentPageValue;
-        });
-
-        // Handler when a page is open (when landing on page and after a page change)
-        this.viewer.addHandler("open", (data) => {
-            this.updateSelectedArticlePanel()
-            for (let article of this.articlesValue) {
-                article = JSON.parse(article)
-                let pagenum = article.canvases_parts[0];
-                pagenum = parseInt(pagenum.substring(pagenum.lastIndexOf('_')+1, pagenum.lastIndexOf("#xywh")))
-                if (pagenum === this.currentPageValue) {
-                    let bbox = article.bbox
-                    let loc = this.viewer.viewport.imageToViewportRectangle(bbox[0], bbox[1], bbox[2], bbox[3])
-                    let elt = $(`<div id="${article.id}" class="article_overlay"></div>`)
-                    elt.attr("data-viewer-target", "articleOverlay")
-                    elt.attr("data-action", "click->viewer#article_clicked")
-                    elt.attr("data-loc", JSON.stringify({'x': loc.x, 'y': loc.y, 'width': loc.width, 'height': loc.height}))
-                    elt.attr("data-text", JSON.stringify(article.all_text))
-                    this.viewer.addOverlay({element: elt[0], location: loc});
-                    this.setOSDDragHandler(elt[0])
-                }
-            }
-        });
+        this.setup_viewer()
+        this.load_named_entities()
     }
 
     article_clicked(event) {
@@ -60,13 +26,9 @@ export default class extends Controller {
                 this.selectedArticlesValue = this.selectedArticlesValue.filter(item => item !== $(event.target).attr('id'))
             }
             else {  // If the article is not yet selected
-                $(".article_overlay_selected").removeClass("article_overlay_selected")
-                $(".article_overlay_selected").addClass("article_overlay")
+                $(".article_overlay_selected").removeClass("article_overlay_selected").addClass("article_overlay")
                 $(event.target).addClass("article_overlay_selected")
                 $(event.target).removeClass("article_overlay")
-                // let selected_articles = self.selectedArticlesValue
-                // selected_articles.push($(event.target).attr('id'))
-                // self.selectedArticlesValue = selected_articles
                 this.selectedArticlesValue = [$(event.target).attr('id')]
                 this.display_mask($(event.target).data('loc'))
             }
@@ -88,6 +50,53 @@ export default class extends Controller {
             $(this.selectedArticlePanelTarget).find('p')[0].innerHTML = text
         }
 
+    }
+
+    load_named_entities() {
+        SearchAPI.load_named_entities(window.location.pathname.split('/').pop(), (data) => {
+            $('#named-entities-panel').find(".card-body").html(data)
+        })
+    }
+
+    setup_viewer() {
+        this.viewer = OpenSeadragon({
+            id: "openseadragon_view",
+            prefixUrl: "/openseadragon/images/",
+            sequenceMode: true,
+            initialPage: 0,
+            tileSources: this.pagesValue,
+        })
+
+        // Set the page counter on the osd viewer
+        this.currentPageValue = this.viewer.currentPage()+1
+        this.currentPageTarget.innerHTML = this.currentPageValue
+
+        // Handler when the current page is changed
+        this.viewer.addHandler("page", (data) => {
+            this.currentPageValue = data.page + 1
+            this.currentPageTarget.innerHTML = this.currentPageValue
+        })
+
+        // Handler when a page is open (when landing on page and after a page change)
+        this.viewer.addHandler("open", (data) => {
+            this.updateSelectedArticlePanel()
+            for (let article of this.articlesValue) {
+                article = JSON.parse(article)
+                let pagenum = article.canvases_parts[0]
+                pagenum = parseInt(pagenum.substring(pagenum.lastIndexOf('_')+1, pagenum.lastIndexOf("#xywh")))
+                if (pagenum === this.currentPageValue) {
+                    let bbox = article.bbox
+                    let loc = this.viewer.viewport.imageToViewportRectangle(bbox[0], bbox[1], bbox[2], bbox[3])
+                    let elt = $(`<div id="${article.id}" class="article_overlay"></div>`)
+                    elt.attr("data-viewer-target", "articleOverlay")
+                    elt.attr("data-action", "click->viewer#article_clicked")
+                    elt.attr("data-loc", JSON.stringify({'x': loc.x, 'y': loc.y, 'width': loc.width, 'height': loc.height}))
+                    elt.attr("data-text", JSON.stringify(article.all_text))
+                    this.viewer.addOverlay({element: elt[0], location: loc})
+                    this.setOSDDragHandler(elt[0])
+                }
+            }
+        })
     }
 
     display_mask(overlay_loc) {

@@ -1,0 +1,58 @@
+<% linked_entities = get_linked_entities named_entities.map{ |k,v| v.map{|label, mentions_solr| label } }.flatten.uniq %>
+<div class="accordion w-100">
+    <% named_entities.keys.each do |ne_type| %>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= ne_type %>_ne_collapse">
+                    <%= t("newspapers.named_entity_type.#{ne_type}") %>
+                    <div style="color: grey; font-size: 0.725em;">
+                        <% nb_linked = named_entities[ne_type].keys.size %>
+                        <% nb_linked -= 1 if named_entities[ne_type].keys.include? "" %>
+                        <% nb_mentions = named_entities[ne_type].keys.map{ |nel| named_entities[ne_type][nel].size }.reduce(:+) %>
+                        <% nb_mentions = 0 if nb_mentions.nil? %>
+                        (<%= nb_linked %> linked entit<%= nb_linked > 1 ? "ies" : "y" %>,
+                        <%= nb_mentions %> mention<%= nb_mentions > 1 ? "s" : "" %>)
+                    </div>
+                </button>
+            </h2>
+            <div id="<%= ne_type %>_ne_collapse" class="accordion-collapse collapse">
+                <div class="p-0 accordion-body">
+                    <ul class="list-group list-group-flush">
+                        <% sorted_entities = named_entities[ne_type].keys.sort_by{|label| -named_entities[ne_type][label].size } %>
+                        <% sorted_entities.each do |label| %>
+                            <% if label != "" %>
+                                <% next if linked_entities[label].nil? %>
+                            <% end %>
+                            <li class="list-group-item">
+                                <a data-bs-toggle="collapse" href="#entities_<%= ne_type %>_<%= label %>"><%= label == "" ? "Unlinked #{t("newspapers.named_entity_type.#{ne_type}")}" : linked_entities[label][:label] %></a>
+                                (<%= named_entities[ne_type][label].size %> mention<%= "s" if named_entities[ne_type][label].size > 1 %>)
+                                <% if !linked_entities[label].nil? and !linked_entities[label][:kb_url].nil? %>
+                                    <%= link_to linked_entities[label][:kb_url], class: "float-end", target: :_blank do %>
+                                        <i class="fas fa-question-circle"></i>
+                                    <% end %>
+                                <% end %>
+                            </li>
+                            <div id="entities_<%= ne_type %>_<%= label %>" class="collapse">
+                                <ul class="list-group">
+                                    <% named_entities[ne_type][label].each do |ne| %>
+                                        <li class="list-group-item ne_mention">
+                                            &emsp;<%= ne['mention_ssi'] %>
+                                            <% case ne['stance_fsi'] %>
+                                            <% when -1 %>
+                                                (-)
+                                            <% when 0 %>
+                                                (=)
+                                            <% when 1 %>
+                                                (+)
+                                            <% end %>
+                                        </li>
+                                    <% end %>
+                                </ul>
+                            </div>
+                        <% end %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    <% end %>
+</div>

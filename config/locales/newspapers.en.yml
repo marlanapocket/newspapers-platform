@@ -1,5 +1,26 @@
 en:
   newspapers:
+    month:
+      1: 'January'
+      2: 'February'
+      3: 'March'
+      4: 'April'
+      5: 'May'
+      6: 'June'
+      7: 'July'
+      8: 'August'
+      9: 'September'
+      10: 'October'
+      11: 'November'
+      12: 'December'
+    day:
+      :0: 'Sunday'
+      1: 'Monday'
+      2: 'Tuesday'
+      3: 'Wednesday'
+      4: 'Thirsday'
+      5: 'Friday'
+      6: 'Saturday'
     titles:
       le_matin: "Le Matin"
       l_oeuvre: "L'Œuvre"
@@ -10,22 +31,40 @@ en:
       fr: "French"
       en: "English"
       de: "German"
+    doc_types:
+      article: "Article"
+      issue: "Issue"
+    named_entity_type:
+      PER: "Persons"
+      LOC: "Locations"
+      ORG: "Organisations"
+      HumanProd: "Human productions"
     solr_fields:
+      doc_type: "has_model_ssim"
       date: "date_created_dtsi"
+      month: "month_isi"
+      day: "day_isi"
       title: "title_ssi"
       score: "score"
       language: "language_ssi"
       newspaper: "member_of_collection_ids_ssim"
       persons: "linked_persons_ssim"
       locations: "linked_locations_ssim"
+      organisations: "linked_organisations_ssim"
+      human_productions: "linked_humanprods_ssim"
     human_readable_solr_fields:
+      doc_type: "Document type"
       date: "Publication date"
+      month: "Month of the year"
+      day: "Day of the week"
       title: "Title"
       score: "Score"
       language: "Language"
       newspaper: "Newspaper"
       persons: "Persons"
       locations: "Locations"
+      organisations: "Organisations"
+      human_productions: "Human productions"
     tools:
       type:
         source_dataset: "Source Dataset"

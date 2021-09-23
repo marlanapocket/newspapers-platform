@@ -2,59 +2,7 @@
 <div class="accordion" id="facets">
     <% @results['facet_counts']['facet_fields'].each do |k,v| %>
         <% unless v.empty? %>
-            <% facet_constraint = all_constraints.find{ |h| h[:label] == k } %>
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="facet_<%= k %>">
-                    <% button_classes = "" %>
-                    <% button_classes += " collapsed" if facet_constraint.nil? %>
-                    <% button_classes += " constrained" unless facet_constraint.nil? %>
-                    <button class="accordion-button<%= button_classes %>" type="button" data-bs-toggle="collapse" data-bs-target="#facet_collapse_<%= k %>" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-                        <% field = I18n.t('newspapers.solr_fields').find { |key ,value| value == k }[0].to_s %>
-                        <%= t("newspapers.human_readable_solr_fields." + field) %>
-                    </button>
-                </h2>
-                <div id="facet_collapse_<%= k %>" class="accordion-collapse collapse<%= " show" unless facet_constraint.nil? %>" aria-labelledby="facet_<%= k %>">
-                    <% per_page = 15 %>
-                    <% total = v.size/2 %>
-                    <% nb_pages = (total/per_page.to_f).ceil %>
-                    <div class="accordion-body"
-                         data-controller="facets"
-                         data-facets-index-value="1"
-                         data-facets-pages-value="<%= nb_pages %>"
-                         data-facets-per-page-value="<%= per_page %>">
-                        <ul class="list-unstyled">
-                            <% v.each_slice(2).each_with_index do |facet, index| %>
-                                <% li_classes = "" %>
-                                <% li_classes = "selected_constraint" if !facet_constraint.nil?  and facet_constraint[:value] == facet[0] %>
-                                <li<%= index < per_page ? "" : " hidden" %> data-facets-target="item" class="<%= li_classes %>">
-                                    <% case k %>
-                                    <% when t("newspapers.solr_fields.newspaper") %>
-                                        <% if !facet_constraint.nil?  and facet_constraint[:value] == facet[0] %>
-                                            <%= t("newspapers.titles." + facet[0]) %>
-                                        <% else %>
-                                        <a href="<%= url_for merge_facets(current_page_params,{f: Hash[k, [facet[0]]] }) %>">
-                                            <%= t("newspapers.titles." + facet[0]) %>
-                                        </a>
-                                        <% end %>
-                                    <% when t("newspapers.solr_fields.language") %>
-                                        <% if !facet_constraint.nil?  and facet_constraint[:value] == facet[0] %>
-                                            <%= t("newspapers.languages." + facet[0]) %>
-                                        <% else %>
-                                            <a href="<%= url_for merge_facets(current_page_params,{f: Hash[k, [facet[0]]] }) %>">
-                                                <%= t("newspapers.languages." + facet[0]) %>
-                                            </a>
-                                        <% end %>
-                                    <% else %>
-                                        <%= facet[0] %>
-                                    <% end %>
-                                    <span class="badge rounded-pill bg-primary float-end"><%= facet[1] %></span>
-                                </li>
-                            <% end %>
-                        </ul>
-                        <div class="facet_pagination"></div>
-                    </div>
-                </div>
-            </div>
+            <%= render partial: "facet", locals: {field: k, entries: v, all_constraints: all_constraints } %>
         <% end %>
     <% end %>
 </div>

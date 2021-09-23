@@ -26,9 +26,13 @@ class SolrQuery
         @bq = ""
         @bf = ""
         @facet = true
-        @facet_dot_field = ["language_ssi", "member_of_collection_ids_ssim", "linked_persons_ssim", "linked_locations_ssim"]
+        @facet_dot_field = I18n.t("newspapers.solr_fields").values_at(:language, :date, :month, :day, :newspaper, :persons, :locations, :organisations)
+        I18n.t("newspapers.solr_fields").values_at(:month, :day).each do |field|
+            self.instance_variable_set("@f_dot_#{field}_dot_facet_dot_sort", 'index')
+        end
         @f_dot_linked_persons_ssim_dot_facet_dot_limit = 10000
         @f_dot_linked_locations_ssim_dot_facet_dot_limit = 10000
+        @f_dot_linked_organisations_ssim_dot_facet_dot_limit = 10000
         @facet_dot_threads = 4
         @hl = true
         @hl_dot_fl = "all_text_tfr_siv"

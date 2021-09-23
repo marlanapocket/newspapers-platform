@@ -4,6 +4,7 @@
                 Filters:
                 <% search_constraints.each do |constraint| %>
                     <% field = t('newspapers.solr_fields').find { |key,value| value == constraint[:label] }[0].to_s %>
+                    <% next if field == "doc_type" %>
                     <span class="btn-group">
                         <button class="btn btn-sm btn-outline-primary" disabled>
                             <span class="filter_name">
@@ -14,15 +15,24 @@
                                 <% case field %>
                                 <% when 'language' %>
                                     <%= t("newspapers.languages." + constraint[:value]) %>
+                                <% when 'doc_type' %>
+                                    <%= t("newspapers.doc_types." + constraint[:value]) %>
                                 <% when 'newspaper' %>
                                     <%= t("newspapers.titles." + constraint[:value]) %>
+                                <% when 'month' %>
+                                    <%= t("newspapers.month." + constraint[:value]) %>
+                                <% when 'day' %>
+                                    <%= t("newspapers.day." + constraint[:value]) %>
+                                <% when 'persons' %>
+                                    <%= get_entity_label constraint[:value] %>
                                 <% else %>
                                     <%= "" %>
                                 <% end %>
                             </span>
                         </button>
                         <% new_params = Marshal.load(Marshal.dump(current_page_params)) %>
-                        <a class="btn btn-sm btn-outline-primary" href="<%= url_for new_params.tap{|h| h[:f].delete(constraint[:label].to_sym)} %>">
+                        <% new_params[:f][constraint[:label].to_sym].delete(constraint[:value]) %>
+                        <a class="btn btn-sm btn-outline-primary" href="<%= url_for new_params %>">
                             <i class="fas fa-times"></i>
                         </a>
                     </span>

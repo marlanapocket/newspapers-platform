@@ -2,7 +2,7 @@
      data-action="click->search-results#toggleResultSelection"
      data-doc-id="<%= result.id %>">
     <h5>
-        <a href="/catalog/<%= result.id %>">
+        <a href="/catalog/<%= result.issue_id %>?selected=<%= result.id %>">
             <span class="doc_index"><%= doc_index %>.</span>
             <%= result.title.nil? ? result.id : result.title %>
         </a>

@@ -1,0 +1,29 @@
+<% facet_constraints = @solr_params[:fq].select { |fq| fq.split(':')[0] == field }.map{|fq| {label: field, value: fq.split(':')[1]} } %>
+<div class="accordion-item">
+    <h2 class="accordion-header" id="facet_<%= field %>">
+        <% button_classes = "" %>
+        <% button_classes += " collapsed" if facet_constraints.empty? %>
+        <% button_classes += " constrained" unless facet_constraints.empty? %>
+        <button class="accordion-button<%= button_classes %>" type="button" data-bs-toggle="collapse" data-bs-target="#facet_collapse_<%= field %>" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+            <% hr_field = I18n.t('newspapers.solr_fields').find { |key ,value| value == field }[0].to_s %>
+            <%= t("newspapers.human_readable_solr_fields." + hr_field) %>
+        </button>
+    </h2>
+    <div id="facet_collapse_<%= field %>" class="accordion-collapse collapse<%= " show" unless facet_constraints.empty? %>" aria-labelledby="facet_<%= field %>">
+        <% per_page = 15 %>
+        <% total = entries.size/2 %>
+        <% nb_pages = (total/per_page.to_f).ceil %>
+        <div class="accordion-body"
+             data-controller="facets"
+             data-facets-index-value="1"
+             data-facets-pages-value="<%= nb_pages %>"
+             data-facets-per-page-value="<%= per_page %>">
+            <ul class="list-unstyled">
+                <% entries.each_slice(2).each_with_index do |facet, index| %>
+                    <%= render partial: 'facet_entry', locals: {facet_constraints: facet_constraints, field: field, facet: facet, index: index, per_page: per_page} %>
+                <% end %>
+            </ul>
+            <div class="facet_pagination"></div>
+        </div>
+    </div>
+</div>

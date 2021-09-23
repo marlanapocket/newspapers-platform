@@ -26,9 +26,9 @@ class Issue
         end
         if with_articles
             i.articles = []
-            ids = SolrSearcher.query({q:"from_issue_ssi:#{i.id} AND has_model_ssim:Article", fl:"id", rows:100000000})['response']['docs'].map {|o| o['id']}
-            ids.each do |solr_article_id|
-                i.articles << Article.from_solr(solr_article_id)
+            articles_docs = SolrSearcher.query({q: "*:*", fq: ["from_issue_ssi:#{i.id}", "has_model_ssim:Article"], fl:"*", rows:10000})['response']['docs']
+            articles_docs.each do |articles_doc|
+                i.articles << Article.from_solr_doc(articles_doc)
             end
         end
         i

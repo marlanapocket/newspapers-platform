@@ -1,0 +1,55 @@
+<% li_classes = "" %>
+<% entry_is_selected = facet_constraints.any? {|fc| fc[:value] == facet[0]} %>
+<% li_classes = "selected_constraint" if entry_is_selected  %>
+<li<%= index < per_page ? "" : " hidden" %> data-facets-target="item" class="<%= li_classes %>">
+    <% case field %>
+    <% when t("newspapers.solr_fields.newspaper") %>
+        <% if entry_is_selected %>
+            <%= t("newspapers.titles." + facet[0]) %>
+        <% else %>
+            <a href="<%= url_for merge_facets(current_page_params,{f: Hash[field, [facet[0]]] }) %>">
+                <%= t("newspapers.titles." + facet[0]) %>
+            </a>
+        <% end %>
+    <% when t("newspapers.solr_fields.language") %>
+        <% if entry_is_selected %>
+            <%= t("newspapers.languages." + facet[0]) %>
+        <% else %>
+            <a href="<%= url_for merge_facets(current_page_params,{f: Hash[field, [facet[0]]] }) %>">
+                <%= t("newspapers.languages." + facet[0]) %>
+            </a>
+        <% end %>
+    <% when t("newspapers.solr_fields.month") %>
+        <% if entry_is_selected %>
+            <%= t("newspapers.month." + facet[0]) %>
+        <% else %>
+            <a href="<%= url_for merge_facets(current_page_params,{f: Hash[field, [facet[0]]] }) %>">
+                <%= t("newspapers.month." + facet[0]) %>
+            </a>
+        <% end %>
+    <% when t("newspapers.solr_fields.day") %>
+        <% if entry_is_selected %>
+            <%= t("newspapers.day." + facet[0]) %>
+        <% else %>
+            <a href="<%= url_for merge_facets(current_page_params,{f: Hash[field, [facet[0]]] }) %>">
+                <%= t("newspapers.day." + facet[0]) %>
+            </a>
+        <% end %>
+    <% when t("newspapers.solr_fields.persons") %>
+        <% if entry_is_selected %>
+            <%= get_entity_label facet[0] %>
+        <% else %>
+            <% if current_page_params[:f].nil? or current_page_params[:f][field].nil? %>
+                <% facet_list = [facet[0]] %>
+            <% else %>
+                <% facet_list = current_page_params[:f][field].concat([facet[0]]) %>
+            <% end %>
+            <a href="<%= url_for merge_facets(current_page_params,{f: Hash[field, facet_list] }) %>">
+                <%= get_entity_label facet[0] %>
+            </a>
+        <% end %>
+    <% else %>
+        <%= facet[0] %>
+    <% end %>
+    <span class="badge rounded-pill bg-primary float-end"><%= facet[1] %></span>
+</li>
