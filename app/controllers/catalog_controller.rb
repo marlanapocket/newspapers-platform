@@ -53,29 +53,19 @@ class CatalogController < ApplicationController
 
     def named_entities_for_doc
         if params[:doc_id].index('_article_').nil?
-            nems = SolrSearcher.query({q:"issue_id_ssi:#{params[:doc_id]}", rows: 1000000})['response']['docs']
+            article = Article.find(params[:doc_id])
+            named_entities = article.named_entities
         else
-            nems = SolrSearcher.query({q:"article_id_ssi:#{params[:doc_id]}", rows: 1000000})['response']['docs']
+            issue = Issue.find(params[:doc_id])
+            named_entities = issue.named_entities
         end
-        output = {LOC: {}, PER: {}, ORG: {}, HumanProd: {}}
-        nems.select {|ne_solr| ne_solr['type_ssi'] == "LOC"}.each do |ne_solr|
-            output[:LOC][ne_solr['linked_entity_ssi']] = [] unless output[:LOC].has_key? ne_solr['linked_entity_ssi']
-            output[:LOC][ne_solr['linked_entity_ssi']].append(ne_solr)
-        end
-        nems.select {|ne_solr| ne_solr['type_ssi'] == "PER"}.each do |ne_solr|
-            output[:PER][ne_solr['linked_entity_ssi']] = [] unless output[:PER].has_key? ne_solr['linked_entity_ssi']
-            output[:PER][ne_solr['linked_entity_ssi']].append(ne_solr)
-        end
-        nems.select {|ne_solr| ne_solr['type_ssi'] == "ORG"}.each do |ne_solr|
-            output[:ORG][ne_solr['linked_entity_ssi']] = [] unless output[:ORG].has_key? ne_solr['linked_entity_ssi']
-            output[:ORG][ne_solr['linked_entity_ssi']].append(ne_solr)
-        end
-        nems.select {|ne_solr| ne_solr['type_ssi'] == "HumanProd"}.each do |ne_solr|
-            output[:HumanProd][ne_solr['linked_entity_ssi']] = [] unless output[:HumanProd].has_key? ne_solr['linked_entity_ssi']
-            output[:HumanProd][ne_solr['linked_entity_ssi']].append(ne_solr)
-        end
-        render partial: 'named_entities/named_entities', locals: {named_entities: output}
-        # render json: nems
+        render partial: 'named_entities/named_entities', locals: {named_entities: named_entities}
+    end
+
+    def named_entities_for_dataset
+        dataset = Dataset.find(params[:dataset_id])
+        named_entities = dataset.named_entities
+        render partial: 'named_entities/named_entities', locals: {named_entities: named_entities}
     end
 
     def paginate_facets

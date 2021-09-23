@@ -1,11 +1,11 @@
 <% if current_user.id == @dataset.user_id %>
     <% set_page_title @dataset.title %>
     <div class="row"
-         data-controller="show-dataset"
-         data-show-dataset-id-value="<%= @dataset.id %>">
+         data-controller="dataset"
+         data-dataset-id-value="<%= @dataset.id %>">
         <div id="sidebar" class="col-3">
             <%= render partial: 'dataset_info' %>
-            <%= render partial: 'named_entities/named_entities' %>
+            <%= render partial: 'catalog/named_entities_panel' %>
         </div>
         <div class="col-9">
             <%= render partial: 'dataset_header' %>

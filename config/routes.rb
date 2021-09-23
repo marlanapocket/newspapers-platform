@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     get '/catalog/:id', to: 'catalog#show'
     post '/paginate_facets', to: 'catalog#paginate_facets'
     post '/named_entities', to: 'catalog#named_entities_for_doc'
+    post '/dataset_named_entities', to: 'catalog#named_entities_for_dataset'
 
     get '/datasets', to: 'dataset#index'
     get '/datasets/update', to: 'dataset#update_datasets_list'

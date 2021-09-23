@@ -49,4 +49,29 @@ class Dataset < ActiveRecord::Base
         return {docs: solr_docs.nil? ? [] : solr_docs, nb_pages: nb_pages}
     end
 
+    def named_entities
+        article_ids = self.documents.select {|d| d['type'] == 'article' }.map{|d| d['id']}
+        issue_ids = self.documents.select {|d| d['type'] == 'issue' }.map{|d| d['id']}
+        nems = []
+        nems = SolrSearcher.query({q: "*:*", fq: "article_id_ssi:(#{article_ids.join(' OR ')})", rows: 1000000})['response']['docs'] unless article_ids.empty?
+        nems += SolrSearcher.query({q: "*:*", fq: "issue_id_ssi:(#{issue_ids.join(' OR ')})", rows: 1000000})['response']['docs'] unless issue_ids.empty?
+        output = {LOC: {}, PER: {}, ORG: {}, HumanProd: {}}
+        nems.select {|ne_solr| ne_solr['type_ssi'] == "LOC"}.each do |ne_solr|
+            output[:LOC][ne_solr['linked_entity_ssi']] = [] unless output[:LOC].has_key? ne_solr['linked_entity_ssi']
+            output[:LOC][ne_solr['linked_entity_ssi']].append(ne_solr)
+        end
+        nems.select {|ne_solr| ne_solr['type_ssi'] == "PER"}.each do |ne_solr|
+            output[:PER][ne_solr['linked_entity_ssi']] = [] unless output[:PER].has_key? ne_solr['linked_entity_ssi']
+            output[:PER][ne_solr['linked_entity_ssi']].append(ne_solr)
+        end
+        nems.select {|ne_solr| ne_solr['type_ssi'] == "ORG"}.each do |ne_solr|
+            output[:ORG][ne_solr['linked_entity_ssi']] = [] unless output[:ORG].has_key? ne_solr['linked_entity_ssi']
+            output[:ORG][ne_solr['linked_entity_ssi']].append(ne_solr)
+        end
+        nems.select {|ne_solr| ne_solr['type_ssi'] == "HumanProd"}.each do |ne_solr|
+            output[:HumanProd][ne_solr['linked_entity_ssi']] = [] unless output[:HumanProd].has_key? ne_solr['linked_entity_ssi']
+            output[:HumanProd][ne_solr['linked_entity_ssi']].append(ne_solr)
+        end
+        output
+    end
 end

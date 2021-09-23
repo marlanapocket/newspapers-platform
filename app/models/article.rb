@@ -32,4 +32,26 @@ class Article
         canvas_size = [canvas_coords[1]-canvas_coords[0], canvas_coords[3]-canvas_coords[2]]
         [min_x,min_y,canvas_size[0],canvas_size[1]]
     end
+
+    def named_entities
+        nems = SolrSearcher.query({q:"article_id_ssi:#{self.id}", rows: 1000000})['response']['docs']
+        output = {LOC: {}, PER: {}, ORG: {}, HumanProd: {}}
+        nems.select {|ne_solr| ne_solr['type_ssi'] == "LOC"}.each do |ne_solr|
+            output[:LOC][ne_solr['linked_entity_ssi']] = [] unless output[:LOC].has_key? ne_solr['linked_entity_ssi']
+            output[:LOC][ne_solr['linked_entity_ssi']].append(ne_solr)
+        end
+        nems.select {|ne_solr| ne_solr['type_ssi'] == "PER"}.each do |ne_solr|
+            output[:PER][ne_solr['linked_entity_ssi']] = [] unless output[:PER].has_key? ne_solr['linked_entity_ssi']
+            output[:PER][ne_solr['linked_entity_ssi']].append(ne_solr)
+        end
+        nems.select {|ne_solr| ne_solr['type_ssi'] == "ORG"}.each do |ne_solr|
+            output[:ORG][ne_solr['linked_entity_ssi']] = [] unless output[:ORG].has_key? ne_solr['linked_entity_ssi']
+            output[:ORG][ne_solr['linked_entity_ssi']].append(ne_solr)
+        end
+        nems.select {|ne_solr| ne_solr['type_ssi'] == "HumanProd"}.each do |ne_solr|
+            output[:HumanProd][ne_solr['linked_entity_ssi']] = [] unless output[:HumanProd].has_key? ne_solr['linked_entity_ssi']
+            output[:HumanProd][ne_solr['linked_entity_ssi']].append(ne_solr)
+        end
+        output
+    end
 end
