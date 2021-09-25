@@ -5,17 +5,14 @@ class Tool < ActiveRecord::Base
     def to_h
         {
           "tool": {
-            "id": self.id,
-            # "type": self.tool_type,
-            # "status": self.status,
-            # "parameters": self.parameters
+            "id": self.id
           },
           "children": []
         }
     end
 
     def run
-        ToolRunnerWorker.perform_async(self.id, self.experiment.user.id, self.experiment.id, self.tool_type, self.parameters)
+        "#{self.tool_type}_worker".camelize.constantize.perform_async(self.id, self.experiment.user.id, self.experiment.id, self.tool_type, self.parameters)
     end
 
 end

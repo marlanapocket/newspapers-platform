@@ -37,25 +37,6 @@
         ]
       },
       {
-        "type": "stem",
-        "input_type": "documents",
-        "output_type": "documents",
-        "name": "Stemmer",
-        "parameters": [
-          {
-            "name": "language",
-            "type": "select",
-            "values": [
-              "French",
-              "English",
-              "German"
-            ],
-            "description": "Transform the text of documents so that every word is replaced by its stem.",
-            "default": null
-          }
-        ]
-      },
-      {
         "type": "preprocess",
         "input_type": "documents",
         "output_type": "documents",
