@@ -2,10 +2,7 @@
     <div class="p-2">
         Results <%= (@current_page-1)*@solr_params[:rows].to_i+1 %>-<%= [@current_page*@solr_params[:rows].to_i, @results['response']['numFound']].min %> out of <%= @results['response']['numFound'] %>.
     </div>
-    <div class=""
-         id="results_navigation"
-         data-controller="results-pagination"
-         data-results-pagination-total-value="<%= @results['response']['numFound'] %>">
+    <div id="results_navigation">
         <%= render partial: 'paginate_results', locals: {total: @results['response']['numFound'],
                                                          per_page: @solr_params[:rows].to_f,
                                                          current_page: @current_page} %>

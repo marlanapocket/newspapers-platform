@@ -34,11 +34,11 @@ export class SearchAPI {
         })
     }
 
-    static create_dataset(title, callback) {
+    static facetPagination(fieldName, nbPages, currentPage, callback) {
         $.ajax({
             type: "POST",
-            url: "/dataset/create",
-            data: {title: title},
+            url: "/catalog/facet_pagination",
+            data: {field_name: fieldName, nb_pages: nbPages, current_page: currentPage},
             headers: {
                 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
             },

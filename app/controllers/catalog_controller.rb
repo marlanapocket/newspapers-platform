@@ -7,7 +7,6 @@ class CatalogController < ApplicationController
     end
 
     def index
-        console
         if params[:q]
             @user_params =
             @solr_params = SolrQuery.new.to_params
@@ -23,6 +22,8 @@ class CatalogController < ApplicationController
                     end
                 end
             end
+            session['search_params'] = @solr_params
+            session['query_params'] = params.to_unsafe_h.slice('q', 'page', 'per_page','sort', 'f')
             @results = SolrSearcher.query @solr_params
             @resulting_docs = @results['response']['docs'].map do |solr_doc|
                 case solr_doc['has_model_ssim']
@@ -32,10 +33,10 @@ class CatalogController < ApplicationController
                     Issue.from_solr_doc solr_doc
                 end
             end
-            entities_fields = ["linked_persons_ssim", "linked_locations_ssim", "linked_organisations_ssim", "linked_humanprods_ssim"]
+            entities_fields = I18n.t("newspapers.solr_fields").values_at(:persons, :locations, :organisations, :human_productions)
             @entities_labels = []
             entities_fields.each do |entity_field|
-                (@entities_labels << Hash[*@results['facet_counts']['facet_fields'][entity_field]].keys).flatten!
+                (@entities_labels << @results['facets'][entity_field]['buckets'].map{|ne| ne['val']}).flatten!
             end
             @entities_labels = helpers.get_entity_label @entities_labels
         end
@@ -69,7 +70,34 @@ class CatalogController < ApplicationController
     end
 
     def paginate_facets
-        render partial: 'paginate_facets', locals: {total: params[:total], per_page: params[:per_page], current_page: params[:page]}
+        out = {}
+        if params[:field_name] != ""
+            search_params = session['search_params']
+            search_params['rows'] = 0
+            search_params['json.facet'] = {"#{params[:field_name]}": {terms: {
+              field: params[:field_name],
+              limit: 15,
+              numBuckets: true,
+              offset: (params[:current_page].to_i-1) * 15}}}.to_json
+            res = SolrSearcher.query search_params
+            entities_labels = [res['facets'][params[:field_name]]['buckets'].map{|ne| ne['val']}]
+            entities_labels = helpers.get_entity_label entities_labels
+            facet_constraints = search_params['fq'].select { |fq| fq.split(':')[0] == params[:field_name] }.map{|fq| {label: params[:field_name], value: fq.split(':')[1]} }
+            out[:facets_entries] = []
+            res['facets'][params[:field_name]]['buckets'].each do |facet_entry|
+                out[:facets_entries] << render_to_string(layout: false, partial: "facet_entry", locals: {
+                  entities_labels: entities_labels,
+                  facet_constraints: facet_constraints,
+                  field: params[:field_name],
+                  facet: facet_entry,
+                  index: params[:current_page].to_i,
+                  per_page: 15
+                })
+            end
+
+        end
+        out[:pagination] = render_to_string(layout: false, partial: 'facet_pagination', locals: {nb_pages: params[:nb_pages].to_i, current_page: params[:current_page].to_i})
+        render json: out
     end
 
     private

@@ -1,55 +1,55 @@
 <% li_classes = "" %>
-<% entry_is_selected = facet_constraints.any? {|fc| fc[:value] == facet[0]} %>
+<% entry_is_selected = facet_constraints.any? {|fc| fc[:value] == facet['val']} %>
 <% li_classes = "selected_constraint" if entry_is_selected  %>
-<li<%= index < per_page ? "" : " hidden" %> data-facets-target="item" class="<%= li_classes %>">
+<li data-facets-target="item" class="<%= li_classes %>">
     <% case field %>
     <% when t("newspapers.solr_fields.newspaper") %>
         <% if entry_is_selected %>
-            <%= t("newspapers.titles." + facet[0]) %>
+            <%= t("newspapers.titles.#{facet['val']}") %>
         <% else %>
-            <a href="<%= url_for merge_facets(current_page_params,{f: Hash[field, [facet[0]]] }) %>">
-                <%= t("newspapers.titles." + facet[0]) %>
+            <a href="<%= url_for(controller: 'catalog', **merge_facets(session['query_params'],{f: Hash[field, [facet['val']]] })) %>">
+                <%= t("newspapers.titles.#{facet['val']}") %>
             </a>
         <% end %>
     <% when t("newspapers.solr_fields.language") %>
         <% if entry_is_selected %>
-            <%= t("newspapers.languages." + facet[0]) %>
+            <%= t("newspapers.languages.#{facet['val']}") %>
         <% else %>
-            <a href="<%= url_for merge_facets(current_page_params,{f: Hash[field, [facet[0]]] }) %>">
-                <%= t("newspapers.languages." + facet[0]) %>
+            <a href="<%= url_for(controller: 'catalog', **merge_facets(session['query_params'],{f: Hash[field, [facet['val']]] })) %>">
+                <%= t("newspapers.languages.#{facet['val']}") %>
             </a>
         <% end %>
     <% when t("newspapers.solr_fields.month") %>
         <% if entry_is_selected %>
-            <%= t("newspapers.month." + facet[0]) %>
+            <%= t("newspapers.month.#{facet['val']}") %>
         <% else %>
-            <a href="<%= url_for merge_facets(current_page_params,{f: Hash[field, [facet[0]]] }) %>">
-                <%= t("newspapers.month." + facet[0]) %>
+            <a href="<%= url_for(controller: 'catalog', **merge_facets(session['query_params'],{f: Hash[field, [facet['val']]] })) %>">
+                <%= t("newspapers.month.#{facet['val']}") %>
             </a>
         <% end %>
     <% when t("newspapers.solr_fields.day") %>
         <% if entry_is_selected %>
-            <%= t("newspapers.day." + facet[0]) %>
+            <%= t("newspapers.day.#{facet['val']}") %>
         <% else %>
-            <a href="<%= url_for merge_facets(current_page_params,{f: Hash[field, [facet[0]]] }) %>">
-                <%= t("newspapers.day." + facet[0]) %>
+            <a href="<%= url_for(controller: 'catalog', **merge_facets(session['query_params'],{f: Hash[field, [facet['val']]] })) %>">
+                <%= t("newspapers.day.#{facet['val']}") %>
             </a>
         <% end %>
-    <% when t("newspapers.solr_fields.persons") %>
+    <% when *(I18n.t("newspapers.solr_fields").values_at(:persons, :locations, :organisations, :human_productions)) %>
         <% if entry_is_selected %>
-            <%= get_entity_label facet[0] %>
+            <%= entities_labels[facet['val']] %>
         <% else %>
-            <% if current_page_params[:f].nil? or current_page_params[:f][field].nil? %>
-                <% facet_list = [facet[0]] %>
+            <% if session['query_params'][:f].nil? or session['query_params'][:f][field].nil? %>
+                <% facet_list = [facet['val']] %>
             <% else %>
-                <% facet_list = current_page_params[:f][field].concat([facet[0]]) %>
+                <% facet_list = session['query_params'][:f][field] +[facet['val']] %>
             <% end %>
-            <a href="<%= url_for merge_facets(current_page_params,{f: Hash[field, facet_list] }) %>">
-                <%= get_entity_label facet[0] %>
+            <a href="<%= url_for(controller: "catalog", **merge_facets(session['query_params'],{f: Hash[field, facet_list] })) %>">
+                <%= entities_labels[facet['val']] %>
             </a>
         <% end %>
     <% else %>
-        <%= facet[0] %>
+        <%= facet['val'] %>
     <% end %>
-    <span class="badge rounded-pill bg-primary float-end"><%= facet[1] %></span>
+    <span class="badge rounded-pill bg-primary float-end"><%= facet['count'] %></span>
 </li>

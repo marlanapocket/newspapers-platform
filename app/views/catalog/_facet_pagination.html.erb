@@ -1,0 +1,31 @@
+<% if nb_pages > 1 %>
+    <nav>
+        <ul class="pagination pagination-sm justify-content-center">
+            <li class="page-item<%= " disabled" if current_page == 1 %>" data-facets-target="previousButton" data-action="click->facets#previous_page">
+                <a class="page-link" href="#">«</a>
+            </li>
+            <% if (nb_pages > 10) %>
+                <% (1..nb_pages).each do |i| %>
+                    <% if (i >= current_page-2 and i <= current_page+2) or (i <= 1) or (i>= nb_pages) %>
+                        <li class="page-item<%= " active" if current_page == i %>" data-facets-target="pageButton" data-action="click->facets#page_button">
+                            <a class="page-link" href="#"><%= i %></a>
+                        </li>
+                    <% elsif (i == 2 and current_page >= 5) or (i == nb_pages-1 and current_page <= nb_pages-4) %>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">...</a>
+                        </li>
+                    <% end %>
+                <% end %>
+            <% else %>
+                <% (1..nb_pages).each do |i| %>
+                    <li class="page-item<%= " active" if current_page == i %>" data-facets-target="pageButton" data-action="click->facets#page_button">
+                        <a class="page-link" href="#"><%= i %></a>
+                    </li>
+                <% end %>
+            <% end %>
+            <li class="page-item<%= " disabled" if current_page == nb_pages %>" data-facets-target="nextButton" data-action="click->facets#next_page">
+                <a class="page-link" href="#">»</a>
+            </li>
+        </ul>
+    </nav>
+<% end %>

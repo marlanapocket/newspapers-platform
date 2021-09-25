@@ -17,7 +17,7 @@ class SolrQuery
         @fl = '*,score'
         @q = '*:*'
         @q_dot_alt = '*:*'
-        @qf = "all_text_tfr_siv"
+        @qf = I18n.t("newspapers.solr_fields").select{|k,v| k.start_with? "text_exact" }.values  # or text_stemmed
         @mm = 1
         @pf = ""
         @ps = ""
@@ -25,21 +25,25 @@ class SolrQuery
         @tie = 0.1
         @bq = ""
         @bf = ""
-        @facet = true
-        @facet_dot_field = I18n.t("newspapers.solr_fields").values_at(:language, :date, :month, :day, :newspaper, :persons, :locations, :organisations)
-        I18n.t("newspapers.solr_fields").values_at(:month, :day).each do |field|
-            self.instance_variable_set("@f_dot_#{field}_dot_facet_dot_sort", 'index')
-        end
-        @f_dot_linked_persons_ssim_dot_facet_dot_limit = 10000
-        @f_dot_linked_locations_ssim_dot_facet_dot_limit = 10000
-        @f_dot_linked_organisations_ssim_dot_facet_dot_limit = 10000
-        @facet_dot_threads = 4
         @hl = true
-        @hl_dot_fl = "all_text_tfr_siv"
+        @hl_dot_fl = @qf
+
+        @json_dot_facet = {}
+        I18n.t("newspapers.solr_fields").values_at(:language, :date, :newspaper).each do |f|
+            @json_dot_facet[f] = { terms: { field: f, limit: 15, numBuckets: true} }
+        end
+        I18n.t("newspapers.solr_fields").values_at(:month, :day).each do |f|
+            @json_dot_facet[f] = { terms: { field: f, limit: 15, numBuckets: true, sort: {index: "asc"}} }
+        end
+        I18n.t("newspapers.solr_fields").values_at(:persons, :locations, :organisations, :human_productions).each do |f|
+            @json_dot_facet[f] = { terms: { field: f, limit: 15, numBuckets: true} }
+        end
     end
 
     def to_params
-        self.instance_values.select {|k,v| v != ""}.transform_keys{|k| k.gsub('_dot_','.')}.with_indifferent_access
+        p = self.instance_values.select {|k,v| v != "" and !v.nil?}.transform_keys{|k| k.gsub('_dot_','.')}.with_indifferent_access
+        p["json.facet"] = p["json.facet"].to_json
+        p
     end
 
 end

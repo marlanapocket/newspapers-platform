@@ -1,8 +1,9 @@
 <% all_constraints = search_constraints %>
 <div class="accordion" id="facets">
-    <% @results['facet_counts']['facet_fields'].each do |k,v| %>
-        <% unless v.empty? %>
-            <%= render partial: "facet", locals: {field: k, entries: v, all_constraints: all_constraints } %>
+    <% @results['facets'].each do |k,v| %>
+        <% next if k == "count" %>
+        <% unless v['numBuckets'] == 0 %>
+            <%= render partial: "facet", locals: {field: k, entries: v['buckets'], total: v['numBuckets'], all_constraints: all_constraints, entities_labels: @entities_labels } %>
         <% end %>
     <% end %>
 </div>

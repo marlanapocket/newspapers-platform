@@ -23,7 +23,7 @@
                                     <%= t("newspapers.month." + constraint[:value]) %>
                                 <% when 'day' %>
                                     <%= t("newspapers.day." + constraint[:value]) %>
-                                <% when 'persons' %>
+                                <% when 'persons', 'locations', 'organisations', 'human_productions' %>
                                     <%= get_entity_label constraint[:value] %>
                                 <% else %>
                                     <%= "" %>

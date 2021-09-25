@@ -1,126 +1,52 @@
 import { Controller } from "stimulus"
+import { SearchAPI } from "../utils/search_api"
 
 export default class extends Controller {
     static targets = [ "pageButton", "nextButton", 'previousButton', 'item' ]
-    static values = { index: Number, pages: Number, perPage: Number }
+    static values = { index: Number, nbPages: Number, perPage: Number }
 
     initialize() {
     }
 
     connect() {
-        this.generatePagination()
+        this.generatePagination(false)
     }
 
     previous_page(event) {
         event.preventDefault()
         if (this.indexValue > 1) {
             this.indexValue--
-            this.updatePagination()
+            this.generatePagination()
         }
     }
 
     next_page(event) {
         event.preventDefault()
-        if (this.indexValue < this.pagesValue)
+        if (this.indexValue < this.nbPagesValue)
             this.indexValue++
-        this.updatePagination()
-    }
-
-    page_button(event) {
-        event.preventDefault()
-        this.indexValue = event.target.textContent
-        this.updatePagination()
-
-    }
-
-    updatePagination() {
-        this.itemTargets.forEach( (item, item_index) => {
-            item.hidden = !(item_index >= ((this.indexValue-1) * this.perPageValue) && item_index < (this.indexValue * this.perPageValue))
-        })
         this.generatePagination()
     }
 
-    generatePagination() {
-        if (this.pagesValue > this.perPageValue) {
-            const nav = document.createElement('nav')
-            const ul = document.createElement('ul')
-            ul.setAttribute('class', 'pagination pagination-sm justify-content-center')
-            nav.appendChild(ul)
+    page_button(event) {
+        // $(this.element).find("ul.list-unstyled")[0].innerHTML = "<div class=\"spinner-border\"></div>"
+        event.preventDefault()
+        this.indexValue = event.target.textContent
+        this.generatePagination()
 
-            const prev = document.createElement('li')
-            prev.setAttribute("data-facets-target", "previousButton")
-            prev.setAttribute('data-action', "click->facets#previous_page")
-            prev.setAttribute('class', "page-item")
-            if (this.indexValue === 1)
-                prev.classList.add("disabled")
-            let a = document.createElement("a")
-            a.setAttribute('class', 'page-link')
-            a.setAttribute('href', '#')
-            a.appendChild(document.createTextNode("\u00AB"))
-            prev.appendChild(a)
-            ul.appendChild(prev)
+    }
 
-            if (this.pagesValue > 10) {
-                for (let i=1; i <= this.pagesValue; i++) {
-                    if ( (i >= this.indexValue-2 && i <= this.indexValue+2) || i <= 1 || i >= this.pagesValue) {
-                        const pageButton = document.createElement('li')
-                        pageButton.setAttribute("data-facets-target", "pageButton")
-                        pageButton.setAttribute('data-action', "click->facets#page_button")
-                        pageButton.setAttribute('class', "page-item")
-                        if (this.indexValue === i)
-                            pageButton.classList.add("active")
-                        a = document.createElement("a")
-                        a.setAttribute('class', 'page-link')
-                        a.setAttribute('href', '#')
-                        a.appendChild(document.createTextNode(i+""))
-                        pageButton.appendChild(a)
-                        ul.appendChild(pageButton)
-                    }
-                    else if ( (i === 2 && this.indexValue >= 5) || (i === this.pagesValue-1 && this.indexValue <= this.pagesValue-4) ) {
-                        const skipButton = document.createElement('li')
-                        // skipButton.setAttribute("data-facets-target", "pageButton")
-                        // skipButton.setAttribute('data-action', "click->facets#page_button")
-                        skipButton.setAttribute('class', "page-item disabled")
-                        a = document.createElement("a")
-                        a.setAttribute('class', 'page-link')
-                        a.setAttribute('href', '#')
-                        a.appendChild(document.createTextNode("..."))
-                        skipButton.appendChild(a)
-                        ul.appendChild(skipButton)
-                    }
-                }
-            }
-            else {
-                for (let i=1; i <= this.pagesValue; i++) {
-                    const pageButton = document.createElement('li')
-                    pageButton.setAttribute("data-facets-target", "pageButton")
-                    pageButton.setAttribute('data-action', "click->facets#page_button")
-                    pageButton.setAttribute('class', "page-item")
-                    if (this.indexValue === i)
-                        pageButton.classList.add("active")
-                    a = document.createElement("a")
-                    a.setAttribute('class', 'page-link')
-                    a.setAttribute('href', '#')
-                    a.appendChild(document.createTextNode(i+""))
-                    pageButton.appendChild(a)
-                    ul.appendChild(pageButton)
-                }
-            }
-
-            const next = document.createElement('li')
-            next.setAttribute("data-facets-target", "nextButton")
-            next.setAttribute('data-action', "click->facets#next_page")
-            next.setAttribute('class', "page-item")
-            if (this.indexValue === this.pagesValue)
-                next.classList.add("disabled")
-            a = document.createElement("a")
-            a.setAttribute('class', 'page-link')
-            a.setAttribute('href', '#')
-            a.appendChild(document.createTextNode("\u00BB"))
-            next.appendChild(a)
-            ul.appendChild(next)
-
-            this.element.querySelector("div.facet_pagination").innerHTML = nav.outerHTML
+    generatePagination(generateFacets=true) {
+        if(generateFacets) {
+            const entity_field = this.element.parentElement.getAttribute('id').substring("facet_collapse_".length)
+            SearchAPI.facetPagination(entity_field, this.nbPagesValue, this.indexValue, (data) => {
+                $(this.element).find("ul.list-unstyled")[0].innerHTML = data['facets_entries'].join("")
+                $(this.element).find(".facet_pagination")[0].innerHTML = data['pagination']
+            })
+        }
+        else if(this.nbPagesValue > 1) {
+            SearchAPI.facetPagination(null, this.nbPagesValue, this.indexValue, (data) => {
+                $(this.element).find(".facet_pagination")[0].innerHTML = data['pagination']
+            })
         }
     }
 }
