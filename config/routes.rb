@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     get '/dataset/:id', to: 'dataset#show'
     post "/dataset/:id/paginate", to: "dataset#paginate"
     post '/dataset/create', to: 'dataset#create_dataset'
+    post '/dataset/delete', to: 'dataset#delete_dataset'
 
     get '/experiments', to: 'experiment#index'
     get '/experiments/update', to: 'experiment#update_experiments_list'

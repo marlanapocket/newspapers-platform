@@ -16,6 +16,23 @@ export class DatasetAPI {
         })
     }
 
+    static delete_dataset(datasetId, callback) {
+        $.ajax({
+            type: "POST",
+            url: "/dataset/delete",
+            data: {dataset_id: datasetId},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
+
     static update_datasets_list(callback) {
         $.ajax({
             type: "GET",
@@ -76,7 +93,6 @@ export class DatasetAPI {
             data: {
                 search_params: searchParams
             },
-            dataType: 'json',
             success: (data, textStatus, jqXHR) => {
                 callback(data)
             }

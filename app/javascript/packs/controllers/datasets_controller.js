@@ -42,4 +42,12 @@ export default class extends Controller {
             }
         })
     }
+
+    deleteDataset(event) {
+        const datasetId = event.target.parentElement.dataset['datasetId']
+        const datasetName = event.target.parentElement.dataset['datasetName']
+        if (confirm(`Are you sure you want to delete dataset "${datasetName}"`)) {
+            DatasetAPI.delete_dataset(datasetId, (data) => {})
+        }
+    }
 }
