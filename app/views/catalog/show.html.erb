@@ -7,19 +7,21 @@
      data-viewer-current-page-value="1"
      data-viewer-selected-articles-value="[]">
     <div id="sidebar" class="col-3">
-        <%= render partial: 'metadata' %>
         <%= render partial: 'named_entities_panel' %>
     </div>
     <div id="viewer_container" class="col-6">
-        <div >
+        <div>
             <div id="page_counter"><span data-viewer-target="currentPage"></span> out of <%= @issue.nb_pages %></div>
             <div id="openseadragon_view"></div>
         </div>
     </div>
     <div class="col-3">
+        <%= render partial: 'metadata' %>
         <div class="card" data-viewer-target="selectedArticlePanel">
-            <div class="card-body">
+            <div class="card-header">
                 <h5 class="card-title"></h5>
+            </div>
+            <div class="card-body">
                 <p class="card-text"></p>
             </div>
         </div>

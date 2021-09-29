@@ -65,6 +65,7 @@ export default class extends Controller {
             sequenceMode: true,
             initialPage: 0,
             tileSources: this.pagesValue,
+            showFullPageControl: false
         })
 
         // Set the page counter on the osd viewer

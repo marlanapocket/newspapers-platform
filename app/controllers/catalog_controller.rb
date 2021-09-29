@@ -36,7 +36,7 @@ class CatalogController < ApplicationController
             entities_fields = I18n.t("newspapers.solr_fields").values_at(:persons, :locations, :organisations, :human_productions)
             @entities_labels = []
             entities_fields.each do |entity_field|
-                (@entities_labels << @results['facets'][entity_field]['buckets'].map{|ne| ne['val']}).flatten!
+                (@entities_labels << @results['facets'][entity_field]['buckets'].map{|ne| ne['val']}).flatten! if @results['facets'][entity_field]
             end
             @entities_labels = helpers.get_entity_label @entities_labels
         end
@@ -54,11 +54,9 @@ class CatalogController < ApplicationController
 
     def named_entities_for_doc
         if params[:doc_id].index('_article_').nil?
-            article = Article.find(params[:doc_id])
-            named_entities = article.named_entities
+            named_entities = Issue.named_entities params[:doc_id]
         else
-            issue = Issue.find(params[:doc_id])
-            named_entities = issue.named_entities
+            named_entities = Article.named_entities params[:doc_id]
         end
         render partial: 'named_entities/named_entities', locals: {named_entities: named_entities}
     end

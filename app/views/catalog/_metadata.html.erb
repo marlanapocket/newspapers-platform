@@ -1,0 +1,13 @@
+<div class="card mb-2">
+    <div class="card-header">
+        <h5 class="card-title">Metadata</h5>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-6">Publication date</dt>
+            <dd class="col-6"><%= @issue.date_created %></dd>
+            <dt class="col-6">Newspaper</dt>
+            <dd class="col-6"><%= t("newspapers.titles.#{@issue.newspaper}") %></dd>
+        </dl>
+    </div>
+</div>

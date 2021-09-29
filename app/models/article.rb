@@ -33,8 +33,8 @@ class Article
         [min_x,min_y,canvas_size[0],canvas_size[1]]
     end
 
-    def named_entities
-        nems = SolrSearcher.query({q:"article_id_ssi:#{self.id}", rows: 1000000})['response']['docs']
+    def self.named_entities(article_id)
+        nems = SolrSearcher.query({q:"article_id_ssi:#{article_id}", rows: 1000000})['response']['docs']
         output = {LOC: {}, PER: {}, ORG: {}, HumanProd: {}}
         nems.select {|ne_solr| ne_solr['type_ssi'] == "LOC"}.each do |ne_solr|
             output[:LOC][ne_solr['linked_entity_ssi']] = [] unless output[:LOC].has_key? ne_solr['linked_entity_ssi']

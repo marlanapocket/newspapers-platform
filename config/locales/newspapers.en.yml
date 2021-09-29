@@ -31,6 +31,8 @@ en:
       fr: "French"
       en: "English"
       de: "German"
+      se: "Swedish"
+      fi: "Finnish"
     doc_types:
       article: "Article"
       issue: "Issue"
