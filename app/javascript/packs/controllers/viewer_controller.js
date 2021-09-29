@@ -3,14 +3,21 @@ import { SearchAPI } from "../utils/search_api"
 
 export default class extends Controller {
     static targets = ['currentPage', 'articleOverlay', 'selectedArticlePanel']
-    static values = {currentPage: Number, nbpages: Number, pages: Array, articles: Array, selectedArticles: Array}
+    static values = {currentPage: Number, nbpages: Number, pages: Array, articles: Array, selectedArticles: Array, issueId: String}
 
     isDragged = false
     viewer = null
 
     connect() {
+        const selectedParam = (new URL(window.location.href)).searchParams.get('selected')
+        if (selectedParam == null) {
+            this.selectedArticlesValue = []
+        }
+        else {
+            this.selectedArticlesValue = [selectedParam]
+        }
         this.setup_viewer()
-        this.load_named_entities()
+        this.load_named_entities((this.selectedArticlesValue.length == 0) ? this.issueIdValue : this.selectedArticlesValue[0])
     }
 
     article_clicked(event) {
@@ -19,18 +26,33 @@ export default class extends Controller {
         }
         else {
             this.hide_mask()
+            const articleId = event.target.getAttribute('id')
             // If the article is already selected
-            if(this.selectedArticlesValue.includes($(event.target).attr('id'))) {
-                $(event.target).removeClass("article_overlay_selected")
-                $(event.target).addClass("article_overlay")
+            if(this.selectedArticlesValue.includes(articleId)) {
+                $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
+                this.load_named_entities(this.issueIdValue)
+                $(event.target).removeClass("article_overlay_selected").addClass("article_overlay")
                 this.selectedArticlesValue = this.selectedArticlesValue.filter(item => item !== $(event.target).attr('id'))
+                // Change url param for selected article
+                if (window.history.replaceState) {
+                    let url = new URL(window.location.href)
+                    url.searchParams.delete('selected')
+                    window.history.replaceState(null, '', url.toString())
+                }
             }
             else {  // If the article is not yet selected
+                $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
+                this.load_named_entities(articleId)
                 $(".article_overlay_selected").removeClass("article_overlay_selected").addClass("article_overlay")
-                $(event.target).addClass("article_overlay_selected")
-                $(event.target).removeClass("article_overlay")
+                $(event.target).addClass("article_overlay_selected").removeClass("article_overlay")
                 this.selectedArticlesValue = [$(event.target).attr('id')]
                 this.display_mask($(event.target).data('loc'))
+                // Change url param for selected article
+                if (window.history.replaceState) {
+                    let url = new URL(window.location.href)
+                    url.searchParams.set('selected', event.target.getAttribute('id'))
+                    window.history.replaceState(null, '', url.toString())
+                }
             }
             this.updateSelectedArticlePanel()
         }
@@ -52,18 +74,27 @@ export default class extends Controller {
 
     }
 
-    load_named_entities() {
-        SearchAPI.load_named_entities(window.location.pathname.split('/').pop(), (data) => {
+    load_named_entities(docId) {
+        SearchAPI.load_named_entities(docId, (data) => {
             $('#named-entities-panel').find(".card-body").html(data)
         })
     }
 
     setup_viewer() {
+        const selectedArticleObject = this.articlesValue.filter((elt)=>{return elt.id == this.selectedArticlesValue[0]})[0]
+        let initialPage = null
+        if(selectedArticleObject == undefined) {
+            initialPage = 0
+        }
+        else {
+            const pagenum = selectedArticleObject.canvases_parts[0]
+            initialPage = parseInt(pagenum.substring(pagenum.lastIndexOf('_')+1, pagenum.lastIndexOf("#xywh")))-1
+        }
         this.viewer = OpenSeadragon({
             id: "openseadragon_view",
             prefixUrl: "/openseadragon/images/",
             sequenceMode: true,
-            initialPage: 0,
+            initialPage: initialPage,
             tileSources: this.pagesValue,
             showFullPageControl: false
         })
@@ -76,19 +107,33 @@ export default class extends Controller {
         this.viewer.addHandler("page", (data) => {
             this.currentPageValue = data.page + 1
             this.currentPageTarget.innerHTML = this.currentPageValue
+            $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
+            this.load_named_entities(this.issueIdValue)
+            this.selectedArticlesValue = []
+            if (window.history.replaceState) {
+                let url = new URL(window.location.href)
+                url.searchParams.delete('selected')
+                window.history.replaceState(null, '', url.toString())
+            }
         })
 
         // Handler when a page is open (when landing on page and after a page change)
         this.viewer.addHandler("open", (data) => {
-            this.updateSelectedArticlePanel()
             for (let article of this.articlesValue) {
-                article = JSON.parse(article)
                 let pagenum = article.canvases_parts[0]
                 pagenum = parseInt(pagenum.substring(pagenum.lastIndexOf('_')+1, pagenum.lastIndexOf("#xywh")))
                 if (pagenum === this.currentPageValue) {
                     let bbox = article.bbox
                     let loc = this.viewer.viewport.imageToViewportRectangle(bbox[0], bbox[1], bbox[2], bbox[3])
-                    let elt = $(`<div id="${article.id}" class="article_overlay"></div>`)
+                    let article_class = null
+                    if(this.selectedArticlesValue[0] == article.id) {
+                        this.display_mask(loc)
+                        article_class = "article_overlay_selected"
+                    }
+                    else {
+                        article_class = "article_overlay"
+                    }
+                    let elt = $(`<div id="${article.id}" class="${article_class}"></div>`)
                     elt.attr("data-viewer-target", "articleOverlay")
                     elt.attr("data-action", "click->viewer#article_clicked")
                     elt.attr("data-loc", JSON.stringify({'x': loc.x, 'y': loc.y, 'width': loc.width, 'height': loc.height}))
@@ -97,6 +142,7 @@ export default class extends Controller {
                     this.setOSDDragHandler(elt[0])
                 }
             }
+            this.updateSelectedArticlePanel()
         })
     }
 
