@@ -7,6 +7,8 @@ class DatasetController < ApplicationController
 
     def show
         @dataset = Dataset.find(params[:id])
+        @current_page = params[:page] || 1
+        @per_page = params[:per_page] || 10
     end
 
     def create_dataset
@@ -67,19 +69,24 @@ class DatasetController < ApplicationController
     end
 
     def paginate
+        out = {}
         d = Dataset.find params['id']
-        @rows = params[:per_page].to_i
-        res = d.fetch_paginated_documents(params[:page].to_i, @rows, params[:sort], params[:sort_order], params[:type])
-        @docs = res[:docs].map do |solr_doc|
+        rows = params[:per_page].to_i
+        res = d.fetch_paginated_documents(params[:page].to_i, rows, params[:sort], params[:sort_order], params[:type])
+        docs = res[:docs].map do |solr_doc|
             if solr_doc['id'].index("_article_") >= 0
                 Article.from_solr_doc solr_doc
             else
                 Issue.from_solr_doc solr_doc
             end
         end
-        # @nb_pages = res[:nb_pages]
-        @pagenum = params[:page].to_i
-        # @counter = (params[:page].to_i - 1) * params[:per_page].to_i
+        out[:documents] = render_to_string(layout: false,
+                                           partial: "documents",
+                                           locals: {docs: docs, rows: rows, pagenum: params[:page].to_i})
+        out[:pagination] = render_to_string(layout: false,
+                                            partial: "pagination",
+                                            locals: {nb_pages: params[:nb_pages].to_i, current_page: params[:page].to_i})
+        render json: out
     end
 
     def list_datasets

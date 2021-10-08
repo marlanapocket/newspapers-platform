@@ -1,14 +1,22 @@
 <% if current_user.id == @dataset.user_id %>
+    <% nb_pages = (@dataset.documents.size/@per_page.to_f).ceil %>
     <% set_page_title @dataset.title %>
     <div class="row"
          data-controller="dataset"
-         data-dataset-id-value="<%= @dataset.id %>">
+         data-dataset-id-value="<%= @dataset.id %>"
+         data-dataset-current-page-value="1"
+         data-dataset-per-page-value="10"
+         data-dataset-sort-value="default"
+         data-dataset-sort-order-value="asc"
+         data-dataset-nb-pages-value="<%= nb_pages %>">
         <div id="sidebar" class="col-3">
             <%= render partial: 'dataset_info' %>
             <%= render partial: 'catalog/named_entities_panel' %>
         </div>
         <div class="col-9">
-            <%= render partial: 'dataset_header' %>
+            <div id="results_navigation">
+                <%= render partial: 'dataset/pagination', locals: {current_page: @current_page, nb_pages: nb_pages} %>
+            </div>
             <div id="documents-list" class="d-flex justify-content-center">
                 <div class="spinner-border"></div>
             </div>

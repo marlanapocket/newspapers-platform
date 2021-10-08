@@ -28,7 +28,6 @@ export default class extends Controller {
     }
 
     page_button(event) {
-        // $(this.element).find("ul.list-unstyled")[0].innerHTML = "<div class=\"spinner-border\"></div>"
         event.preventDefault()
         this.indexValue = event.target.textContent
         this.generatePagination()

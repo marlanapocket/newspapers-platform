@@ -1,0 +1,26 @@
+<div id="dataset-info" class="mb-2 card">
+    <div class="card-header">
+        <h3><%= @dataset.title %></h3>
+    </div>
+    <div class="p-2 card-body d-flex align-items-start justify-content-center flex-column">
+        <div class="dataset-metadata">
+            <%= @dataset.nb_issues %> issues.
+            <%= @dataset.nb_articles %> articles.
+        </div>
+        <div id="dataset-sharing-options">
+            <span title="Public datasets can be copied by all users in their personal workspace." class="glyphicon glyphicon-question-sign"></span>
+            <span style="font-weight: bold;">Sharing status:</span>
+            <% if @dataset.public? %>
+                <% button_text = "Set to Private" %>
+                <% sharing_status = "public" %>
+                <% display_status = "Public" %>
+            <% else %>
+                <% button_text = "Set to Public" %>
+                <% sharing_status = "private" %>
+                <% display_status = "Private" %>
+            <% end %>
+            <span id="sharing_status" class="me-2"><%= display_status %></span>
+            <button id="toggle_sharing_status_button" type="button" class="btn btn-sm btn-primary" value="<%= sharing_status %>"><%= button_text %></button>
+        </div>
+    </div>
+</div>
