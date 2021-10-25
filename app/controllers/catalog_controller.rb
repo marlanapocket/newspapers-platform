@@ -8,7 +8,6 @@ class CatalogController < ApplicationController
 
     def index
         if params[:q]
-            @user_params =
             @solr_params = SolrQuery.new.to_params
             @solr_params[:q] = params[:q]
             @solr_params[:rows] = params[:per_page] if params[:per_page]
@@ -17,8 +16,14 @@ class CatalogController < ApplicationController
             @solr_params[:sort] = params[:sort] if params[:sort]
             if params[:f]
                 params[:f].each do |k,v|
-                    v.each do |val|
-                        @solr_params[:fq] << "#{k}:#{val}"
+                    if k == "date_created_dtsi"  # v is a hash {to: "", from: ""}
+                        @solr_params[:fq] << "#{k}:[#{v['from']}T00:00:00Z TO #{v['to']}T00:00:00Z]"
+                    else
+                        if v.is_a? Array
+                            v.each do |val|
+                                @solr_params[:fq] << "#{k}:#{val}"
+                            end
+                        end
                     end
                 end
             end

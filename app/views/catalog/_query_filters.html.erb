@@ -25,13 +25,20 @@
                                     <%= t("newspapers.day." + constraint[:value]) %>
                                 <% when 'persons', 'locations', 'organisations', 'human_productions' %>
                                     <%= get_entity_label constraint[:value] %>
+                                <% when 'date' %>
+                                    <%= constraint[:value] %>
                                 <% else %>
                                     <%= "" %>
                                 <% end %>
                             </span>
                         </button>
                         <% new_params = Marshal.load(Marshal.dump(current_page_params)) %>
-                        <% new_params[:f][constraint[:label].to_sym].delete(constraint[:value]) %>
+                        <% puts new_params %>
+                        <% if field == "date" %>
+                            <% new_params[:f].delete(constraint[:label].to_sym) %>
+                        <% else %>
+                            <% new_params[:f][constraint[:label].to_sym].delete(constraint[:value]) %>
+                        <% end %>
                         <a class="btn btn-sm btn-outline-primary" href="<%= url_for new_params %>">
                             <i class="fas fa-times"></i>
                         </a>

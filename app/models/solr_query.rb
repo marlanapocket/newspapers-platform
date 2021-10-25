@@ -38,6 +38,8 @@ class SolrQuery
         I18n.t("newspapers.solr_fields").values_at(:persons, :locations, :organisations, :human_productions).each do |f|
             @json_dot_facet[f] = { terms: { field: f, limit: 15, numBuckets: true} }
         end
+        @json_dot_facet["min_date"] = "min(date_created_dtsi)"
+        @json_dot_facet["max_date"] = "max(date_created_dtsi)"
     end
 
     def to_params

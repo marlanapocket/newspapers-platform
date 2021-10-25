@@ -1,0 +1,60 @@
+<% facet_constraints = @solr_params[:fq].select { |fq| fq.split(':')[0] == "date_created_dtsi" }.map{|fq| {label: "date_created_dtsi", value: fq.split(':')[1]} } %>
+<div class="accordion-item">
+    <h2 class="accordion-header" id="facet_date_created_dtsi">
+        <% button_classes = "" %>
+        <% button_classes += " collapsed" if facet_constraints.empty? %>
+        <% button_classes += " constrained" unless facet_constraints.empty? %>
+        <button class="accordion-button<%= button_classes %>" type="button" data-bs-toggle="collapse" data-bs-target="#facet_collapse_date_created_dtsi" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+            <% hr_field = I18n.t('newspapers.solr_fields').find { |key ,value| value == "date_created_dtsi" }[0].to_s %>
+            <%= t("newspapers.human_readable_solr_fields." + hr_field) %>
+        </button>
+    </h2>
+    <div id="facet_collapse_date_created_dtsi" class="accordion-collapse collapse<%= " show" unless facet_constraints.empty? %>" aria-labelledby="facet_date_created_dtsi">
+        <% datepicker_min_date = convert_solr_date_to_datepicker_date(min_date) %>
+        <% datepicker_max_date = convert_solr_date_to_datepicker_date(max_date) %>
+        <div class="accordion-body" data-controller="date-facets"
+             data-date-facets-max-date-value="<%= datepicker_max_date %>"
+             data-date-facets-min-date-value="<%= datepicker_min_date %>">
+            <form action="/search" method="get">
+                <div class="input-group mb-2">
+                    <span class="input-group-text">From</span>
+                    <input class="form-control" type="date" id="date_facet_from" name="f[date_created_dtsi][from]"
+                           autocomplete="off"
+                           min="<%= datepicker_min_date %>"
+                           max="<%= datepicker_max_date %>"
+                           value="<%= datepicker_min_date %>"
+                           data-action="change->date-facets#from_date_changed">
+                    <span class="input-group-text">To</span>
+                    <input class="form-control" type="date" id="date_facet_to" name="f[date_created_dtsi][to]"
+                           autocomplete="off"
+                           min="<%= datepicker_min_date %>"
+                           max="<%= datepicker_max_date %>"
+                           value="<%= datepicker_max_date %>"
+                           data-action="change->date-facets#to_date_changed">
+                </div>
+                <% if session['query_params']['q'] %>
+                    <input type="hidden" name="q" value="<%= session['query_params']['q'] %>">
+                <% end %>
+                <% if session['query_params']['page'] %>
+                    <input type="hidden" name="page" value="<%= session['query_params']['page'] %>">
+                <% end %>
+                <% if session['query_params']['per_page'] %>
+                    <input type="hidden" name="per_page" value="<%= session['query_params']['per_page'] %>">
+                <% end %>
+                <% if session['query_params']['sort'] %>
+                    <input type="hidden" name="sort" value="<%= session['query_params']['sort'] %>">
+                <% end %>
+                <% if session['query_params']['f'] %>
+                    <% session['query_params']['f'].each do |k,v| %>
+                        <% if v.is_a? Array %>
+                            <% v.each do |val| %>
+                                <input type="hidden" name="f[<%= k %>][]" value="<%= val %>">
+                            <% end %>
+                        <% end %>
+                    <% end %>
+                <% end %>
+                <button class="btn btn-secondary d-block" type="submit" data-action="click->date-facets#submit">Limit</button>
+            </form>
+        </div>
+    </div>
+</div>

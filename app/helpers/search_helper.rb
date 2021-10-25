@@ -10,12 +10,24 @@ module SearchHelper
         end
     end
 
+    def convert_solr_date_to_datepicker_date solr_date
+        DateTime.parse(solr_date).strftime("%Y-%m-%d")
+    end
+
+    def convert_datepicker_date_to_solr_date solr_date
+        DateTime.parse(solr_date).strftime("%Y-%m-%d")
+    end
+
     def search_constraints
         constraints = []
         if current_page_params[:f]
             current_page_params[:f].each do |f, vals|
-                vals.each do |val|
-                    constraints << {label: f, value: val}
+                if f == "date_created_dtsi"
+                    constraints << {label: f, value: "From #{vals['from']} To #{vals['to']}"}
+                else
+                    vals.each do |val|
+                        constraints << {label: f, value: val}
+                    end
                 end
             end
         end
