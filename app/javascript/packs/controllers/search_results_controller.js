@@ -23,7 +23,24 @@ export default class extends Controller {
         const documentsIds = $(".search_result.selected").map((index, document) => {
             return document.getAttribute("data-doc-id")
         }).get()
-        DatasetAPI.addSelectedDocumentsToWorkingDataset(documentsIds, (data)=> {})
+        DatasetAPI.addSelectedDocumentsToWorkingDataset(documentsIds, (data)=> {
+            $("#notifications").append(data['notif'])
+            for(const notif of $('.toast')) {
+                const notifToast = bootstrap.Toast.getOrCreateInstance(notif)
+                notifToast.show()
+                notif.addEventListener('hidden.bs.toast', (event) => {
+                    bootstrap.Toast.getOrCreateInstance(event.target).dispose()
+                    event.target.remove()
+                })
+            }
+
+            // Find dataset in list and change nb docs
+            const option = $("#working_dataset_select").find(":selected")
+            option.html(`${data['title']} (${data['nbdocs']} docs)`)
+
+            //unselect all docs
+            $("div.search_result").removeClass("selected")
+        })
     }
 
     addAllDocumentsToWorkingDataset(event) {

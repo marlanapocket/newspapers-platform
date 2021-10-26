@@ -1,14 +1,21 @@
 <% all_constraints = search_constraints %>
-<div class="accordion" id="facets">
-    <% @results['facets'].each do |k,v| %>
-        <% next if k == "count" %>
-        <% unless v['numBuckets'] == 0 %>
-            <% if k == "date_created_dtsi" %>
-                <%= render partial: "date_facet", locals: {min_date: @results['facets']['min_date'], max_date: @results['facets']['max_date']} %>
-            <% elsif k == "min_date" or k == "max_date" %>
-            <% else %>
-                <%= render partial: "facet", locals: {field: k, entries: v['buckets'], total: v['numBuckets'], all_constraints: all_constraints, entities_labels: @entities_labels } %>
+<div class="card mb-3">
+    <div class="card-header">
+        Filter your results
+    </div>
+    <div class="card-body p-0">
+        <div class="accordion" id="facets">
+            <% @results['facets'].each do |k,v| %>
+                <% next if k == "count" %>
+                <% unless v['numBuckets'] == 0 %>
+                    <% if k == "date_created_dtsi" %>
+                        <%= render partial: "date_facet", locals: {min_date: @results['facets']['min_date'], max_date: @results['facets']['max_date']} %>
+                    <% elsif k == "min_date" or k == "max_date" %>
+                    <% else %>
+                        <%= render partial: "facet", locals: {field: k, entries: v['buckets'], total: v['numBuckets'], all_constraints: all_constraints, entities_labels: @entities_labels } %>
+                    <% end %>
+                <% end %>
             <% end %>
-        <% end %>
-    <% end %>
+        </div>
+    </div>
 </div>

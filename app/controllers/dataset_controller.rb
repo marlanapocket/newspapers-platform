@@ -27,14 +27,15 @@ class DatasetController < ApplicationController
 
     def delete_dataset
         dataset = Dataset.find(params[:dataset_id])
-        if session[:working_dataset] == dataset.id
+        dataset_id = dataset.id
+        dataset.destroy
+        if session[:working_dataset] == dataset_id
             if current_user.datasets.first
                 session[:working_dataset] = current_user.datasets.first.id
             else
                 session[:working_dataset] = nil
             end
         end
-        dataset.destroy
     end
 
     def update_datasets_list
@@ -52,13 +53,18 @@ class DatasetController < ApplicationController
     end
 
     def add_selected_documents
+        out = {}
         @nb_added_docs = params[:documents_ids].size
         dataset = Dataset.find(session[:working_dataset])
         dataset.add_documents params[:documents_ids]
-        @title = dataset.title
-        respond_to do |format|
-            format.js
-        end
+        title = dataset.title
+        message = "<p> #{@nb_added_docs} documents were added to your dataset.</p>"
+        # render partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
+        out['notif'] = render_to_string layout: false, partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
+        out['nbdocs'] = dataset.documents.size
+        out['title'] = title
+        # out[:dataset_options] = options_for_select(current_user.datasets.map{|d| ["#{d.title} (#{d.documents.size} docs)", d.id]})
+        render json: out
     end
 
     def add_all_documents

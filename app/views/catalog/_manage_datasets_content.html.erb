@@ -1,28 +1,20 @@
 <% if @results['response']['numFound'] > 0 %>
-    <div class="card">
+    <div class="card mb-3">
         <div class="card-header">
             Datasets handling
         </div>
-        <div class="card-body d-flex align-items-center justify-content-center flex-column">
-            <div class="input-group">
+        <div class="card-body">
+            <div class="input-group mb-2">
                 <span class="input-group-text">Working dataset</span>
                 <select id="working_dataset_select" class="form-select" data-action="change->search-results#selectWorkingDataset">
-                    <%= session[:working_dataset] ||= current_user.datasets.first.id%>
-                    <%= options_for_select(current_user.datasets.map{|d| ["#{d.title} (#{d.documents.size} docs)", d.id]}, session[:working_dataset]) %>
+                    <option class="" value="" disabled selected>Select a dataset</option>
+                    <%= options_for_select(current_user.datasets.map{ |d| ["#{d.title} (#{d.documents.size} docs)", d.id]}, session[:working_dataset]) %>
                 </select>
             </div>
-            <button type="button"
-                    class="btn btn-sm btn-outline-primary rounded-circle p-0"
-                    data-toggle="popover"
-                    data-placement="top"
-                    title="Adding documents to a dataset"
-                    data-content="<p>Select documents from the results list by clicking on them. You can then add the selected documents to the current working dataset.</p>">
-                <i class="fas fa-2x fa-question-circle"></i>
-            </button>
-            <button class="btn btn-sm btn-primary" data-action="click->search-results#addSelectedDocumentsToWorkingDataset">
+            <button class="btn btn-sm btn-secondary" data-action="click->search-results#addSelectedDocumentsToWorkingDataset">
                 Add selected documents
             </button>
-            <button class="btn btn-sm btn-primary"
+            <button class="btn btn-sm btn-secondary"
                     data-search-params="<%= @solr_params.to_json %>"
                     data-action="click->search-results#addAllDocumentsToWorkingDataset">
                 Add all documents

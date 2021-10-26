@@ -1,5 +1,5 @@
 <% li_classes = "" %>
-<% entry_is_selected = facet_constraints.any? {|fc| fc[:value] == facet['val']} %>
+<% entry_is_selected = facet_constraints.any? {|fc| fc[:value] == facet['val'].to_s} %>
 <% li_classes = "selected_constraint" if entry_is_selected  %>
 <li data-facets-target="item" class="<%= li_classes %>">
     <% case field %>

@@ -76,7 +76,6 @@ export class DatasetAPI {
             data: {
                 documents_ids: documentsIds
             },
-            dataType: "script",
             success: (data, textStatus, jqXHR) => {
                 callback(data)
             }

@@ -4,7 +4,7 @@
         <% button_classes = "" %>
         <% button_classes += " collapsed" if facet_constraints.empty? %>
         <% button_classes += " constrained" unless facet_constraints.empty? %>
-        <button class="accordion-button<%= button_classes %>" type="button" data-bs-toggle="collapse" data-bs-target="#facet_collapse_date_created_dtsi" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+        <button class="accordion-button<%= button_classes %> p-2" type="button" data-bs-toggle="collapse" data-bs-target="#facet_collapse_date_created_dtsi" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
             <% hr_field = I18n.t('newspapers.solr_fields').find { |key ,value| value == "date_created_dtsi" }[0].to_s %>
             <%= t("newspapers.human_readable_solr_fields." + hr_field) %>
         </button>
