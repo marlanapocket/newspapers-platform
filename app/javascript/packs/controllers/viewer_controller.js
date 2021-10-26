@@ -1,8 +1,9 @@
 import { Controller } from "stimulus"
 import { SearchAPI } from "../utils/search_api"
+import {DatasetAPI} from "../utils/dataset_api";
 
 export default class extends Controller {
-    static targets = ['currentPage', 'articleOverlay', 'selectedArticlePanel']
+    static targets = ['currentPage', 'articleOverlay', 'selectedArticlePanel', 'addArticleButton']
     static values = {currentPage: Number, nbpages: Number, pages: Array, articles: Array, selectedArticles: Array, issueId: String}
 
     isDragged = false
@@ -18,6 +19,20 @@ export default class extends Controller {
         }
         this.setup_viewer()
         this.load_named_entities((this.selectedArticlesValue.length == 0) ? this.issueIdValue : this.selectedArticlesValue[0])
+        this.setup_mention_click()
+    }
+
+    setup_mention_click() {
+        $('#named-entities-panel').on("click", ".entity_mention", (event) => {
+            let articleId = event.target.dataset['articleId']
+            // Go to article page and select it
+            let article = this.articlesValue.filter((obj) => { return obj["id"] == articleId})[0]
+            let pagenum = article.canvases_parts[0]
+            pagenum = parseInt(pagenum.substring(pagenum.lastIndexOf('_')+1, pagenum.lastIndexOf("#xywh")))
+            // this.viewer.goToPage(pagenum)
+            // this.viewer.viewport.zoomTo(2)
+            // this.viewer.viewport.panTo(new OpenSeadragon.Point(loc.x+loc.width/2, loc.y+loc.height/2))
+        })
     }
 
     article_clicked(event) {
@@ -29,6 +44,7 @@ export default class extends Controller {
             const articleId = event.target.getAttribute('id')
             // If the article is already selected
             if(this.selectedArticlesValue.includes(articleId)) {
+                $(this.addArticleButtonTarget).addClass("d-none")
                 $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
                 this.load_named_entities(this.issueIdValue)
                 $(event.target).removeClass("article_overlay_selected").addClass("article_overlay")
@@ -41,6 +57,7 @@ export default class extends Controller {
                 }
             }
             else {  // If the article is not yet selected
+                $(this.addArticleButtonTarget).removeClass("d-none")
                 $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
                 this.load_named_entities(articleId)
                 $(".article_overlay_selected").removeClass("article_overlay_selected").addClass("article_overlay")
@@ -80,13 +97,64 @@ export default class extends Controller {
         })
     }
 
+    toggleResultSelection(event){
+        if(!['A', 'IMG'].includes(event.target.tagName)) {
+            $(event.target).parents("div.search_result").toggleClass("selected")
+        }
+    }
+
+    selectWorkingDataset(event) {
+        const datasetID = parseInt($(event.target).find("option:selected").val())
+        DatasetAPI.setCurrentWorkingDataset(datasetID, (data) => {})
+    }
+
+    addSelectedArticleToWorkingDataset(event) {
+        DatasetAPI.addSelectedDocumentsToWorkingDataset(this.selectedArticlesValue, (data)=> {
+            $("#notifications").append(data['notif'])
+            for(const notif of $('.toast')) {
+                const notifToast = bootstrap.Toast.getOrCreateInstance(notif)
+                notifToast.show()
+                notif.addEventListener('hidden.bs.toast', (event) => {
+                    bootstrap.Toast.getOrCreateInstance(event.target).dispose()
+                    event.target.remove()
+                })
+            }
+            // Find dataset in list and change nb docs
+            const option = $("#working_dataset_select").find(":selected")
+            option.html(`${data['title']} (${data['nbdocs']} docs)`)
+            //unselect all docs
+            $("div.search_result").removeClass("selected")
+        })
+    }
+
+    addEntireIssueToWorkingDataset(event) {
+        DatasetAPI.addSelectedDocumentsToWorkingDataset([this.issueIdValue], (data)=> {
+            $("#notifications").append(data['notif'])
+            for(const notif of $('.toast')) {
+                const notifToast = bootstrap.Toast.getOrCreateInstance(notif)
+                notifToast.show()
+                notif.addEventListener('hidden.bs.toast', (event) => {
+                    bootstrap.Toast.getOrCreateInstance(event.target).dispose()
+                    event.target.remove()
+                })
+            }
+            // Find dataset in list and change nb docs
+            const option = $("#working_dataset_select").find(":selected")
+            option.html(`${data['title']} (${data['nbdocs']} docs)`)
+            //unselect all docs
+            $("div.search_result").removeClass("selected")
+        })
+    }
+
     setup_viewer() {
         const selectedArticleObject = this.articlesValue.filter((elt)=>{return elt.id == this.selectedArticlesValue[0]})[0]
         let initialPage = null
         if(selectedArticleObject == undefined) {
             initialPage = 0
+            $(this.addArticleButtonTarget).addClass("d-none")
         }
         else {
+            $(this.addArticleButtonTarget).removeClass("d-none")
             const pagenum = selectedArticleObject.canvases_parts[0]
             initialPage = parseInt(pagenum.substring(pagenum.lastIndexOf('_')+1, pagenum.lastIndexOf("#xywh")))-1
         }

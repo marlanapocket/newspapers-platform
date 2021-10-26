@@ -1,0 +1,20 @@
+<div class="card mb-3">
+    <div class="card-header">
+        Datasets handling
+    </div>
+    <div class="card-body">
+        <div class="input-group mb-2">
+            <span class="input-group-text">Working dataset</span>
+            <select id="working_dataset_select" class="form-select" data-action="change->viewer#selectWorkingDataset">
+                <option class="" value="" disabled selected>Select a dataset</option>
+                <%= options_for_select(current_user.datasets.map{ |d| ["#{d.title} (#{d.documents.size} docs)", d.id]}, session[:working_dataset]) %>
+            </select>
+        </div>
+        <button class="btn btn-sm btn-secondary" data-viewer-target="addArticleButton" data-action="click->viewer#addSelectedArticleToWorkingDataset">
+            Add selected article
+        </button>
+        <button class="btn btn-sm btn-secondary" data-action="click->viewer#addEntireIssueToWorkingDataset">
+            Add entire issue
+        </button>
+    </div>
+</div>
