@@ -4,11 +4,42 @@ import {SearchAPI} from "../utils/search_api";
 
 export default class extends Controller {
     static targets = [ ]
-    static values = { id: Number, nbPages: Number, currentPage: Number, perPage: Number, sort: String, sortOrder: String }
+    static values = { id: Number, nbPages: Number, currentPage: Number, perPage: Number, sort: String, sortOrder: String, selectedDocuments: Array }
 
     connect() {
         this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.nbPagesValue, this.sortValue, this.sortOrderValue, "all")
         this.load_named_entities()
+    }
+
+    toggleResultSelection(event){
+        if(!['A', 'IMG'].includes(event.target.tagName)) {
+            $(event.target).parents("div.dataset_document").toggleClass("selected")
+        }
+    }
+
+    export_json(event) {
+        DatasetAPI.exportDataset(this.idValue, (data) => {
+            $("#notifications").append(data)
+            for(const notif of $('.toast')) {
+                const notifToast = bootstrap.Toast.getOrCreateInstance(notif)
+                notifToast.show()
+                notif.addEventListener('hidden.bs.toast', (event) => {
+                    bootstrap.Toast.getOrCreateInstance(event.target).dispose()
+                    event.target.remove()
+                })
+            }
+        })
+    }
+
+    export_zip(event) {
+
+    }
+
+    deleteSelectedDocuments(event) {
+        const documentsIds = $(".dataset_document.selected").map((index, document) => {
+            return document.getAttribute("data-doc-id")
+        }).get()
+        DatasetAPI.removeSelectedDocumentsToWorkingDataset(documentsIds, (data)=> {})
     }
 
     loadDocuments(datasetId, page, per_page, nb_pages, sort, sort_order, type) {

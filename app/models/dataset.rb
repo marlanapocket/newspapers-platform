@@ -14,6 +14,11 @@ class Dataset < ActiveRecord::Base
         self.save
     end
 
+    def remove_documents(documents_ids)
+        self.documents.delete_if{ |elt| documents_ids.include? elt['id'] }
+        self.save
+    end
+
     def nb_issues
         self.documents.select do |doc|
             doc['type'] == 'issue'

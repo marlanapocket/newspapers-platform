@@ -146,3 +146,16 @@ li.selected_constraint {
   overflow: visible;
 }
 ////////////////////////////////////////////////////////
+
+////////////////////// Show Dataset ////////////////////
+.dataset_document {
+  padding: 0.5em;
+}
+.dataset_document:hover {
+  background-color: #EEE;
+}
+.dataset_document.selected {
+  border: 2px solid #32a1ce;
+  padding: calc(0.5em - 2px);
+}
+////////////////////////////////////////////////////////

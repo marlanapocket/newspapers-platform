@@ -22,5 +22,18 @@
             <span id="sharing_status" class="me-2"><%= display_status %></span>
             <button id="toggle_sharing_status_button" type="button" class="btn btn-sm btn-primary" value="<%= sharing_status %>"><%= button_text %></button>
         </div>
+        <hr>
+        <div class="d-flex">
+            <button type="button" class="btn btn-danger me-3" data-action="click->dataset#deleteSelectedDocuments">Delete selected articles</button>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Export as...
+                </button>
+                <ul class="dropdown-menu">
+                    <li><button class="dropdown-item" type="button" data-action="click->dataset#export_json">JSON</button></li>
+                    <li><button class="dropdown-item" type="button" data-action="click->dataset#export_zip">ZIP</button></li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>

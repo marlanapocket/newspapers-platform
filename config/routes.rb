@@ -5,6 +5,8 @@ Rails.application.routes.draw do
     # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
     root to: 'catalog#home'
 
+    get '/send', to: "application#send_file"
+
     get '/search', to: 'catalog#index'
     get '/catalog/:id', to: 'catalog#show'
     post '/catalog/facet_pagination', to: 'catalog#paginate_facets'
@@ -15,7 +17,9 @@ Rails.application.routes.draw do
     get '/datasets/update', to: 'dataset#update_datasets_list'
     post '/datasets/working_dataset', to: 'dataset#set_working_dataset'
     post "/datasets/add_selected_documents", to: "dataset#add_selected_documents"
+    post "/datasets/remove_selected_documents", to: "dataset#remove_selected_documents"
     post "/datasets/add_all_documents", to: "dataset#add_all_documents"
+    post "/datasets/export_dataset", to: "dataset#export_dataset"
     get "/datasets/list", to: "dataset#list_datasets"
     get '/dataset/:id', to: 'dataset#show'
     post "/dataset/:id/paginate", to: "dataset#paginate"

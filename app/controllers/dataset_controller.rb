@@ -9,6 +9,7 @@ class DatasetController < ApplicationController
         @dataset = Dataset.find(params[:id])
         @current_page = params[:page] || 1
         @per_page = params[:per_page] || 10
+        session[:working_dataset] = @dataset.id
     end
 
     def create_dataset
@@ -61,16 +62,30 @@ class DatasetController < ApplicationController
         message = "<p> #{@nb_added_docs} documents were added to your dataset.</p>"
         # render partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
         out['notif'] = render_to_string layout: false, partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
-        out['nbdocs'] = dataset.documents.size
+        out['nbissues'] = dataset.documents.select{|d| d['type'] == "issue" }.size
+        out['nbarticles'] = dataset.documents.select{|d| d['type'] == "article" }.size
         out['title'] = title
-        # out[:dataset_options] = options_for_select(current_user.datasets.map{|d| ["#{d.title} (#{d.documents.size} docs)", d.id]})
         render json: out
+    end
+
+    def remove_selected_documents
+        @nb_removed_docs = params[:documents_ids].size
+        dataset = Dataset.find(session[:working_dataset])
+        dataset.remove_documents params[:documents_ids]
+        redirect_to action: "show", id: dataset.id
     end
 
     def add_all_documents
         SearchToDatasetWorker.perform_async(current_user.id, session[:working_dataset], params[:search_params].to_unsafe_h)
         title = Dataset.find(session[:working_dataset]).title
         message = "<p>Documents are being added to your dataset. You will be notified when the operation is done.</p>"
+        render partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
+    end
+
+    def export_dataset
+        ExportDatasetWorker.perform_async(current_user.id, params[:dataset_id])
+        title = Dataset.find(params[:dataset_id]).title
+        message = "<p>The export is being prepared. You will be notified when the operation is done.</p>"
         render partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
     end
 

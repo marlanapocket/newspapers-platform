@@ -82,6 +82,22 @@ export class DatasetAPI {
         })
     }
 
+    static removeSelectedDocumentsToWorkingDataset(documentsIds, callback) {
+        $.ajax({
+            type: "POST",
+            url: "/datasets/remove_selected_documents",
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                documents_ids: documentsIds
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            }
+        })
+    }
+
     static addAllDocumentsToWorkingDataset(searchParams, callback) {
         $.ajax({
             type: "POST",
@@ -91,6 +107,22 @@ export class DatasetAPI {
             },
             data: {
                 search_params: searchParams
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            }
+        })
+    }
+
+    static exportDataset(datasetId, callback) {
+        $.ajax({
+            type: "POST",
+            url: "/datasets/export_dataset",
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                dataset_id: datasetId
             },
             success: (data, textStatus, jqXHR) => {
                 callback(data)
