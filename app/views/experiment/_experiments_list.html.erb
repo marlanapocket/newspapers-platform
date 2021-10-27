@@ -9,6 +9,25 @@
                     <div class="w-25">
                         <a href="/experiment/<%= experiment.id %>"><%= experiment.title %></a>
                     </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <% tools = experiment.load_tools %>
+                        <% statuses = tools.values.each_with_object(Hash.new(0)) { |h1, h2| h2[h1[:status]] += 1 } %>
+                        <span class="badge bg-secondary me-2"><%= tools.size %> tools</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <% if statuses["finished"] != 0 %>
+                            <span class="badge bg-success me-2"><%= statuses["finished"] %> finished</span>
+                        <% end %>
+                        <% if statuses["created"] != 0 %>
+                            <span class="badge bg-secondary me-2"><%= statuses["created"] %> created</span>
+                        <% end %>
+                        <% if statuses["configured"] != 0 %>
+                            <span class="badge bg-secondary me-2"><%= statuses["configured"] %> configured</span>
+                        <% end %>
+                        <% if statuses["running"] != 0 %>
+                            <span class="badge bg-primary"><%= statuses["running"] %> running</span>
+                        <% end %>
+                    </div>
                     <button type="button"
                             class="btn btn-danger px-2 d-flex align-items-center justify-content-between"
                             data-action="click->experiments#deleteExperiment">

@@ -21,6 +21,10 @@ class ExperimentController < ApplicationController
 
     def delete
         experiment = Experiment.find(params[:experiment_id])
+        root_ids = experiment.description["children"].map{|root| root['tool']['id'] }
+        root_ids.each do |root_id|
+            Tool.destroy(experiment.delete_tool(root_id))
+        end
         experiment.destroy
     end
 
