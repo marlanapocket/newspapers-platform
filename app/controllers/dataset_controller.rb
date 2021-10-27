@@ -83,7 +83,7 @@ class DatasetController < ApplicationController
     end
 
     def export_dataset
-        ExportDatasetWorker.perform_async(current_user.id, params[:dataset_id])
+        ExportDatasetWorker.perform_async(current_user.id, params[:dataset_id], params[:export_type])
         title = Dataset.find(params[:dataset_id]).title
         message = "<p>The export is being prepared. You will be notified when the operation is done.</p>"
         render partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
@@ -95,10 +95,10 @@ class DatasetController < ApplicationController
         rows = params[:per_page].to_i
         res = d.fetch_paginated_documents(params[:page].to_i, rows, params[:sort], params[:sort_order], params[:type])
         docs = res[:docs].map do |solr_doc|
-            if solr_doc['id'].index("_article_") >= 0
-                Article.from_solr_doc solr_doc
-            else
+            if solr_doc['id'].index("_article_").nil?
                 Issue.from_solr_doc solr_doc
+            else
+                Article.from_solr_doc solr_doc
             end
         end
         out[:documents] = render_to_string(layout: false,

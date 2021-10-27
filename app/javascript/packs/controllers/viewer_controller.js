@@ -97,12 +97,6 @@ export default class extends Controller {
         })
     }
 
-    toggleResultSelection(event){
-        if(!['A', 'IMG'].includes(event.target.tagName)) {
-            $(event.target).parents("div.search_result").toggleClass("selected")
-        }
-    }
-
     selectWorkingDataset(event) {
         const datasetID = parseInt($(event.target).find("option:selected").val())
         DatasetAPI.setCurrentWorkingDataset(datasetID, (data) => {})
@@ -121,9 +115,7 @@ export default class extends Controller {
             }
             // Find dataset in list and change nb docs
             const option = $("#working_dataset_select").find(":selected")
-            option.html(`${data['title']} (${data['nbdocs']} docs)`)
-            //unselect all docs
-            $("div.search_result").removeClass("selected")
+            option.html(`${data['title']} (${data['nbissues']+data['nbarticles']} docs)`)
         })
     }
 
@@ -140,9 +132,7 @@ export default class extends Controller {
             }
             // Find dataset in list and change nb docs
             const option = $("#working_dataset_select").find(":selected")
-            option.html(`${data['title']} (${data['nbdocs']} docs)`)
-            //unselect all docs
-            $("div.search_result").removeClass("selected")
+            option.html(`${data['title']} (${data['nbissues']+data['nbarticles']} docs)`)
         })
     }
 

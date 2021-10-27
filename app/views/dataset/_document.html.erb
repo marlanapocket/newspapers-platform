@@ -3,9 +3,10 @@
      data-action="click->dataset#toggleResultSelection"
      data-doc-id="<%= doc.id %>">
     <h5>
-        <a href="/catalog/<%= doc.id %>">
+        <% url = doc.is_a?(Article) ? "/catalog/#{doc.issue_id}?selected=#{doc.id}" : "/catalog/#{doc.id}" %>
+        <a href="<%= url %>">
             <span class="doc_index"><%= doc_index %>.</span>
-            <%= doc.title.nil? ? doc.id : doc.title %>
+            <%= doc.is_a?(Article) ? doc.id : doc.title %>
         </a>
     </h5>
     <div class="row">

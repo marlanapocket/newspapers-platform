@@ -17,8 +17,9 @@ export default class extends Controller {
         }
     }
 
-    export_json(event) {
-        DatasetAPI.exportDataset(this.idValue, (data) => {
+    export(event) {
+        console.log(event)
+        DatasetAPI.exportDataset(this.idValue, event.target.dataset["exportType"], (data) => {
             $("#notifications").append(data)
             for(const notif of $('.toast')) {
                 const notifToast = bootstrap.Toast.getOrCreateInstance(notif)
@@ -29,10 +30,6 @@ export default class extends Controller {
                 })
             }
         })
-    }
-
-    export_zip(event) {
-
     }
 
     deleteSelectedDocuments(event) {

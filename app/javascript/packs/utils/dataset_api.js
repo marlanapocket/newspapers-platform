@@ -114,7 +114,7 @@ export class DatasetAPI {
         })
     }
 
-    static exportDataset(datasetId, callback) {
+    static exportDataset(datasetId, exportType, callback) {
         $.ajax({
             type: "POST",
             url: "/datasets/export_dataset",
@@ -122,7 +122,8 @@ export class DatasetAPI {
                 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
             },
             data: {
-                dataset_id: datasetId
+                dataset_id: datasetId,
+                export_type: exportType
             },
             success: (data, textStatus, jqXHR) => {
                 callback(data)
