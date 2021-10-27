@@ -30,6 +30,7 @@ Rails.application.routes.draw do
     get '/experiments', to: 'experiment#index'
     get '/experiments/update', to: 'experiment#update_experiments_list'
     post '/experiment/create', to: 'experiment#create'
+    post '/experiment/delete', to: 'experiment#delete'
     get '/experiment/:id', to: "experiment#show"
     get '/experiment/:id/load', to: "experiment#load"
     post '/experiment/:id/save', to: "experiment#save"

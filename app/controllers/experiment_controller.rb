@@ -19,6 +19,11 @@ class ExperimentController < ApplicationController
         end
     end
 
+    def delete
+        experiment = Experiment.find(params[:experiment_id])
+        experiment.destroy
+    end
+
     def show
         @experiment = Experiment.find params[:id]
         @tools = @experiment.load_tools

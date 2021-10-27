@@ -1,5 +1,6 @@
 import { Controller } from "stimulus"
 import {ExperimentAPI} from "../utils/experiment_api"
+import {DatasetAPI} from "../utils/dataset_api";
 
 export default class extends Controller {
     static targets = []
@@ -42,5 +43,13 @@ export default class extends Controller {
                 event.target.removeAttribute('disabled')
             }
         })
+    }
+
+    deleteExperiment(event) {
+        const experimentId = event.target.parentElement.dataset['experimentId']
+        const experimentName = event.target.parentElement.dataset['experimentName']
+        if (confirm(`Are you sure you want to delete dataset "${experimentName}"`)) {
+            ExperimentAPI.delete_experiment(experimentId, (data) => {})
+        }
     }
 }

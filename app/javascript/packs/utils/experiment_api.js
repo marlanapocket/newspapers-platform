@@ -17,6 +17,23 @@ export class ExperimentAPI {
         })
     }
 
+    static delete_experiment(experimentId, callback) {
+        $.ajax({
+            type: "POST",
+            url: "/experiment/delete",
+            data: {experiment_id: experimentId},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
+
     static update_experiments_list(callback) {
         $.ajax({
             type: "GET",
