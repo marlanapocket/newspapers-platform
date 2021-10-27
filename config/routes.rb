@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     post "/datasets/export_dataset", to: "dataset#export_dataset"
     get "/datasets/list", to: "dataset#list_datasets"
     get '/dataset/:id', to: 'dataset#show'
+    post "/dataset/toggle_sharing_status", to: "dataset#toggle_sharing_status"
     post "/dataset/:id/paginate", to: "dataset#paginate"
     post '/dataset/create', to: 'dataset#create_dataset'
     post '/dataset/delete', to: 'dataset#delete_dataset'

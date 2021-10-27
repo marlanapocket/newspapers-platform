@@ -89,6 +89,12 @@ class DatasetController < ApplicationController
         render partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
     end
 
+    def toggle_sharing_status
+        @dataset = Dataset.find(params[:dataset_id])
+        @dataset.toggle!(:public)
+        render partial: 'dataset_info'
+    end
+
     def paginate
         out = {}
         d = Dataset.find params['id']

@@ -17,6 +17,12 @@ export default class extends Controller {
         }
     }
 
+    toggleSharingStatus(event) {
+        DatasetAPI.toggleSharingStatus(this.idValue, (data) => {
+            document.getElementById("dataset-info").outerHTML= data
+        })
+    }
+
     export(event) {
         console.log(event)
         DatasetAPI.exportDataset(this.idValue, event.target.dataset["exportType"], (data) => {

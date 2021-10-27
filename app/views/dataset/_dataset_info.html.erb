@@ -20,7 +20,9 @@
                 <% display_status = "Private" %>
             <% end %>
             <span id="sharing_status" class="me-2"><%= display_status %></span>
-            <button id="toggle_sharing_status_button" type="button" class="btn btn-sm btn-primary" value="<%= sharing_status %>"><%= button_text %></button>
+            <button id="toggle_sharing_status_button" type="button"
+                    class="btn btn-sm btn-primary" value="<%= sharing_status %>"
+                    data-action="click->dataset#toggleSharingStatus"><%= button_text %></button>
         </div>
         <hr>
         <div class="d-flex">

@@ -161,4 +161,20 @@ export class DatasetAPI {
             }
         })
     }
+
+    static toggleSharingStatus(dataset_id, callback) {
+        $.ajax({
+            type: "POST",
+            url: `/dataset/toggle_sharing_status`,
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                dataset_id: dataset_id
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            }
+        })
+    }
 }
