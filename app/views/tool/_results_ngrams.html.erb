@@ -1,0 +1,8 @@
+<ul class="list-group">
+    <% tool.results['ngrams'].first(50).each do |ngram| %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <%= ngram[0] %>
+            <span><%= ngram[1] %></span>
+        </li>
+    <% end %>
+</ul>

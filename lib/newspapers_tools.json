@@ -28,7 +28,9 @@
             "name": "metadata",
             "type": "select",
             "values": [
-              "Publication date",
+              "Publication date (per year)",
+              "Publication date (per 5 years)",
+              "Publication date (per 10 years)",
               "Language"
             ],
             "description": "Split the input source into multiples ones.",

@@ -1,0 +1,3 @@
+<% dataset_id = tool.parameters.select{|t| t["name"] == "dataset" }[0]["value"] %>
+<a class="btn btn-primary" href="/dataset/<%= dataset_id %>" target="_blank">Access original dataset</a>
+<!--<pre><%#= JSON.pretty_generate(@tool.results) %></pre>-->

@@ -3,5 +3,5 @@
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 </div>
 <div class="offcanvas-body">
-    <pre><%= JSON.pretty_generate(@tool.results) %></pre>
+    <%= render partial: "tool/results_#{tool.tool_type}", locals: {tool: @tool} %>
 </div>

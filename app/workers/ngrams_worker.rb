@@ -27,7 +27,6 @@ class NgramsWorker
 
     def find_ngrams(tool_id, experiment_id, user_id, documents, n, minimum_frequency)
         total = {}
-        puts documents.join("\n###\n")
         documents.each_with_index do |document, idx|
             out = {
               type: "completion_rate",

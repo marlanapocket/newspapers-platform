@@ -1,5 +1,4 @@
 <% if current_user.id == @experiment.user_id %>
-    <% tools = JSON.parse(@tools_description) %>
     <div id="experiment-container" class="h-100"
          data-controller="experiment"
          data-experiment-experiment-id-value="<%= @experiment.id %>">
@@ -9,7 +8,7 @@
                     <%= render partial: "experiment/experiment_menu" %>
                 </div>
                 <div id="tools_menu" class="h-75 dnd-zone">
-                    <%= render partial: "experiment/tools_menu", locals: {tools: tools} %>
+                    <%= render partial: "experiment/tools_menu", locals: {tools: @tools} %>
                 </div>
             </div>
             <div class="h-100 col-9">

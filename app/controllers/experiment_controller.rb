@@ -31,7 +31,8 @@ class ExperimentController < ApplicationController
     def show
         @experiment = Experiment.find params[:id]
         @tools = @experiment.load_tools
-        @tools_description = File.read("#{Rails.root}/lib/newspapers_tools.json")
+        @tools = JSON.parse(File.read("#{Rails.root}/lib/newspapers_tools.json"))
+        @tools['tools']['processors'].delete_if{ |h| h["type"] == "splitter" }
     end
 
     def update_experiments_list

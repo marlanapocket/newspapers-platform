@@ -28,12 +28,13 @@ export default class extends Controller {
 
     display_results(event) {
         const toolId = $(event.target).closest(".tool-slot-occupied").attr('id').substring(5)
+        const offcanvasElement = $("#params_offcanvas")[0]
+        offcanvasElement.innerHTML = "<div class='d-flex justify-content-center'><div class='mt-5 spinner-border'></div></div>"
+        offcanvasElement.setAttribute("data-tool-slot-id", toolId)
+        offcanvasElement.setAttribute("style", "width: 75vw;")
+        bootstrap.Offcanvas.getInstance(offcanvasElement).show()
         ExperimentAPI.openToolResults(toolId, this.experimentIdValue, (data) => {
-            const offcanvasElement = $("#params_offcanvas")[0]
             offcanvasElement.innerHTML = data
-            offcanvasElement.setAttribute("data-tool-slot-id", toolId)
-            offcanvasElement.setAttribute("style", "width: 75vw;")
-            bootstrap.Offcanvas.getInstance(offcanvasElement).show()
         })
     }
 
