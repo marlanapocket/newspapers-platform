@@ -34,6 +34,23 @@ export class ExperimentAPI {
         })
     }
 
+    static run_experiment(experimentId, callback) {
+        $.ajax({
+            type: "POST",
+            url: "/experiment/run",
+            data: {experiment_id: experimentId},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
+
     static update_experiments_list(callback) {
         $.ajax({
             type: "GET",

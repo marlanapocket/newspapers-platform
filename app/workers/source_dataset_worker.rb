@@ -1,7 +1,7 @@
 class SourceDatasetWorker
     include Sidekiq::Worker
 
-    def perform(tool_id, user_id, experiment_id, tool_type, tool_parameters)
+    def perform(tool_id, user_id, experiment_id, tool_type, tool_parameters, continue=false)
         tool = Tool.find(tool_id)
         tool.status = "running"
         tool.save!
@@ -13,13 +13,23 @@ class SourceDatasetWorker
         tool.results = {type:"documents", docs: docs}
         tool.status = "finished"
         tool.save!
+        experiment = Experiment.find(tool.experiment.id)
         out = {
           type: "refresh_display",
-          html: ApplicationController.render(partial: "experiment/tree", locals: {experiment: Experiment.find(tool.experiment.id)}),
+          html: ApplicationController.render(partial: "experiment/tree", locals: {experiment: experiment}),
           message: 'Done.'
         }
         ActionCable.server.broadcast("notifications.#{user_id}", out)
-
+        if continue
+            experiment.continue_from(tool_id)
+        end
+        if experiment.finished?
+            out = {
+              type: "experiment_finished",
+              message: 'Experiment has finished running.'
+            }
+            ActionCable.server.broadcast("notifications.#{user_id}", out)
+        end
     end
 
     def fetch_docs_from_dataset(tool_id, experiment_id, user_id, dataset_id)
@@ -35,7 +45,7 @@ class SourceDatasetWorker
               type: "completion_rate",
               tool_id: tool_id,
               experiment_id: experiment_id,
-              completion: ((all_docs.size.to_f/d.documents.size)*100).to_i
+              completion: d.documents.size == 0 ? 0 : ((all_docs.size.to_f/d.documents.size)*100).to_i
             }
             ActionCable.server.broadcast("notifications.#{user_id}", out)
         end

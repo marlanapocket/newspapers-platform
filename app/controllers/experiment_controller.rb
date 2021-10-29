@@ -101,6 +101,18 @@ class ExperimentController < ApplicationController
     end
 
     def run_experiment
-
+        out = {}
+        @experiment = Experiment.find(params[:experiment_id])
+        ids = @experiment.get_tool_ids
+        running = false
+        ids.map{|id| Tool.find(id)}.each do |tool|
+            if tool.runnable?
+                tool.run(true)
+                running = true
+            end
+        end
+        out[:html_tree] = render_to_string partial: "tree", locals: {experiment: @experiment}
+        out[:experiment_running] = running
+        render json: out
     end
 end

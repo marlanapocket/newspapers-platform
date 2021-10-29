@@ -24,16 +24,40 @@ class Experiment < ActiveRecord::Base
         end.to_h
     end
 
+    def finished?
+        tools = self.load_tools
+        tools.values.all? { |t| t[:status] == "finished" }
+    end
+
+    def running?
+        tools = self.load_tools
+        tools.values.any? { |t| t[:status] == "running" }
+    end
+
+    def get_tool_ids
+        gather_ids self.description
+    end
+
+    def continue_from(tool_id)
+        locate_tool(self.description, tool_id) do |t|
+            tools_to_start = t['children'].map { |c| c['tool']['id'] }
+            tools_to_start.each do |tool_id|
+                tool = Tool.find(tool_id)
+                tool.run(true) if tool.runnable?
+            end
+        end
+    end
+
     private
 
-    def locate_tool(tree_part, parent_id, &block)
+    def locate_tool(tree_part, tool_id, &block)
         if tree_part.has_key?('tool')
-            if tree_part['tool']['id'] == parent_id
+            if tree_part['tool']['id'] == tool_id
                 yield tree_part
                 return true
             else
                 tree_part['children'].each do |subtree|
-                    return true if locate_tool(subtree, parent_id, &block)
+                    return true if locate_tool(subtree, tool_id, &block)
                 end
             end
         else
@@ -41,7 +65,7 @@ class Experiment < ActiveRecord::Base
                 yield tree_part
             end
             tree_part['children'].each do |subtree|
-                return true if locate_tool(subtree, parent_id, &block)
+                return true if locate_tool(subtree, tool_id, &block)
             end
         end
         false

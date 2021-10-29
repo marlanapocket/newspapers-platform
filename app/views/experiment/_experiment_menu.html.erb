@@ -1,14 +1,21 @@
+<% is_running = @experiment.running? %>
 <div class="card h-100">
     <div class="card-header">
         Experiment
     </div>
     <div class="card-body">
         <h4><%= @experiment.title %></h4>
-        <button type="button"
-                class="btn btn-success d-flex align-items-center justify-content-between"
-                data-action="click->experiment#run_experiment"
-                disabled >
-            <i class="fas fa-play me-2"></i>Run experiment
-        </button>
+        <div class="d-flex justify-content-between">
+            <button id="run_experiment_button"
+                    type="button"
+                    class="btn btn-success d-flex align-items-center justify-content-between"
+                    data-action="click->experiment#run_experiment"
+                    <%= "disabled" if is_running %>>
+                <i class="fas fa-play me-2"></i>
+                <span><%= is_running ? "Running..." : "Run experiment" %></span>
+            </button>
+            <div id="experiment_loader" class="<%= "spinner-border" if is_running %>"></div>
+        </div>
+        <span id="experiment_status"></span>
     </div>
 </div>

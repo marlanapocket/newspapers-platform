@@ -1,7 +1,7 @@
 class NgramsWorker
     include Sidekiq::Worker
 
-    def perform(tool_id, user_id, experiment_id, tool_type, tool_parameters)
+    def perform(tool_id, user_id, experiment_id, tool_type, tool_parameters, continue=false)
         tool = Tool.find(tool_id)
         tool.status = "running"
         tool.save!
@@ -17,12 +17,23 @@ class NgramsWorker
         tool.results = {type:"ngrams", ngrams: ngrams}
         tool.status = "finished"
         tool.save!
+        experiment = Experiment.find(tool.experiment.id)
         out = {
           type: "refresh_display",
-          html: ApplicationController.render(partial: "experiment/tree", locals: {experiment: Experiment.find(tool.experiment.id)}),
+          html: ApplicationController.render(partial: "experiment/tree", locals: {experiment: experiment}),
           message: 'Done.'
         }
         ActionCable.server.broadcast("notifications.#{user_id}", out)
+        if continue
+            experiment.continue_from(tool_id)
+        end
+        if experiment.finished?
+            out = {
+              type: "experiment_finished",
+              message: 'Experiment has finished running.'
+            }
+            ActionCable.server.broadcast("notifications.#{user_id}", out)
+        end
     end
 
     def find_ngrams(tool_id, experiment_id, user_id, documents, n, minimum_frequency)

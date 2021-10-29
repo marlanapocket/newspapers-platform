@@ -11,8 +11,12 @@ class Tool < ActiveRecord::Base
         }
     end
 
-    def run
-        "#{self.tool_type}_worker".camelize.constantize.perform_async(self.id, self.experiment.user.id, self.experiment.id, self.tool_type, self.parameters)
+    def runnable?
+        self.status == "configured" && (self.parent_id.nil? || Tool.find(self.parent_id).status == "finished")
+    end
+
+    def run(continue=false)
+        "#{self.tool_type}_worker".camelize.constantize.perform_async(self.id, self.experiment.user.id, self.experiment.id, self.tool_type, self.parameters, continue)
     end
 
 end

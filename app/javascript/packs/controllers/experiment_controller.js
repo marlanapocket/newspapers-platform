@@ -1,5 +1,6 @@
 import { Controller } from "stimulus"
 import { Draggable } from "@shopify/draggable"
+import Panzoom from '@panzoom/panzoom'
 import {ExperimentAPI} from "../utils/experiment_api"
 
 export default class extends Controller {
@@ -7,8 +8,10 @@ export default class extends Controller {
     static values = {experimentId: Number}
 
     connect() {
-        this.panzoom = this.initPanzoom()
-        this.draggable = this.initDraggable()
+        this.currentPan = {x: 0, y: 0}
+        this.currentScale = 1
+        this.initPanzoom()
+        this.initDraggable()
         new bootstrap.Offcanvas($("#params_offcanvas")[0])
 
         const observer = new MutationObserver((mutations) => {
@@ -18,7 +21,18 @@ export default class extends Controller {
     }
 
     run_experiment(event) {
-
+        $("#experiment_loader").addClass("spinner-border")
+        $("#run_experiment_button").attr("disabled", true)
+        $("#run_experiment_button span").html("Running...")
+        ExperimentAPI.run_experiment(this.experimentIdValue, (data) => {
+            $("#experiment_area").html(data['html_tree'])
+            if (!data['experiment_running']) {
+                $("#experiment_loader").removeClass("spinner-border")
+                $("#run_experiment_button").attr("disabled", false)
+                $("#run_experiment_button span").html("Run experiment")
+            }
+            this.refresh_display()
+        })
     }
 
     run_tool(event) {
@@ -62,51 +76,47 @@ export default class extends Controller {
                 parameters[e.getAttribute("data-param")] = $(e).val()
             })
             ExperimentAPI.editTool(toolId, parameters, this.experimentIdValue, () => {
-                this.panzoom.destroy()
-                this.panzoom = this.initPanzoom()
-                this.draggable.destroy()
-                this.draggable = this.initDraggable()})
+                this.refresh_display()
+            })
         }
     }
 
     delete_tool(event) {
         const toolId = $(event.target).closest('.tool-slot-occupied').attr('id').substring(5)
         ExperimentAPI.deleteTool(toolId, this.experimentIdValue, (data) => {
-            this.panzoom.destroy()
-            this.panzoom = this.initPanzoom()
-            this.draggable.destroy()
-            this.draggable = this.initDraggable()
+            this.refresh_display()
         })
     }
 
     refresh_display() {
+        this.currentPan = this.panzoom.getPan()
+        this.currentScale = this.panzoom.getScale()
         this.panzoom.destroy()
         this.draggable.destroy()
-        this.panzoom = this.initPanzoom()
-        this.draggable = this.initDraggable()
+        this.initPanzoom()
+        this.initDraggable()
     }
 
     initPanzoom() {
         const canvas_elem = document.getElementById("experiment_canvas")
-        const panzoom = Panzoom.default(canvas_elem, {
-            cursor: "auto"
+        this.panzoom = Panzoom(canvas_elem, {
+            cursor: "auto",
+            startScale: this.currentScale,
+            startX: this.currentPan.x,
+            startY: this.currentPan.y
         })
-        canvas_elem.parentElement.removeEventListener('wheel', panzoom.zoomWithWheel)
-        canvas_elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
-        // panzoom.pan(10, 10)
-        // panzoom.zoom(2, { animate: true })
-        return panzoom
+        canvas_elem.addEventListener('wheel', this.panzoom.zoomWithWheel)
     }
 
     initDraggable() {
-        let draggable = new Draggable(document.querySelectorAll('.dnd-zone'), {
+        this.draggable = new Draggable(document.querySelectorAll('.dnd-zone'), {
             draggable: '.tool',
             mirror: { constrainDimensions: true, appendTo: 'body'}
         })
         let mirror2
         let final_dropzone
         let toolsMenu = document.querySelector("#tools_menu")
-        draggable.on('mirror:created', (event) => {
+        this.draggable.on('mirror:created', (event) => {
             $('html,body').css('cursor','grabbing')
             const draggedInputType = $(event.originalSource).data('tool')['input_type']
             mirror2 = event.mirror.cloneNode(true)
@@ -118,7 +128,7 @@ export default class extends Controller {
                 }
             }
         })
-        draggable.on('drag:over:container', (event) => {
+        this.draggable.on('drag:over:container', (event) => {
             if(event.overContainer === toolsMenu){
                 return
             }
@@ -131,7 +141,7 @@ export default class extends Controller {
             }
         })
 
-        draggable.on('drag:out:container', (event) => {
+        this.draggable.on('drag:out:container', (event) => {
             if(event.overContainer === toolsMenu){
                 return;
             }
@@ -139,7 +149,7 @@ export default class extends Controller {
             event.overContainer.innerHTML = ''
             $('html,body').css('cursor','grabbing')
         })
-        draggable.on('drag:stop', (event) => {
+        this.draggable.on('drag:stop', (event) => {
             $('html,body').css('cursor','auto')
             if(final_dropzone != null) {
                 if($(final_dropzone).hasClass("possible-tool-slot")) {
@@ -148,10 +158,7 @@ export default class extends Controller {
                     const parentId = (parent == null) ? null : parent.getAttribute('id').substring(5)
                     ExperimentAPI.addTool(JSON.stringify(tool), parentId, this.experimentIdValue, (data) => {
                         final_dropzone = null
-                        this.panzoom.destroy()
-                        this.panzoom = this.initPanzoom()
-                        this.draggable.destroy()
-                        this.draggable = this.initDraggable()
+                        this.refresh_display()
                     })
                 }
                 else {
@@ -160,6 +167,5 @@ export default class extends Controller {
             }
             $(".tool-slot").removeClass("possible-tool-slot")
         })
-        return draggable
     }
 }
