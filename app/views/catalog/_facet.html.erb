@@ -19,7 +19,9 @@
              data-facets-per-page-value="<%= per_page %>">
             <ul class="list-unstyled">
                 <% entries.each_with_index do |facet, index| %>
-                    <%= render partial: 'facet_entry', locals: {entities_labels: entities_labels, facet_constraints: facet_constraints, field: field, facet: facet, index: index, per_page: per_page} %>
+                    <% if entities_labels[facet['val']] %>
+                        <%= render partial: 'facet_entry', locals: {entities_labels: entities_labels, facet_constraints: facet_constraints, field: field, facet: facet, index: index, per_page: per_page} %>
+                    <% end %>
                 <% end %>
             </ul>
             <div class="facet_pagination"></div>
