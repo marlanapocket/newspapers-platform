@@ -34,7 +34,7 @@ class Article
         solr_doc['from_issue_ssi'] = self.issue_id
         solr_doc['member_of_collection_ids_ssim'] = self.newspaper
         solr_doc['canvases_parts_ssm'] = self.canvases_parts
-        solr_doc['thumbnail_url_ss'] =  "#{pfs.iiif_url}/full/,200/0/default.jpg"
+        solr_doc['thumbnail_url_ss'] =  self.get_iiif_url
         solr_doc['has_model_ssim'] = 'Article'
         solr_doc
     end
