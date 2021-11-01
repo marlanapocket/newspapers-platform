@@ -15,4 +15,17 @@ class Page
         p.image_path = attrs['image_path_ss'] if attrs['image_path_ss']
         p
     end
+
+    def to_solr
+        solr_doc = {}
+        solr_doc['id'] = self.id
+        solr_doc['has_model_ssim'] = 'PageFileSet'
+        solr_doc['page_number_isi'] = self.page_number
+        solr_doc['width_isi'] = self.width
+        solr_doc['height_isi'] = self.height
+        solr_doc['mime_type_ssi'] = self.mime_type
+        solr_doc['iiif_url_ss'] = self.iiif_url
+        solr_doc['ocr_path_ss'] = self.ocr_path
+        solr_doc
+    end
 end

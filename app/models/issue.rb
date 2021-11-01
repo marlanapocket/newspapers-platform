@@ -2,12 +2,12 @@ class Issue
 
     attr_accessor :id, :title, :date_created, :language, :original_uri, :nb_pages, :all_text, :thumbnail_url, :newspaper, :pages, :articles
 
-    def self.from_solr(id, with_pages: false, with_articles: false)
+    def self.from_solr(id, with_pages=false, with_articles=false)
         solr_doc = SolrSearcher.get_doc_by_id id
-        Issue.from_solr_doc(solr_doc, with_pages: with_pages, with_articles: with_articles)
+        Issue.from_solr_doc(solr_doc, with_pages, with_articles)
     end
 
-    def self.from_solr_doc(solr_doc, with_pages: false, with_articles: false)
+    def self.from_solr_doc(solr_doc, with_pages=false, with_articles=false)
         i = Issue.new
         i.id = solr_doc['id']
         i.language = solr_doc['language_ssi']
@@ -32,6 +32,24 @@ class Issue
             end
         end
         i
+    end
+
+    def to_solr
+        solr_doc = {}
+        solr_doc['id'] =  self.id
+        solr_doc['has_model_ssim'] =  'Issue'
+        solr_doc['title_ssi'] =  self.title
+        solr_doc['date_created_ssi'] =  self.date_created
+        solr_doc['date_created_dtsi'] =  DateTime.parse(self.date_created).strftime('%Y-%m-%dT%H:%M:%SZ')
+        solr_doc['language_ssi'] =  self.language
+        solr_doc['original_uri_ss'] =  self.original_uri
+        solr_doc['nb_pages_isi'] =  self.nb_pages
+        solr_doc['thumbnail_url_ss'] =  self.thumbnail_url
+        solr_doc['member_ids_ssim'] =  self.pages.map(&:id)
+        solr_doc['year_isi'] = solr_doc['date_created_ssi'][0..3].to_i
+        solr_doc["member_of_collection_ids_ssim"] = self.newspaper
+        solr_doc["all_text_t#{self.language}_siv"] = self.all_text
+        solr_doc
     end
 
     def self.named_entities(issue_id)
