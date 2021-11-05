@@ -50,4 +50,21 @@ export class SearchAPI {
             }
         })
     }
+
+    static wideDatesHistogram(callback) {
+        $.ajax({
+            type: "POST",
+            url: "/catalog/wide_dates_histogram",
+            data: {},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
 }

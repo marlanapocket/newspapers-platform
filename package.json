@@ -11,6 +11,8 @@
     "@rails/webpacker": "5.4.0",
     "@shopify/draggable": "^1.0.0-beta.8",
     "bootstrap": "^5.0.2",
+    "chart.js": "^3.6.0",
+    "chartjs-plugin-zoom": "^1.1.1",
     "cytoscape": "^3.19.1",
     "cytoscape-dagre": "^2.3.2",
     "expose-loader": "1",

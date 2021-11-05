@@ -84,7 +84,14 @@ export default class extends Controller {
             const text = $.map(this.selectedArticlesValue, (article_id, idx) => {
                 return $(`#${article_id}`).data('text').replaceAll("\"", "").replaceAll("\\n", "<br/>")
             }).join("\n")
-            const title = this.selectedArticlesValue.length == 1 ? this.selectedArticlesValue[0] : "Compound"
+            let title
+            if(this.selectedArticlesValue.length == 1) {
+                title = this.articlesValue.filter(o => o.id === this.selectedArticlesValue[0])[0].title
+                if(title == null)
+                    title = this.selectedArticlesValue[0]
+            }
+            else
+                title = "Compound"
             $(this.selectedArticlePanelTarget).find('h5')[0].innerHTML = title
             $(this.selectedArticlePanelTarget).find('p')[0].innerHTML = text
         }

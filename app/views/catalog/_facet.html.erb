@@ -18,8 +18,9 @@
              data-facets-nb-pages-value="<%= nb_pages %>"
              data-facets-per-page-value="<%= per_page %>">
             <ul class="list-unstyled">
+                <% ne_fields = I18n.t("newspapers.solr_fields").values_at(:persons, :locations, :organisations, :human_productions) %>
                 <% entries.each_with_index do |facet, index| %>
-                    <% if entities_labels[facet['val']] %>
+                    <% if ((!ne_fields.include? field) || (!entities_labels[facet['val']].nil?)) %> <%# Fix for linked NEs without label %>
                         <%= render partial: 'facet_entry', locals: {entities_labels: entities_labels, facet_constraints: facet_constraints, field: field, facet: facet, index: index, per_page: per_page} %>
                     <% end %>
                 <% end %>

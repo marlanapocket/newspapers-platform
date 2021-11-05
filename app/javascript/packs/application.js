@@ -27,3 +27,4 @@ window.$ = $
 window.bootstrap = bootstrap
 window.Panzoom = require('@panzoom/panzoom')
 import "./application.scss"
+import Chart from 'chart.js/auto'

@@ -1,0 +1,24 @@
+<%
+    year_hist = @results['facets']['date_created_dtsi']['buckets'].map { |e| {DateTime.parse(e['val']).year => e['count']} }
+    year_hist = year_hist.inject{|a,b| a.merge(b){|_,x,y| x + y}}
+    year_hist.merge!((year_hist.keys.min..year_hist.keys.max).to_a.map{|e| [e, 0]}.to_h) {|key, oldval, newval| oldval }
+    month_year_hist = @results['facets']['date_created_dtsi']['buckets'].map{ |e| {"#{DateTime.parse(e['val']).year}/%02d" % DateTime.parse(e['val']).month => e['count']} }
+    month_year_hist = month_year_hist.inject{|a,b| a.merge(b){|_,x,y| x + y}}
+    missing_keys = (year_hist.keys.min..year_hist.keys.max).to_a.map{ |e| (1..12).to_a.map{ |f| "#{e}/%02d" % f } }.flatten.map{|t| [t, 0] }.to_h
+    month_year_hist.merge!(missing_keys) {|key, oldval, newval| oldval }
+%>
+<div class="card mb-3"
+     data-controller="dates-histogram"
+     data-dates-histogram-years-value = "<%= year_hist.to_json %>"
+     data-dates-histogram-months-value = "<%= month_year_hist.to_json %>">
+    <div class="card-header">
+        Dates frequencies
+        <button class="btn btn-link" id="wide_date_histogram">
+            <span class="fas fa-plus-circle"></span>
+        </button>
+    </div>
+    <div class="card-body p-1">
+        <canvas id="canvas_dates_histogram"></canvas>
+    </div>
+</div>
+<div id="wide_dates_histogram_modal" class="modal fade"></div>

@@ -22,7 +22,7 @@ class Article
         a
     end
 
-    def to_solr
+    def to_solr(page_iiif_url)
         solr_doc = {}
         solr_doc['id'] = self.id
         solr_doc['title_ssi'] = self.title
@@ -34,7 +34,7 @@ class Article
         solr_doc['from_issue_ssi'] = self.issue_id
         solr_doc['member_of_collection_ids_ssim'] = self.newspaper
         solr_doc['canvases_parts_ssm'] = self.canvases_parts
-        solr_doc['thumbnail_url_ss'] =  self.get_iiif_url
+        solr_doc['thumbnail_url_ss'] =  self.get_iiif_url(page_iiif_url)
         solr_doc['has_model_ssim'] = 'Article'
         solr_doc
     end
@@ -50,7 +50,7 @@ class Article
         [min_x,min_y,canvas_size[0],canvas_size[1]]
     end
 
-    def get_iiif_url
+    def get_iiif_url(page_iiif_url)
         canvas_url = self.canvases_parts[0]
         coords = self.canvases_parts.map { |c| c[c.rindex('#xywh=')+6..-1].split(',').map(&:to_i) }
         min_x = coords.map{ |coord| coord[0] }.min
@@ -58,7 +58,7 @@ class Article
         min_y = coords.map{ |coord| coord[1] }.min
         max_y = coords.map{ |coord| coord[1] + coord[3] }.max
         pagenum = canvas_url[canvas_url.rindex('_')+1...canvas_url.rindex('#')].to_i
-        "https://platform.newseye.eu/iiif/#{self.issue_id}_page_#{pagenum}/#{min_x},#{min_y},#{max_x-min_x},#{max_y-min_y}/full/0/default.jpg"
+        "#{page_iiif_url}/#{min_x},#{min_y},#{max_x-min_x},#{max_y-min_y}/full/0/default.jpg"
     end
 
     def self.named_entities(article_id)

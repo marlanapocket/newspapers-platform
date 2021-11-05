@@ -24,6 +24,9 @@ body .container-fluid {
   border: 2px solid #32a1ce;
   padding: calc(0.5em - 2px);
 }
+#canvas_wide_dates_histogram {
+  height: 60vh;
+}
 ////////////////////////////////////////////
 
 ////////////////// Facets //////////////////
@@ -47,6 +50,11 @@ li.selected_constraint {
 #viewer_container {
   position: relative;
 }
+
+.openseadragon-canvas + div {
+  z-index: 2;
+}
+
 #page_counter {
   position: absolute;
   background-color: #8AF;

@@ -15,7 +15,7 @@ class Issue
         i.title = solr_doc['title_ssi']
         i.date_created = solr_doc['date_created_ssi']
         i.original_uri = solr_doc['original_uri_ss']
-        i.nb_pages = solr_doc['nb_pages_isi']
+        i.nb_pages = solr_doc['member_ids_ssim'].size
         i.thumbnail_url = solr_doc['thumbnail_url_ss']
         i.all_text = solr_doc["all_text_t#{i.language}_siv"]
         if with_pages

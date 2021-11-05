@@ -29,8 +29,11 @@ class SolrQuery
         @hl_dot_fl = @qf
 
         @json_dot_facet = {}
-        I18n.t("newspapers.solr_fields").values_at(:language, :date, :newspaper).each do |f|
+        I18n.t("newspapers.solr_fields").values_at(:language, :newspaper).each do |f|
             @json_dot_facet[f] = { terms: { field: f, limit: 15, numBuckets: true} }
+        end
+        I18n.t("newspapers.solr_fields").values_at(:date).each do |f|
+            @json_dot_facet[f] = { terms: { field: f, limit: -1, numBuckets: true} }
         end
         I18n.t("newspapers.solr_fields").values_at(:month, :day).each do |f|
             @json_dot_facet[f] = { terms: { field: f, limit: 15, numBuckets: true, sort: {index: "asc"}} }

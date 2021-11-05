@@ -30,6 +30,7 @@ class CatalogController < ApplicationController
             session['search_params'] = @solr_params
             session['query_params'] = params.to_unsafe_h.slice('q', 'page', 'per_page','sort', 'f')
             @results = SolrSearcher.query @solr_params
+            puts @results.to_json
             @resulting_docs = @results['response']['docs'].map do |solr_doc|
                 case solr_doc['has_model_ssim']
                 when ['Article']
@@ -50,10 +51,10 @@ class CatalogController < ApplicationController
     def show
         if params[:id].include? "_article_"
             @article = Article.from_solr params[:id]
-            @issue = Issue.from_solr @article.issue_id, with_pages: true, with_articles: true
+            @issue = Issue.from_solr @article.issue_id, with_pages=true, with_articles=true
         else
             @article = nil
-            @issue = Issue.from_solr params[:id], with_pages: true, with_articles: true
+            @issue = Issue.from_solr params[:id], with_pages=true, with_articles=true
         end
     end
 
@@ -100,6 +101,12 @@ class CatalogController < ApplicationController
 
         end
         out[:pagination] = render_to_string(layout: false, partial: 'facet_pagination', locals: {nb_pages: params[:nb_pages].to_i, current_page: params[:current_page].to_i})
+        render json: out
+    end
+
+    def wide_dates_histogram
+        out = {}
+        out[:modal_content] = render_to_string(layout: false, partial: "wide_dates_histogram")
         render json: out
     end
 
