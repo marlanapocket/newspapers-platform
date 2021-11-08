@@ -27,4 +27,5 @@ window.$ = $
 window.bootstrap = bootstrap
 window.Panzoom = require('@panzoom/panzoom')
 import "./application.scss"
+const images = require.context('../images', true)
 import Chart from 'chart.js/auto'

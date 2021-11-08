@@ -1,40 +1,59 @@
-<nav class="navbar navbar-expand-lg">
-    <a class="navbar-brand" href="/">Newspapers</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarContent">
-        <ul class="navbar-nav mr-auto">
-            <% if current_user %>
-                <li class="nav-item">
-                    <a class="nav-link" href="/search">Search</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/datasets">Datasets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/experiments">Experiments</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        User<span class="glyphicon glyphicon-user"></span>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                        <%= link_to "Edit Profile", edit_user_registration_path, class: "dropdown-item" %>
-                        <%= link_to "Disconnect", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
-                    </ul>
-                </li>
-            <% else %>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        User<span class="glyphicon glyphicon-user"></span>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                        <%= link_to t('blacklight.header_links.signup'), new_user_registration_path, class: "dropdown-item" %>
-                        <%= link_to t('blacklight.header_links.login'), new_user_session_path, class: "dropdown-item" %>
-                    </ul>
-                </li>
-            <% end %>
-        </ul>
-    </div>
-</nav>
+<div id="navigation" class="d-flex align-items-center px-3 mb-2 border-bottom border-2 bg-light">
+    <nav class="w-100 p-0 navbar navbar-expand-lg">
+        <a class="navbar-brand" href="/">
+            <%= image_pack_tag "media/images/newseye_logo_small.png" %>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="me-5 w-100 justify-content-end navbar-nav mr-auto">
+                <% if current_user %>
+                    <li class="me-5 nav-item">
+                        <a class="<%= "border-bottom border-4" if request.path.include? "/search" %> h5 nav-link" href="/search">Search</a>
+                    </li>
+                    <li class="me-5 nav-item">
+                        <a class="<%= "border-bottom border-4" if request.path.include? "/dataset" %> h5 nav-link" href="/datasets">Datasets</a>
+                    </li>
+                    <li class="me-5 nav-item">
+                        <a class="<%= "border-bottom border-4" if request.path.include? "/experiment" %> h5 nav-link" href="/experiments">Experiments</a>
+                    </li>
+                    <li class="me-5 nav-item dropdown" style="margin-left: 10vw">
+                        <a class="h5 nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                            <%= link_to "Edit Profile", edit_user_registration_path, class: "dropdown-item" %>
+                            <%= link_to "Disconnect", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+                        </ul>
+                    </li>
+<!--                    <li class="me-5 nav-item dropdown">-->
+<!--                        <a class="h5 nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
+                            <%#= I18n.locale.upcase %>
+<!--                        </a>-->
+<!--                        <ul class="dropdown-menu" aria-labelledby="profileDropdown">-->
+                            <%# I18n.available_locales.each do |loc| %>
+                                <%#= link_to loc.upcase, request.original_url, class: "dropdown-item" unless loc == I18n.locale %>
+                            <%# end %>
+<!--                            <li class="dropdown-item"><%#= link_to "FR", "/locale/fr", remote: true %></li>-->
+<!--                            <li class="dropdown-item"><%#= link_to "EN", "/locale/en", remote: true %></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+                    <li class="me-5 nav-item">
+                        <a class="h5 nav-link">Help</a>
+                    </li>
+                <% else %>
+                    <li class="nav-item dropdown">
+                        <a class="h5 nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                            <%= link_to t('blacklight.header_links.signup'), new_user_registration_path, class: "dropdown-item" %>
+                            <%= link_to t('blacklight.header_links.login'), new_user_session_path, class: "dropdown-item" %>
+                        </ul>
+                    </li>
+                <% end %>
+            </ul>
+        </div>
+    </nav>
+</div>

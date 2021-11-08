@@ -2,7 +2,7 @@ module NamedEntitiesHelper
 
     def get_linked_entities entities
         priority_language = [I18n.locale, 'en', 'de', 'fr', 'fi', 'sv']
-        ids = entities.select{ |label| label != "" }
+        ids = entities.select{ |label| label != "" && label != nil }
         return {} if ids.empty?
         out = {}
         SolrSearcher.query({q: "*:*", fq: "id:(#{ids.join(' ')})", fl: "*", rows: 99999})['response']['docs'].map do |res|

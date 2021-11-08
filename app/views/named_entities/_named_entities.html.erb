@@ -1,3 +1,4 @@
+<% puts named_entities %>
 <% linked_entities = get_linked_entities named_entities.map{ |k,v| v.map{|label, mentions_solr| label } }.flatten.uniq %>
 <div class="accordion w-100">
     <% named_entities.keys.each do |ne_type| %>
@@ -7,7 +8,7 @@
                     <%= t("newspapers.named_entity_type.#{ne_type}") %>
                     <div class="text-secondary ms-2">
                         <% nb_linked = named_entities[ne_type].keys.size %>
-                        <% nb_linked -= 1 if named_entities[ne_type].keys.include? "" %>
+                        <% nb_linked -= 1 if named_entities[ne_type].keys.include?("") || named_entities[ne_type].keys.include?(nil) %>
                         <% nb_mentions = named_entities[ne_type].keys.map{ |nel| named_entities[ne_type][nel].size }.reduce(:+) %>
                         <% nb_mentions = 0 if nb_mentions.nil? %>
                         (<%= nb_linked %> linked entit<%= nb_linked > 1 ? "ies" : "y" %>,
@@ -20,11 +21,11 @@
                     <ul class="list-group list-group-flush">
                         <% sorted_entities = named_entities[ne_type].keys.sort_by{|label| -named_entities[ne_type][label].size } %>
                         <% sorted_entities.each do |label| %>
-                            <% if label != "" %>
+                            <% if label != "" && label != nil %>
                                 <% next if linked_entities[label].nil? %>
                             <% end %>
                             <li class="list-group-item">
-                                <a data-bs-toggle="collapse" href="#entities_<%= ne_type %>_<%= label %>"><%= label == "" ? "Unlinked #{t("newspapers.named_entity_type.#{ne_type}")}" : linked_entities[label][:label] %></a>
+                                <a data-bs-toggle="collapse" href="#entities_<%= ne_type %>_<%= label %>"><%= label == "" || label == nil ? "Unlinked #{t("newspapers.named_entity_type.#{ne_type}")}" : linked_entities[label][:label] %></a>
                                 (<%= named_entities[ne_type][label].size %> mention<%= "s" if named_entities[ne_type][label].size > 1 %>)
                                 <% if !linked_entities[label].nil? and !linked_entities[label][:kb_url].nil? %>
                                     <%= link_to linked_entities[label][:kb_url], class: "float-end", target: :_blank do %>

@@ -1,6 +1,65 @@
 <% set_page_title "Newspaper Platform" %>
-
-<div data-controller="hello">
-    <h1>Test</h1>
-    <button data-action="click->hello#greet" class="btn btn-primary">Yeah <i class="far fa-thumbs-up"></i></button>
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="d-flex align-items-center justify-content-between" style="height: 30vh;">
+        <%= image_pack_tag "media/images/newseye_logo.png", class: "mh-100 ms-auto me-auto d-block" %>
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            <%= image_pack_tag "media/images/eu_flag_yellow.jpg", size: "224x150"%>
+            <p class="w-50">
+                This project has received funding from the
+                European Union’s Horizon 2020 research and
+                innovation programme under grant agreement
+                No 770299.
+            </p>
+        </div>
+    </div>
+    <div class="mt-5 w-75">
+        <h4>Available data</h4>
+        <p>
+            Grâce à cette plateforme, il est possible de rechercher de l’information dans la vingtaine de titres disponibles, en cinq langues différentes.
+            Ces titres de presse ont été fournis par les trois bibliothèques partenaires du projet : la Bibliothèque Nationale de France (BNF),
+            la Bibliothèque Nationale d’Autriche (ONB) et la Bibliothèque Nationale de Finlande (NLF). En voici la liste :
+            <ul class="list-group list-group-horizontal">
+                <li class="list-group-item">
+                    <h5>BNF (French)</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><span class="text-decoration-underline">La Presse</span> : 1850-1890</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Le Matin</span> : 1884-1944</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">La Fronde</span> : 1897-1929</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Marie-Claire</span> : 1937-1944</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">L’Œuvre</span> : 1915-1944</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Le Gaulois</span> : 1868-1900</li>
+                    </ul>
+                </li>
+                <li class="list-group-item">
+                    <h5>ONB (German)</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><span class="text-decoration-underline">Neue Freie Presse</span> : 1864-1873, 1895-1900, 1911-1922 et 1933-1939</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Illustrierte Kronen Zeitung</span> : 1911-1922 et 1933-1939</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Innsbrucker Nachrichten</span> : 1864-1873, 1895-1900, 1911-1922 et 1933-1939</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Arbeiter Zeitung</span> : 1895-1900, 1911-1922 et 1933-1939</li>
+                    </ul>
+                </li>
+                <li class="list-group-item">
+                    <h5>NLF (Finnish)</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><span class="text-decoration-underline">Sanomia Turusta</span> : 1850-1900</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Aura</span> : 1880-1896</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Uusi Aura</span> : 1897-1918</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Suometar</span> : 1847-1866</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Uusi Suometar</span> : 1869-1918</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Païvalehti</span> : 1889-1904</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Helsingin Sanomat</span> : 1904-1918</li>
+                    </ul>
+                </li>
+                <li class="list-group-item">
+                    <h5>NLF (Swedish)</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><span class="text-decoration-underline">Åbo Underrättelser</span> : 1824-1827 et 1829-1918</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Västra Finland</span> : 1895-1918</li>
+                        <li class="list-group-item"><span class="text-decoration-underline">Hufvudstadsbladet</span> : 1864-1918</li>
+                    </ul>
+                </li>
+            </ul>
+        </p>
+    </div>
 </div>
