@@ -64,7 +64,9 @@ class DatasetController < ApplicationController
         out['notif'] = render_to_string layout: false, partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
         out['nbissues'] = dataset.documents.select{|d| d['type'] == "issue" }.size
         out['nbarticles'] = dataset.documents.select{|d| d['type'] == "article" }.size
+        out['nbdocs'] = out['nbissues'] + out['nbarticles']
         out['title'] = title
+        out['results_datasets'] = params[:documents_ids].map{ |docid| [docid, render_to_string(layout: false, partial: 'catalog/result_datasets', locals: {doc_id: docid})] }.to_h
         render json: out
     end
 

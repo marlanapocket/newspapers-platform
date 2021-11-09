@@ -30,4 +30,7 @@
             <a href="<%= url %>"><img class="h-auto w-100" src="<%= result.thumbnail_url %>"/></a>
         </div>
     </div>
+    <div class="in_datasets">
+        <%= render partial: "result_datasets", locals: {doc_id: result.id} %>
+    </div>
 </div>

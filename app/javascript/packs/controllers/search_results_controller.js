@@ -24,6 +24,7 @@ export default class extends Controller {
             return document.getAttribute("data-doc-id")
         }).get()
         DatasetAPI.addSelectedDocumentsToWorkingDataset(documentsIds, (data)=> {
+            console.log(data)
             $("#notifications").append(data['notif'])
             for(const notif of $('.toast')) {
                 const notifToast = bootstrap.Toast.getOrCreateInstance(notif)
@@ -40,6 +41,11 @@ export default class extends Controller {
 
             //unselect all docs
             $("div.search_result").removeClass("selected")
+
+            //Add dataset pill under selected documents
+            for(const doc_id of Object.keys(data['results_datasets'])) {
+                $(`.search_result[data-doc-id=\"${doc_id}\"] .in_datasets`).html(data['results_datasets'][doc_id])
+            }
         })
     }
 

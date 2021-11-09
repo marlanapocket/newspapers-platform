@@ -1,0 +1,11 @@
+<% in_datasets = current_user.datasets_with_doc(doc_id) %>
+<% unless in_datasets.empty? %>
+    <p>
+        Currently belongs to:
+        <% in_datasets.each do |dataset_id, dataset_title| %>
+            <%= link_to "/dataset/#{dataset_id}" do %>
+                <span class="dataset-<%= dataset_id %> badge rounded-pill bg-primary"><%= dataset_title %></span>
+            <% end %>
+        <% end %>
+    </p>
+<% end %>

@@ -19,6 +19,10 @@ class Dataset < ActiveRecord::Base
         self.save
     end
 
+    def contains doc_id
+        self.documents.index { |doc| doc['id'] == doc_id }.nil? ? false : true
+    end
+
     def nb_issues
         self.documents.select do |doc|
             doc['type'] == 'issue'
