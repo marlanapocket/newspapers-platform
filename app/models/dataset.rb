@@ -5,13 +5,17 @@ class Dataset < ActiveRecord::Base
     validates :title, length: { minimum: 1 }
 
     def add_documents(documents_ids)
+        existing = []
         documents_ids.each do |doc_id|
-            unless self.documents.any?{ |doc| doc['id'] == doc_id }
+            if self.documents.any?{ |doc| doc['id'] == doc_id }
+                existing << doc_id
+            else
                 doc_type = doc_id.index("_article_").nil? ? "issue" : "article"
                 self.documents << {id: doc_id, type: doc_type}
             end
         end
         self.save
+        return existing
     end
 
     def remove_documents(documents_ids)

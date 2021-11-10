@@ -57,9 +57,11 @@ class DatasetController < ApplicationController
         out = {}
         @nb_added_docs = params[:documents_ids].size
         dataset = Dataset.find(session[:working_dataset])
-        dataset.add_documents params[:documents_ids]
+        existing = dataset.add_documents params[:documents_ids]  # Add docs and return existing ids
+        @nb_added_docs -= existing.size
         title = dataset.title
-        message = "<p> #{@nb_added_docs} documents were added to your dataset.</p>"
+        message = "<p> #{@nb_added_docs} document#{@nb_added_docs > 1 ? "s were" : " was"} added to your dataset.</p>"
+        message.concat "<p>#{existing.size} document#{existing.size > 1 ? "s" : ""} already exist in this dataset.</p>" unless existing.empty?
         # render partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
         out['notif'] = render_to_string layout: false, partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
         out['nbissues'] = dataset.documents.select{|d| d['type'] == "issue" }.size

@@ -19,8 +19,10 @@ class SearchToDatasetWorker
             numFound = res['response']['numFound']
             doc_ids.concat res['response']['docs'].map{|d| d['id']}
         end
-        dataset.add_documents doc_ids
-        content = "<p>#{doc_ids.size} documents were added to your dataset <strong>\"#{dataset.title}\"</strong></p>"
+        existing = dataset.add_documents doc_ids
+        nb_docs_added = doc_ids.size - existing.size
+        content = "<p>#{nb_docs_added} document#{nb_docs_added > 1 ? "s were" : " was"} added to your dataset <strong>\"#{dataset.title}\"</strong></p>"
+        content.concat "<p>#{existing.size} document#{existing.size > 1 ? "s" : ""} already exist in this dataset.</p>" unless existing.empty?
         # TODO: next line may cause bugs with the working dataset
         dataset_options = options_for_select(User.find(user_id).datasets.map{|d| ["#{d.title} (#{d.documents.size} docs)", d.id]})
         ActionCable.server.broadcast("notifications.#{user_id}", {
