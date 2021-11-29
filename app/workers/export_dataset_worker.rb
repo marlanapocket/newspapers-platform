@@ -36,7 +36,7 @@ class ExportDatasetWorker
                               else
                                   ne['stance_fsi'] > 0 ? "positive" : "negative"
                               end,
-                      linked_entity_url: ne['linked_entity_ssi'] == "" ? nil : "https://www.wikidata.org/wiki/#{ne['linked_entity_ssi'].split('_')[-1]}"
+                      linked_entity_url: ne['linked_entity_ssi'] == ""  || ne['linked_entity_ssi'].nil? ? nil : "https://www.wikidata.org/wiki/#{ne['linked_entity_ssi'].split('_')[-1]}"
                     }
                 end
                 unless under_copyright(lang, doc.date_created, User.find(user_id))
