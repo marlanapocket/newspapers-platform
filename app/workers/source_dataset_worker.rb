@@ -51,11 +51,11 @@ class SourceDatasetWorker
         end
         all_docs.map do |doc|
             {
-              id: doc['id'],
-              newspaper: doc["member_of_collection_ids_ssim"][0],
-              language: doc["language_ssi"],
-              text: doc[doc.keys.select{|k|k.start_with?("all_text_t")}[0]],
-              date: doc["date_created_dtsi"]
+              id: doc.id,
+              newspaper: doc.newspaper,
+              language: doc.language,
+              text: doc.all_text,
+              date: doc.date_created
             }
         end
     end

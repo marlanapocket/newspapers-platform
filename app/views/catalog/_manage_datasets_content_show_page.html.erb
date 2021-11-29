@@ -10,8 +10,11 @@
                 <%= options_for_select(current_user.datasets.map{ |d| ["#{d.title} (#{d.documents.size} docs)", d.id]}, session[:working_dataset]) %>
             </select>
         </div>
-        <button class="btn btn-sm btn-secondary" data-viewer-target="addArticleButton" data-action="click->viewer#addSelectedArticleToWorkingDataset">
+        <button class="d-none btn btn-sm btn-secondary" data-viewer-target="addArticleButton" data-action="click->viewer#addSelectedArticleToWorkingDataset">
             Add selected article
+        </button>
+        <button class="d-none btn btn-sm btn-secondary" data-viewer-target="addCompoundArticleButton" data-action="click->viewer#addSelectedCompoundArticleToWorkingDataset">
+            Add selected compound article
         </button>
         <button class="btn btn-sm btn-secondary" data-action="click->viewer#addEntireIssueToWorkingDataset">
             Add entire issue

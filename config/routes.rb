@@ -10,14 +10,18 @@ Rails.application.routes.draw do
     get '/search', to: 'catalog#index'
     get '/catalog/:id', to: 'catalog#show'
     post '/catalog/facet_pagination', to: 'catalog#paginate_facets'
-    post '/named_entities', to: 'catalog#named_entities_for_doc'
+    post '/named_entities', to: 'catalog#named_entities_for_docs'
     post '/dataset_named_entities', to: 'catalog#named_entities_for_dataset'
     post '/catalog/wide_dates_histogram', to: 'catalog#wide_dates_histogram'
+    post '/catalog/confirm_compound_creation', to: 'catalog#confirm_compound_creation'
+    post '/catalog/create_compound', to: 'catalog#create_compound'
+    post '/catalog/delete_compound', to: 'catalog#delete_compound'
 
     get '/datasets', to: 'dataset#index'
     get '/datasets/update', to: 'dataset#update_datasets_list'
     post '/datasets/working_dataset', to: 'dataset#set_working_dataset'
     post "/datasets/add_selected_documents", to: "dataset#add_selected_documents"
+    post "/datasets/add_compound", to: "dataset#add_compound"
     post "/datasets/remove_selected_documents", to: "dataset#remove_selected_documents"
     post "/datasets/add_all_documents", to: "dataset#add_all_documents"
     post "/datasets/export_dataset", to: "dataset#export_dataset"

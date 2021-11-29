@@ -10,10 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_15_140752) do
+ActiveRecord::Schema.define(version: 2021_11_23_112405) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "compound_articles", force: :cascade do |t|
+    t.string "title"
+    t.string "issue_id"
+    t.string "newspaper"
+    t.string "date_created"
+    t.string "thumbnail_url"
+    t.string "language"
+    t.text "all_text"
+    t.bigint "user_id"
+    t.string "parts", default: [], array: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["title", "user_id"], name: "index_compound_articles_on_title_and_user_id", unique: true
+    t.index ["user_id"], name: "index_compound_articles_on_user_id"
+  end
 
   create_table "datasets", force: :cascade do |t|
     t.string "title"
@@ -34,6 +50,15 @@ ActiveRecord::Schema.define(version: 2021_09_15_140752) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["title", "user_id"], name: "index_experiments_on_title_and_user_id", unique: true
     t.index ["user_id"], name: "index_experiments_on_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "content"
+    t.boolean "read", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "tools", force: :cascade do |t|
@@ -63,8 +88,10 @@ ActiveRecord::Schema.define(version: 2021_09_15_140752) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "compound_articles", "users"
   add_foreign_key "datasets", "users"
   add_foreign_key "experiments", "users"
+  add_foreign_key "notifications", "users"
   add_foreign_key "tools", "experiments"
   add_foreign_key "tools", "tools", column: "parent_id"
 end

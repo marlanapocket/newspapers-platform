@@ -3,7 +3,15 @@
      data-action="click->dataset#toggleResultSelection"
      data-doc-id="<%= doc.id %>">
     <h5>
-        <% url = doc.is_a?(Article) ? "/catalog/#{doc.issue_id}?selected=#{doc.id}" : "/catalog/#{doc.id}" %>
+        <%
+            if doc.is_a?(Article)
+               url = "/catalog/#{doc.issue_id}?selected=#{doc.id}"
+           elsif doc.is_a?(CompoundArticle)
+               url = "/catalog/#{doc.issue_id}?selected_compound=#{doc.id}"
+           else
+               url = "/catalog/#{doc.id}"
+           end
+        %>
         <a href="<%= url %>">
             <span class="doc_index"><%= doc_index %>.</span>
             <%= doc.is_a?(Article) ? doc.id : doc.title %>

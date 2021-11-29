@@ -19,7 +19,9 @@ module NewspapersPlatform
         # config.time_zone = "Central Time (US & Canada)"
         # config.eager_load_paths << Rails.root.join("extras")
         config.solr = config_for('solr')
-
+        if File.exist? "#{Rails.root}/config/auths.yml"
+            config.auths = config_for('auths')
+        end
         config.active_job.queue_adapter = :sidekiq
     end
 end

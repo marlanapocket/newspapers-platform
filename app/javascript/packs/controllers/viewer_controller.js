@@ -1,25 +1,158 @@
 import { Controller } from "stimulus"
 import { SearchAPI } from "../utils/search_api"
-import {DatasetAPI} from "../utils/dataset_api";
+import {DatasetAPI} from "../utils/dataset_api"
+import Sortable from 'sortablejs'
 
 export default class extends Controller {
-    static targets = ['currentPage', 'articleOverlay', 'selectedArticlePanel', 'addArticleButton']
-    static values = {currentPage: Number, nbpages: Number, pages: Array, articles: Array, selectedArticles: Array, issueId: String}
+    static targets = ['currentPage', 'articleOverlay', 'selectedArticlePanel', 'addArticleButton', 'addCompoundArticleButton', 'compoundArticlePanel']
+    static values = {currentPage: Number, nbpages: Number, pages: Array, articles: Array, selectedArticles: Array, issueId: String, compoundMode: Boolean}
 
     isDragged = false
     viewer = null
+    named_entities = null
+    selectedCompound = null
 
     connect() {
         const selectedParam = (new URL(window.location.href)).searchParams.get('selected')
+        const selectedCompoundParam = (new URL(window.location.href)).searchParams.get('selected_compound')
         if (selectedParam == null) {
             this.selectedArticlesValue = []
+            if (selectedCompoundParam != null) {
+                const compoundParts = $(`#compound-articles-panel li[data-compound-id="${selectedCompoundParam}"]`).data('parts')
+                this.selectedCompound = {id: selectedCompoundParam, parts: compoundParts}
+                $(`#compound-articles-panel li[data-compound-id="${selectedCompoundParam}"]`).addClass("active")
+            }
         }
         else {
             this.selectedArticlesValue = [selectedParam]
         }
         this.setup_viewer()
-        this.load_named_entities((this.selectedArticlesValue.length == 0) ? this.issueIdValue : this.selectedArticlesValue[0])
+        this.named_entities = this.load_named_entities([this.issueIdValue])
+        this.display_named_entities((this.selectedArticlesValue.length == 0) ? this.issueIdValue : this.selectedArticlesValue[0])
         this.setup_mention_click()
+        this.setup_compound()
+        this.sortable = new Sortable(document.getElementById("compound_list"), {
+            handle: ".li-handle",  // Drag handle selector within list items
+            draggable: ".cmpnd-item"  // Specifies which items inside the element should be draggable
+        })
+    }
+
+    setup_compound() {
+        // Compound Mode Activation/Deactivation
+        $("#compound_switch").prop('checked', false)
+        $("#compound_switch").on("change", (event) => {
+            this.compoundModeValue = !this.compoundModeValue
+            if(this.compoundModeValue) { // if compound mode is being activated
+                this.unselectArticles()
+                this.unselect_compound_article()
+                $("#compound_articles_list li").removeClass("active")
+                $("#compound_card_content").removeClass("d-none")
+            }
+            else { // Compound deactivated
+                $("#compound_list").html("")
+                $("#compound_card_content").addClass("d-none")
+                $('div.article_overlay_compound_selected').removeClass("article_overlay_compound_selected")
+                this.selectedArticlesValue = []
+            }
+        })
+        // Delete article part when creating a compound article
+        $("#compound-articles-panel").on("click", ".delete_article_part", (event) => {
+            const articleId = $(event.target).parents('li').data('id')
+            $(`#${articleId}`).removeClass("article_overlay_compound_selected")
+            this.selectedArticlesValue = this.selectedArticlesValue.filter(item => item !== articleId)
+            $(`li[data-id="${articleId}"]`).remove()
+            return false
+        })
+        // Open the modal to validate and create the compound article
+        $("#create_compound_button").on("click", (event) => {
+            const article_parts = new Map(this.selectedArticlesValue.map((artid) => {
+                return [artid, $(`#${artid}`).data('text')]
+            }))
+            if(article_parts.length !== 0) {
+                SearchAPI.confirm_compond_creation(Object.fromEntries(article_parts), (data) => {
+                    $("#confirm_compound_modal").html(data.modal_content)
+                    let myModal = new bootstrap.Modal(document.getElementById('confirm_compound_modal'), {})
+                    myModal.toggle()
+                })
+            }
+        })
+        // On the modal, actual creation of the compound article
+        $("#confirm_compound_modal").on("click", "#create-compound-button", (event) => {
+            $("#compound_logs").html("")
+            const title = $("#compound-title").val()
+            const all_text = this.selectedArticlesValue.map((artid) => {return $(`#${artid}`).data('text') }).join("\n")
+            event.target.setAttribute('disabled', 'disabled')
+            event.target.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Loading`
+            SearchAPI.create_compound(title, all_text, this.issueIdValue, this.selectedArticlesValue, (data) => {
+                if(data.status === 'ok') {
+                    bootstrap.Modal.getInstance(document.getElementById('confirm_compound_modal')).hide()
+                    $("#compound_articles_list").html(data.html)
+                    $("#compound_switch").prop("checked", false).change()
+                }
+                else {
+                    $("#compound_logs").html(data['message'])
+                    event.target.innerHTML = "Create"
+                    event.target.removeAttribute('disabled')
+                }
+            })
+        })
+        // Delete a previously created compound article
+        $("#compound_articles_list").on("click", ".delete_compound_article", (event) => {
+            const parent_li = $(event.target).parents('li')
+            const compoundId = parent_li.data('compound-id')
+            this.unselect_compound_article(compoundId)
+            SearchAPI.delete_compound_article(compoundId, (data) => {
+                $("#compound_articles_list").html(data.html)
+            })
+            return false
+        })
+        // Compound article selection
+        $("#compound_articles_list").on("click", "li", (event) => {
+            const elt = $(event.target)
+            if(elt.hasClass("active"))
+                this.unselect_compound_article(elt.data('compoundId'))
+            else
+                this.select_compound_article(elt.data('compoundId'))
+            return false
+        })
+    }
+
+    select_compound_article(compoundId) {
+        const compoundParts = $(`#compound-articles-panel li[data-compound-id="${compoundId}"]`).data('parts')
+        this.selectedCompound = {id: compoundId, parts: compoundParts}
+        $("#compound-articles-panel li").removeClass("active")
+        $(`#compound-articles-panel li[data-compound-id="${compoundId}"]`).addClass("active")
+        this.unselectArticles()
+        $(this.addArticleButtonTarget).addClass("d-none")
+        $(this.addCompoundArticleButtonTarget).removeClass("d-none")
+        $(".article_overlay_compound_selected").removeClass("article_overlay_compound_selected").addClass("article_overlay")
+        for(const part_id of this.selectedCompound.parts) {
+            $(`#${part_id}`).addClass("article_overlay_compound_selected")
+        }
+        if (window.history.replaceState) {
+            let url = new URL(window.location.href)
+            url.searchParams.set('selected_compound', this.selectedCompound.id)
+            window.history.replaceState(null, '', url.toString())
+        }
+        this.load_named_entities(this.selectedCompound.parts)
+        this.updateSelectedArticlePanel()
+    }
+
+    unselect_compound_article(compoundId) {
+        $(this.addCompoundArticleButtonTarget).addClass("d-none")
+        this.selectedCompound = null
+        if (compoundId == undefined)
+            $(`#compound-articles-panel li`).removeClass("active")
+        else
+            $(`#compound-articles-panel li[data-compound-id="${compoundId}"]`).removeClass("active")
+        $(".article_overlay_compound_selected").removeClass("article_overlay_compound_selected").addClass("article_overlay")
+        if (window.history.replaceState) {
+            let url = new URL(window.location.href)
+            url.searchParams.delete('selected_compound')
+            window.history.replaceState(null, '', url.toString())
+        }
+        this.load_named_entities([this.issueIdValue])
+        this.updateSelectedArticlePanel()
     }
 
     setup_mention_click() {
@@ -40,44 +173,99 @@ export default class extends Controller {
             this.isDragged = false
         }
         else {
-            this.hide_mask()
             const articleId = event.target.getAttribute('id')
             // If the article is already selected
             if(this.selectedArticlesValue.includes(articleId)) {
-                $(this.addArticleButtonTarget).addClass("d-none")
-                $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
-                this.load_named_entities(this.issueIdValue)
-                $(event.target).removeClass("article_overlay_selected").addClass("article_overlay")
-                this.selectedArticlesValue = this.selectedArticlesValue.filter(item => item !== $(event.target).attr('id'))
-                // Change url param for selected article
-                if (window.history.replaceState) {
-                    let url = new URL(window.location.href)
-                    url.searchParams.delete('selected')
-                    window.history.replaceState(null, '', url.toString())
+                if(this.compoundModeValue) {
+                    $(event.target).removeClass("article_overlay_compound_selected")
+                    this.selectedArticlesValue = this.selectedArticlesValue.filter(item => item !== articleId)
+                    $(`li[data-id="${articleId}"]`).remove()
+                }
+                else {
+                    this.unselectArticles(articleId)
                 }
             }
             else {  // If the article is not yet selected
-                $(this.addArticleButtonTarget).removeClass("d-none")
-                $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
-                this.load_named_entities(articleId)
-                $(".article_overlay_selected").removeClass("article_overlay_selected").addClass("article_overlay")
-                $(event.target).addClass("article_overlay_selected").removeClass("article_overlay")
-                this.selectedArticlesValue = [$(event.target).attr('id')]
-                this.display_mask($(event.target).data('loc'))
-                // Change url param for selected article
-                if (window.history.replaceState) {
-                    let url = new URL(window.location.href)
-                    url.searchParams.set('selected', event.target.getAttribute('id'))
-                    window.history.replaceState(null, '', url.toString())
+                if(this.compoundModeValue) {
+                    $(event.target).addClass("article_overlay_compound_selected")
+                    const arr = this.selectedArticlesValue
+                    arr.push(articleId)
+                    this.selectedArticlesValue = arr
+                    const list_elt = $(`<li data-id="${articleId}" class="list-group-item cmpnd-item"></li>`)
+                    const text = $(`<div class="text_part" style="display: inline;">${$(event.target).data("text").slice(1,-1).substring(0,37)}...</div>`)
+                    const delete_span = $(`<a class="delete_article_part text-danger float-end" href="#"><span class="fas fa-times"></span></a>`)
+                    const move_span = $(`<i class="fas fa-grip-vertical li-handle" style="color: black"></i>`)
+                    list_elt.append(move_span)
+                    list_elt.append(text)
+                    list_elt.append(delete_span)
+                    $("#compound_list").append(list_elt)
+                }
+                else {
+                    this.hide_mask()
+                    $(this.addArticleButtonTarget).removeClass("d-none")
+                    this.selectedCompound = null
+                    $(this.addCompoundArticleButtonTarget).addClass("d-none")
+                    $("#compound_articles_list li").removeClass("active")
+                    $(".article_overlay_compound_selected").removeClass("article_overlay_compound_selected").addClass("article_overlay")
+                    $(".article_overlay_selected").removeClass("article_overlay_selected").addClass("article_overlay")
+                    $(event.target).addClass("article_overlay_selected").removeClass("article_overlay")
+                    this.selectedArticlesValue = [articleId]
+                    this.display_mask($(event.target).data('loc'))
+                    // Change url param for selected article
+                    if (window.history.replaceState) {
+                        let url = new URL(window.location.href)
+                        url.searchParams.delete('selected_compound')
+                        url.searchParams.set('selected', articleId)
+                        window.history.replaceState(null, '', url.toString())
+                    }
+                    $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
+                    this.load_named_entities([articleId])
+                    this.updateSelectedArticlePanel()
                 }
             }
-            this.updateSelectedArticlePanel()
         }
+    }
+
+    unselectArticles(articleId) {
+        this.hide_mask()
+        $(this.addArticleButtonTarget).addClass("d-none")
+        $(".article_overlay_selected").removeClass("article_overlay_selected").addClass("article_overlay")
+        if (articleId === undefined) {
+            if (this.selectedArticlesValue.length !== 0) {
+                $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
+                this.load_named_entities([this.issueIdValue])
+            }
+            this.selectedArticlesValue = []
+        }
+        else {
+            this.selectedArticlesValue = this.selectedArticlesValue.filter(item => item !== articleId)
+            $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
+            this.load_named_entities([this.issueIdValue])
+        }
+
+        // Change url param for selected article
+        if (window.history.replaceState) {
+            let url = new URL(window.location.href)
+            url.searchParams.delete('selected')
+            window.history.replaceState(null, '', url.toString())
+        }
+        this.updateSelectedArticlePanel()
     }
 
     updateSelectedArticlePanel() {
         if(this.selectedArticlesValue.length == 0) {
-            this.selectedArticlePanelTarget.hidden = true
+            if(this.selectedCompound) {
+                this.selectedArticlePanelTarget.hidden = false
+                const text = $.map(this.selectedCompound.parts, (article_id, idx) => {
+                    const art = this.articlesValue.filter(elt => elt.id == article_id)[0]
+                    return art.all_text.replaceAll("\"", "").replaceAll("\\n", "<br/>")
+                }).join("\n")
+                $(this.selectedArticlePanelTarget).find('h5')[0].innerHTML = ""
+                $(this.selectedArticlePanelTarget).find('p')[0].innerHTML = text
+            }
+            else {
+                this.selectedArticlePanelTarget.hidden = true
+            }
         }
         else {
             this.selectedArticlePanelTarget.hidden = false
@@ -98,10 +286,14 @@ export default class extends Controller {
 
     }
 
-    load_named_entities(docId) {
-        SearchAPI.load_named_entities(docId, (data) => {
+    load_named_entities(docsIds) {
+        SearchAPI.load_named_entities(docsIds, (data) => {
             $('#named-entities-panel').find(".card-body").html(data)
         })
+    }
+
+    display_named_entities(docId) {
+        console.log(this.named_entities)
     }
 
     selectWorkingDataset(event) {
@@ -126,6 +318,23 @@ export default class extends Controller {
         })
     }
 
+    addSelectedCompoundArticleToWorkingDataset(event) {
+        DatasetAPI.addSelectedCompoundToWorkingDataset(this.selectedCompound.id, (data) => {
+            $("#notifications").append(data['notif'])
+            for(const notif of $('.toast')) {
+                const notifToast = bootstrap.Toast.getOrCreateInstance(notif)
+                notifToast.show()
+                notif.addEventListener('hidden.bs.toast', (event) => {
+                    bootstrap.Toast.getOrCreateInstance(event.target).dispose()
+                    event.target.remove()
+                })
+            }
+            // Find dataset in list and change nb docs
+            const option = $("#working_dataset_select").find(":selected")
+            option.html(`${data['title']} (${data['nbissues']+data['nbarticles']+data['nbcompounds']} docs)`)
+        })
+    }
+
     addEntireIssueToWorkingDataset(event) {
         DatasetAPI.addSelectedDocumentsToWorkingDataset([this.issueIdValue], (data)=> {
             $("#notifications").append(data['notif'])
@@ -147,8 +356,18 @@ export default class extends Controller {
         const selectedArticleObject = this.articlesValue.filter((elt)=>{return elt.id == this.selectedArticlesValue[0]})[0]
         let initialPage = null
         if(selectedArticleObject == undefined) {
-            initialPage = 0
-            $(this.addArticleButtonTarget).addClass("d-none")
+            if(this.selectedCompound) {
+                $(this.addCompoundArticleButtonTarget).removeClass("d-none")
+                $(this.addArticleButtonTarget).addClass("d-none")
+                const first_article_part = this.articlesValue.filter((elt)=>{return elt.id == this.selectedCompound.parts[0]})[0]
+                const pagenum = first_article_part.canvases_parts[0]
+                initialPage = parseInt(pagenum.substring(pagenum.lastIndexOf('_')+1, pagenum.lastIndexOf("#xywh")))-1
+            }
+            else {
+                initialPage = 0
+                $(this.addArticleButtonTarget).addClass("d-none")
+                $(this.addCompoundArticleButtonTarget).addClass("d-none")
+            }
         }
         else {
             $(this.addArticleButtonTarget).removeClass("d-none")
@@ -173,7 +392,7 @@ export default class extends Controller {
             this.currentPageValue = data.page + 1
             this.currentPageTarget.innerHTML = this.currentPageValue
             $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
-            this.load_named_entities(this.issueIdValue)
+            this.load_named_entities([this.issueIdValue])
             this.selectedArticlesValue = []
             if (window.history.replaceState) {
                 let url = new URL(window.location.href)
@@ -196,7 +415,12 @@ export default class extends Controller {
                         article_class = "article_overlay_selected"
                     }
                     else {
-                        article_class = "article_overlay"
+                        if(this.selectedCompound !== null && this.selectedCompound.parts.includes(article.id)) {
+                            article_class = "article_overlay_compound_selected"
+                        }
+                        else {
+                            article_class = "article_overlay"
+                        }
                     }
                     let elt = $(`<div id="${article.id}" class="${article_class}"></div>`)
                     elt.attr("data-viewer-target", "articleOverlay")

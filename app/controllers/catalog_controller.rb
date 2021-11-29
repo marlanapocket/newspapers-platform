@@ -58,11 +58,26 @@ class CatalogController < ApplicationController
         end
     end
 
-    def named_entities_for_doc
-        if params[:doc_id].index('_article_').nil?
-            named_entities = Issue.named_entities params[:doc_id]
-        else
-            named_entities = Article.named_entities params[:doc_id]
+    def named_entities_for_docs
+        named_entities = {LOC: {}, PER: {}, ORG: {}, HumanProd: {}}
+        params[:docs_ids].each do |doc_id|
+            if doc_id.index('_article_').nil?
+                doc_named_entities = Issue.named_entities doc_id
+            else
+                doc_named_entities = Article.named_entities doc_id
+            end
+            named_entities[:LOC] = named_entities[:LOC].merge(doc_named_entities[:LOC]) do |key,oldval,newval|
+                oldval.concat newval
+            end
+            named_entities[:ORG] = named_entities[:ORG].merge(doc_named_entities[:ORG]) do |key,oldval,newval|
+                oldval.concat newval
+            end
+            named_entities[:PER] = named_entities[:PER].merge(doc_named_entities[:PER]) do |key,oldval,newval|
+                oldval.concat newval
+            end
+            named_entities[:HumanProd] = named_entities[:HumanProd].merge(doc_named_entities[:HumanProd]) do |key,oldval,newval|
+                oldval.concat newval
+            end
         end
         render partial: 'named_entities/named_entities', locals: {named_entities: named_entities}
     end
@@ -107,6 +122,43 @@ class CatalogController < ApplicationController
     def wide_dates_histogram
         out = {}
         out[:modal_content] = render_to_string(layout: false, partial: "wide_dates_histogram")
+        render json: out
+    end
+
+    def confirm_compound_creation
+        out = {}
+        out[:modal_content] = render_to_string(layout: false, partial: "confirm_compound_creation", locals: {article_parts: params[:article_parts]})
+        render json: out
+    end
+
+    def create_compound
+        compound = CompoundArticle.new
+        compound.user = current_user
+        compound.title = params[:title]
+        compound.issue_id = params[:issue_id]
+        issue = Issue.from_solr params[:issue_id]
+        compound.newspaper = issue.newspaper
+        compound.date_created = issue.date_created
+        compound.thumbnail_url = issue.thumbnail_url
+        compound.language = issue.language
+        compound.all_text = params[:all_text]
+        compound.parts = params[:article_parts_ids]
+        begin
+            compound.save!
+            render json: {status: 'ok', html: render_to_string(layout: false, partial: "compound_articles_panel", locals: {issue_id: params[:issue_id]})}
+        rescue ActiveRecord::RecordNotUnique
+            render json: {status: "error", message: "A compound article with this title already exists."}
+        rescue ActiveRecord::RecordInvalid
+            render json: {status: "error", message: "The title should not be blank."}
+        end
+    end
+
+    def delete_compound
+        compound = CompoundArticle.find(params[:compound_id])
+        issue_id = compound.issue_id
+        compound.destroy
+        out = {}
+        out[:html] = render_to_string(layout: false, partial: "compound_articles_panel", locals: {issue_id: issue_id})
         render json: out
     end
 

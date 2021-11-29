@@ -7,7 +7,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="me-5 w-100 justify-content-end navbar-nav mr-auto">
+            <ul class="me-5 w-100 justify-content-end align-items-center navbar-nav mr-auto">
                 <% if current_user %>
                     <li class="me-5 nav-item">
                         <a class="<%= "border-bottom border-4" if request.path.include? "/search" %> h5 nav-link" href="/search">Search</a>
@@ -25,6 +25,16 @@
                         <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                             <%= link_to "Edit Profile", edit_user_registration_path, class: "dropdown-item" %>
                             <%= link_to "Disconnect", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+                        </ul>
+                    </li>
+                    <li class="me-5 nav-item dropdown">
+                        <button id="notifs_button" type="button" class="btn btn-primary position-relative" data-bs-toggle="dropdown" >
+                            Notifications
+                            <span id="unread_notifs" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">99+</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>OK</li>
+                            <li>OK</li>
                         </ul>
                     </li>
 <!--                    <li class="me-5 nav-item dropdown">-->

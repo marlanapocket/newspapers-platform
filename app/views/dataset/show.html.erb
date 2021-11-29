@@ -1,5 +1,4 @@
 <% if current_user.id == @dataset.user_id %>
-    <% nb_pages = (@dataset.documents.size/@per_page.to_f).ceil %>
     <% set_page_title @dataset.title %>
     <div class="row"
          data-controller="dataset"
@@ -8,18 +7,44 @@
          data-dataset-per-page-value="10"
          data-dataset-sort-value="default"
          data-dataset-sort-order-value="asc"
-         data-dataset-selected-documents-value=""
-         data-dataset-nb-pages-value="<%= nb_pages %>">
+         data-dataset-selected-documents-value="">
         <div id="sidebar" class="col-3">
             <%= render partial: 'dataset_info' %>
             <%= render partial: 'catalog/named_entities_panel' %>
         </div>
         <div class="col-9">
-            <div id="results_navigation">
-                <%= render partial: 'dataset/pagination', locals: {current_page: @current_page, nb_pages: nb_pages} %>
-            </div>
-            <div id="documents-list" class="d-flex justify-content-center">
-                <div class="spinner-border"></div>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="btn-group" id="doctype_selection">
+                        <input type="radio" class="btn-check" name="doctype" id="check_articles" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary" for="check_articles">Articles</label>
+
+                        <input type="radio" class="btn-check" name="doctype" id="check_issues" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="check_issues">Issues</label>
+
+                        <input type="radio" class="btn-check" name="doctype" id="check_compounds" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="check_compounds">Compound articles</label>
+                    </div>
+                    <div id="results_navigation">
+                        <%#= render partial: 'dataset/pagination', locals: {current_page: @current_page, nb_pages: nb_pages} %>
+                    </div>
+                    <div id="dataset_sort_select">
+                        <select class="form-select">
+                            <option selected disabled>Sort by...</option>
+                            <option data-sort="default" data-order="asc">Default (Asc)</option>
+                            <option data-sort="default" data-order="desc">Default (Desc)</option>
+                            <option data-sort="date" data-order="asc">Date (Asc)</option>
+                            <option data-sort="date" data-order="desc">Date (Desc)</option>
+                            <option data-sort="relevancy" data-order="asc">Relevancy (Asc)</option>
+                            <option data-sort="relevancy" data-order="desc">Relevancy (Desc</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="documents-list" class="d-flex justify-content-center">
+                        <div class="spinner-border"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

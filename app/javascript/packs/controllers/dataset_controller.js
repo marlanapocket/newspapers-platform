@@ -4,11 +4,27 @@ import {SearchAPI} from "../utils/search_api";
 
 export default class extends Controller {
     static targets = [ ]
-    static values = { id: Number, nbPages: Number, currentPage: Number, perPage: Number, sort: String, sortOrder: String, selectedDocuments: Array }
+    static values = { id: Number, currentPage: Number, perPage: Number, sort: String, sortOrder: String, selectedDocuments: Array }
 
     connect() {
-        this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.nbPagesValue, this.sortValue, this.sortOrderValue, "all")
+        this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, "article")
         this.load_named_entities()
+        $("#doctype_selection input").on("change", (event) => {
+            switch($(event.currentTarget).attr('id')) {
+                case "check_articles":
+                    this.currentPageValue = 1
+                    this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, "article")
+                    break
+                case "check_issues":
+                    this.currentPageValue = 1
+                    this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, "issue")
+                    break
+                case "check_compounds":
+                    this.currentPageValue = 1
+                    this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, "compound")
+                    break
+            }
+        })
     }
 
     toggleResultSelection(event){
@@ -24,7 +40,6 @@ export default class extends Controller {
     }
 
     export(event) {
-        console.log(event)
         DatasetAPI.exportDataset(this.idValue, event.target.dataset["exportType"], (data) => {
             $("#notifications").append(data)
             for(const notif of $('.toast')) {
@@ -45,8 +60,9 @@ export default class extends Controller {
         DatasetAPI.removeSelectedDocumentsToWorkingDataset(documentsIds, (data)=> {})
     }
 
-    loadDocuments(datasetId, page, per_page, nb_pages, sort, sort_order, type) {
-        DatasetAPI.paginateDataset(datasetId, page, per_page, nb_pages, sort, sort_order, type, (data) => {
+    loadDocuments(datasetId, page, per_page, sort, sort_order, type) {
+        $("#documents-list").html(`<div class="spinner-border"></div>`)
+        DatasetAPI.paginateDataset(datasetId, page, per_page, sort, sort_order, type, (data) => {
             $("#documents-list").html(data.documents)
             $("#results_navigation").html(data.pagination)
         })
@@ -62,7 +78,7 @@ export default class extends Controller {
         event.preventDefault()
         if (this.currentPageValue > 1) {
             this.currentPageValue--
-            this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.nbPagesValue, this.sortValue, this.sortOrderValue, "all")
+            this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, "all")
         }
     }
 
@@ -70,14 +86,14 @@ export default class extends Controller {
         event.preventDefault()
         if (this.currentPageValue < this.nbPagesValue) {
             this.currentPageValue++
-            this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.nbPagesValue, this.sortValue, this.sortOrderValue, "all")
+            this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, "all")
         }
     }
 
     page_button(event) {
         event.preventDefault()
         this.currentPageValue = event.target.textContent
-        this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.nbPagesValue, this.sortValue, this.sortOrderValue, "all")
+        this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, "all")
     }
 
 }

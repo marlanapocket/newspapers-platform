@@ -72,6 +72,21 @@ class DatasetController < ApplicationController
         render json: out
     end
 
+    def add_compound
+        out = {}
+        dataset = Dataset.find(session[:working_dataset])
+        existing = dataset.add_compound params[:compound_id]  # Add docs and return existing ids
+        title = dataset.title
+        message = "<p> The compound article was added to your dataset.</p>"
+        out['notif'] = render_to_string layout: false, partial: "shared/notification", locals: {notif_title: title, notif_content: message.html_safe}
+        out['nbissues'] = dataset.documents.select{|d| d['type'] == "issue" }.size
+        out['nbarticles'] = dataset.documents.select{|d| d['type'] == "article" }.size
+        out['nbcompounds'] = dataset.documents.select{|d| d['type'] == "compound" }.size
+        out['nbdocs'] = out['nbissues'] + out['nbarticles'] + out['nbcompounds']
+        out['title'] = title
+        render json: out
+    end
+
     def remove_selected_documents
         @nb_removed_docs = params[:documents_ids].size
         dataset = Dataset.find(session[:working_dataset])
@@ -104,19 +119,12 @@ class DatasetController < ApplicationController
         d = Dataset.find params['id']
         rows = params[:per_page].to_i
         res = d.fetch_paginated_documents(params[:page].to_i, rows, params[:sort], params[:sort_order], params[:type])
-        docs = res[:docs].map do |solr_doc|
-            if solr_doc['id'].index("_article_").nil?
-                Issue.from_solr_doc solr_doc
-            else
-                Article.from_solr_doc solr_doc
-            end
-        end
         out[:documents] = render_to_string(layout: false,
                                            partial: "documents",
-                                           locals: {docs: docs, rows: rows, pagenum: params[:page].to_i})
+                                           locals: {docs: res[:docs], rows: rows, pagenum: params[:page].to_i})
         out[:pagination] = render_to_string(layout: false,
                                             partial: "pagination",
-                                            locals: {nb_pages: params[:nb_pages].to_i, current_page: params[:page].to_i})
+                                            locals: {nb_pages: res[:nb_pages].to_i, current_page: params[:page].to_i})
         render json: out
     end
 

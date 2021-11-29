@@ -82,6 +82,22 @@ export class DatasetAPI {
         })
     }
 
+    static addSelectedCompoundToWorkingDataset(compoundId, callback) {
+        $.ajax({
+            type: "POST",
+            url: "/datasets/add_compound",
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                compound_id: compoundId
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            }
+        })
+    }
+
     static removeSelectedDocumentsToWorkingDataset(documentsIds, callback) {
         $.ajax({
             type: "POST",
@@ -131,7 +147,7 @@ export class DatasetAPI {
         })
     }
 
-    static paginateDataset(datasetId, page, per_page, nb_pages, sort, sort_order, type, callback) {
+    static paginateDataset(datasetId, page, per_page, sort, sort_order, type, callback) {
         $.ajax({
             type: "POST",
             url: `/dataset/${datasetId}/paginate`,
@@ -139,7 +155,7 @@ export class DatasetAPI {
                 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
             },
             data: {
-                page: page, per_page: per_page, nb_pages: nb_pages, sort: sort, sort_order: sort_order, type: type
+                page: page, per_page: per_page, sort: sort, sort_order: sort_order, type: type
             },
             dataType: "json",
             success: (data, textStatus, jqXHR) => {

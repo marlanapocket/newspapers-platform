@@ -1,0 +1,18 @@
+<% compound_articles = current_user.compound_articles.where(issue_id: issue_id) %>
+<% unless compound_articles.empty? %>
+    <div id="compound-articles-panel" class="card mb-2">
+        <div class="card-header">
+            Compound articles in this issue
+        </div>
+        <div class="p-0 card-body d-flex align-items-center justify-content-center flex-column">
+            <ul class="list-group w-100">
+                <% compound_articles.each do |compound_article| %>
+                    <li class="list-group-item cmpnd-article" data-compound-id="<%= compound_article.id %>" data-parts="<%= compound_article.parts.to_json %>">
+                        <div class="text_part d-inline"><%= compound_article.title %></div>
+                        <a class="delete_compound_article text-danger float-end" href="#"><span class="fas fa-times"></span></a>
+                    </li>
+                <% end %>
+            </ul>
+        </div>
+    </div>
+<% end %>

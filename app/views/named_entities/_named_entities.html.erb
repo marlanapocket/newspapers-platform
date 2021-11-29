@@ -1,4 +1,3 @@
-<% puts named_entities %>
 <% linked_entities = get_linked_entities named_entities.map{ |k,v| v.map{|label, mentions_solr| label } }.flatten.uniq %>
 <div class="accordion w-100">
     <% named_entities.keys.each do |ne_type| %>

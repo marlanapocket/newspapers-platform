@@ -1,4 +1,6 @@
 module ApplicationCable
+    ##
+    # This class identifies the current user in a websocket communication using ApplicationCable
   class Connection < ActionCable::Connection::Base
       identified_by :current_user
 

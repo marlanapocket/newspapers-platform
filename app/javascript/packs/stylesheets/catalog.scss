@@ -81,14 +81,30 @@ li.selected_constraint {
   outline-width: 2px;
   z-index: 1;
 }
+.article_overlay_compound_selected {
+  background-color: #BBCCFF;
+  opacity: 0.4;
+  outline-style: solid;
+  outline-width: 1px;
+  z-index: 1;
+}
 .article_overlay:hover {
   background-color: #CCCCCC;
+  opacity: 0.6;
+}
+.article_overlay_compound_selected:hover {
+  background-color: #CCDDFF;
   opacity: 0.6;
 }
 .selection_mask {
   background-color: #000000;
   opacity: 0.4;
   z-index: 0;
+}
+
+.li-handle {
+  cursor: move;
+  padding-right: 10px;
 }
 ///////////////////////////////////////////////
 

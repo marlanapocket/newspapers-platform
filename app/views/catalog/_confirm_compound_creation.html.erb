@@ -1,0 +1,28 @@
+<div class="modal-dialog modal-xl">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" id="params_label">Confirm compound article creation</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <h4>Overview of the compound article</h4>
+            <div>
+                <% article_parts.each do |article_id, article_text| %>
+                    <p class="text-start"><%= article_text[1...-1].gsub("\\n", " ").html_safe %></p>
+                <% end %>
+            </div>
+            <hr/>
+            <label for="compound-title" class="form-label">Give a name to your new compound article:</label>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Compound article title</span>
+                <input type="text" class="form-control" id="compound-title" autocomplete="off">
+            </div>
+            <span id="compound_logs"></span>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button id="create-compound-button" type="button" class="btn btn-primary">Create</button>
+        </div>
+    </div>
+</div>
+</div>

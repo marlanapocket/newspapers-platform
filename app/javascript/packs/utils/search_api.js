@@ -17,11 +17,11 @@ export class SearchAPI {
         })
     }
 
-    static load_named_entities(doc_id, callback) {
+    static load_named_entities(docs_ids, callback) {
         $.ajax({
             type: "POST",
             url: "/named_entities",
-            data: {doc_id: doc_id},
+            data: {docs_ids: docs_ids},
             headers: {
                 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
             },
@@ -64,6 +64,57 @@ export class SearchAPI {
             },
             error: (jqXHR, textStatus, errorThrown) => {
 
+            }
+        })
+    }
+
+    static confirm_compond_creation(article_parts, callback) {
+        $.ajax({
+            type: "POST",
+            url: `/catalog/confirm_compound_creation`,
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                article_parts: article_parts
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            }
+        })
+    }
+
+    static create_compound(title, all_text, issue_id, article_parts_ids, callback) {
+        $.ajax({
+            type: "POST",
+            url: `/catalog/create_compound`,
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                article_parts_ids: article_parts_ids,
+                title: title,
+                all_text: all_text,
+                issue_id: issue_id
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            }
+        })
+    }
+
+    static delete_compound_article(compound_id, callback) {
+        $.ajax({
+            type: "POST",
+            url: `/catalog/delete_compound`,
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                compound_id: compound_id
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
             }
         })
     }

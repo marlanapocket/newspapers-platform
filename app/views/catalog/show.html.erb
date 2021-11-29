@@ -1,31 +1,60 @@
 <% set_page_title "Show" %>
 
-<div class="row" data-controller="viewer"
-     data-viewer-issue-id-value="<%= @issue.id %>"
-     data-viewer-nbpages-value="<%= @issue.nb_pages %>"
-     data-viewer-pages-value="<%= @issue.pages.map{|p| "#{p.iiif_url}/info.json" }.to_json %>"
-     data-viewer-articles-value="<%= @issue.articles.map{|art| art }.to_json %>"
-     data-viewer-current-page-value="1"
-     data-viewer-selected-articles-value="[]">
-    <div id="sidebar" class="col-3">
-        <%= render partial: 'catalog/manage_datasets_content_show_page' %>
-        <%= render partial: 'named_entities_panel' %>
-    </div>
-    <div id="viewer_container" class="col-6">
-        <div>
-            <div id="page_counter">page <span data-viewer-target="currentPage"></span>/<%= @issue.nb_pages %></div>
-            <div id="openseadragon_view"></div>
+<% nlf_doc = ["fi", "se"].include? @issue.language %>
+<% nlf_under_copyright = Date.parse("1910-12-31T00:00:00Z") <= Date.parse(@issue.date_created) %>
+
+<% if nlf_doc and nlf_under_copyright and !current_user.researcher? %>
+    This document is under copyright and cannot be accessed by users outside of the NewsEye consortium. You can however access it from its original location :
+    <a href="<%= @issue.original_uri %>" target="_blank"><%= @issue.original_uri %></a> (opens in a new window).
+<% else %>
+    <div class="row" data-controller="viewer"
+         data-viewer-issue-id-value="<%= @issue.id %>"
+         data-viewer-nbpages-value="<%= @issue.nb_pages %>"
+         data-viewer-pages-value="<%= @issue.pages.map{|p| "#{p.iiif_url}/info.json" }.to_json %>"
+         data-viewer-articles-value="<%= @issue.articles.map{|art| art }.to_json %>"
+         data-viewer-current-page-value="1"
+         data-viewer-selected-articles-value="[]">
+        <div id="sidebar" class="col-3">
+            <div id="compound_articles_list">
+                <%= render partial: "compound_articles_panel", locals: {issue_id: @issue.id} %>
+            </div>
+            <%= render partial: 'catalog/manage_datasets_content_show_page' %>
+            <%= render partial: 'named_entities_panel' %>
+        </div>
+        <div id="viewer_container" class="col-6">
+            <div>
+                <div id="page_counter">page <span data-viewer-target="currentPage"></span>/<%= @issue.nb_pages %></div>
+                <div id="openseadragon_view"></div>
+            </div>
+        </div>
+        <div class="col-3">
+            <%= render partial: 'metadata' %>
+            <div id="compound-articles-panel" class="card mb-2" data-viewer-target="compoundArticlePanel" data-viewer-compound-mode-value="false">
+                <div class="card-header">
+                    <h5 class="card-title float-start">Create a Compound article</h5>
+                    <div class="form-check form-switch float-end">
+                        <input class="form-check-input" type="checkbox" id="compound_switch">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="compound_card_content" class="d-none">
+                        <p id="help_compound">
+                            Select different articles from the issue to merge them. Drag and drop elements from the list to change their order.
+                        </p>
+                        <ul id="compound_list" class="list-group"></ul>
+                        <button id="create_compound_button" class="btn btn-primary">Create</button>
+                    </div>
+                </div>
+            </div>
+            <div id="confirm_compound_modal" class="modal fade"></div>
+            <div class="card" data-viewer-target="selectedArticlePanel">
+                <div class="card-header">
+                    <h5 class="card-title"></h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text"></p>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-3">
-        <%= render partial: 'metadata' %>
-        <div class="card" data-viewer-target="selectedArticlePanel">
-            <div class="card-header">
-                <h5 class="card-title"></h5>
-            </div>
-            <div class="card-body">
-                <p class="card-text"></p>
-            </div>
-        </div>
-    </div>
-</div>
+<% end %>
