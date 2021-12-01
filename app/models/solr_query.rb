@@ -7,7 +7,7 @@ class SolrQuery
                   :hl,
                   :mlt
 
-    def initialize
+    def initialize search_type
         @defType = 'edismax'
         @sort = 'score desc'
         @start = 0
@@ -17,7 +17,7 @@ class SolrQuery
         @fl = '*,score'
         @q = '*:*'
         @q_dot_alt = '*:*'
-        @qf = I18n.t("newspapers.solr_fields").select{|k,v| k.start_with? "text_exact" }.values  # or text_stemmed
+        @qf = I18n.t("newspapers.solr_fields").select{|k,v| k.start_with?( search_type=="stemmed" ? "text_stemmed" : "text_exact") }.values  # or text_stemmed
         @mm = 1
         @pf = ""
         @ps = ""

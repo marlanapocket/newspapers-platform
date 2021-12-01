@@ -8,7 +8,8 @@ class CatalogController < ApplicationController
 
     def index
         if params[:q]
-            @solr_params = SolrQuery.new.to_params
+            @search_type = params[:search_type].nil? ? "exact" : params[:search_type]
+            @solr_params = SolrQuery.new(@search_type).to_params
             @solr_params[:q] = params[:q]
             @solr_params[:rows] = params[:per_page] if params[:per_page]
             @current_page = params[:page].to_i != 0 ? params[:page].to_i : 1
@@ -30,7 +31,7 @@ class CatalogController < ApplicationController
             session['search_params'] = @solr_params
             session['query_params'] = params.to_unsafe_h.slice('q', 'page', 'per_page','sort', 'f')
             @results = SolrSearcher.query @solr_params
-            puts @results.to_json
+            puts @results.to_json if Rails.env == "development"
             @resulting_docs = @results['response']['docs'].map do |solr_doc|
                 case solr_doc['has_model_ssim']
                 when ['Article']
@@ -160,6 +161,25 @@ class CatalogController < ApplicationController
         out = {}
         out[:html] = render_to_string(layout: false, partial: "compound_articles_panel", locals: {issue_id: issue_id})
         render json: out
+    end
+
+    def random_sample
+        search_params = session['search_params'].with_indifferent_access
+        search_params[:fq] = search_params[:fq].select {|elt| !elt.start_with? "has_model_ssim:" } if search_params[:fq]
+        search_params[:fq] ||= []
+        search_params[:fq] << "has_model_ssim:Article"
+        search_params[:sort] = "rand#{(0...8).map { (65 + rand(26)).chr }.join} asc"
+        results = SolrSearcher.query search_params
+        results = results['response']['docs'].map do |solr_doc|
+            case solr_doc['has_model_ssim']
+            when ['Article']
+                Article.from_solr_doc solr_doc
+            when ['Issue']
+                Issue.from_solr_doc solr_doc
+            end
+        end
+        puts results
+        render json: {content: render_to_string(layout: false, partial: "random_sample", locals: {resulting_docs: results}) }
     end
 
     private

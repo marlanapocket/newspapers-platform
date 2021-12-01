@@ -118,4 +118,19 @@ export class SearchAPI {
             }
         })
     }
+
+    static random_sample(callback) {
+        $.ajax({
+            type: "POST",
+            url: `/catalog/random_sample`,
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            }
+        })
+    }
 }

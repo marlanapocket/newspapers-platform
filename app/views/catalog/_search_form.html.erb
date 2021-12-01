@@ -1,7 +1,13 @@
 <div id="search_forms">
     <div id="search_form" class="mb-2">
-        <form action="/search" method="get">
-            <div class="w-50 input-group flex-nowrap">
+        <form action="/search" method="get" class="row">
+            <div class="col-3 btn-group" role="group">
+                <input type="radio" class="btn-check" name="search_type" value="exact" id="exact_search" autocomplete="off" <%= "checked" if @search_type.nil? || @search_type == "exact" %>>
+                <label class="btn btn-outline-primary" for="exact_search">Exact search</label>
+                <input type="radio" class="btn-check" name="search_type" value="stemmed" id="stemmed_search" autocomplete="off" <%= "checked" if @search_type == "stemmed" %>>
+                <label class="btn btn-outline-primary" for="stemmed_search">Stemmed search</label>
+            </div>
+            <div class="col-9 w-50 input-group flex-nowrap">
                 <span class="input-group-text" id="addon-wrapping">Search for:</span>
                 <input name="q" type="text" class="form-control" value="<%= @solr_params[:q] if @solr_params and @solr_params[:q] %>">
                 <input class="btn btn-outline-secondary" type="submit" value="Go"></input>

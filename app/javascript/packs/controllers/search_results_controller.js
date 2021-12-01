@@ -1,11 +1,17 @@
 import { Controller } from "stimulus"
 import { DatasetAPI } from "../utils/dataset_api"
+import {SearchAPI} from "../utils/search_api"
 
 export default class extends Controller {
     static targets = [  ]
     static values = {  }
 
     connect() {
+        $("#random_sample").on("click", event => {
+            SearchAPI.random_sample( data => {
+                $("#random_sample_offcanvas .offcanvas-body").html(data["content"])
+            })
+        })
     }
 
     toggleResultSelection(event){
@@ -24,7 +30,6 @@ export default class extends Controller {
             return document.getAttribute("data-doc-id")
         }).get()
         DatasetAPI.addSelectedDocumentsToWorkingDataset(documentsIds, (data)=> {
-            console.log(data)
             $("#notifications").append(data['notif'])
             for(const notif of $('.toast')) {
                 const notifToast = bootstrap.Toast.getOrCreateInstance(notif)

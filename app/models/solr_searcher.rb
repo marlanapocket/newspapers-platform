@@ -5,7 +5,7 @@ class SolrSearcher
 
     def self.query params
         connect unless @@connection
-        puts "[SolrSearcher.Query] #{params.to_json}" if Rails.env == "development"
+        puts "[SolrSearcher.Query] #{params.to_json}\n" if Rails.env == "development"
         @@connection.send_and_receive("select", data: params, method: :post)
     end
 

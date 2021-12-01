@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     post '/catalog/confirm_compound_creation', to: 'catalog#confirm_compound_creation'
     post '/catalog/create_compound', to: 'catalog#create_compound'
     post '/catalog/delete_compound', to: 'catalog#delete_compound'
+    post '/catalog/random_sample', to: 'catalog#random_sample'
 
     get '/datasets', to: 'dataset#index'
     get '/datasets/update', to: 'dataset#update_datasets_list'

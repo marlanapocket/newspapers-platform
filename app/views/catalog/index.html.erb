@@ -17,6 +17,16 @@
             <div class="row">
                 <%= render partial: 'results_list' %>
             </div>
+
+            <div class="offcanvas offcanvas-end w-75" data-bs-scroll="true" data-bs-backdrop="false" id="random_sample_offcanvas">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title">Random sample</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="spinner-border"></div>
+                </div>
+            </div>
         <% end %>
     </div>
 </div>

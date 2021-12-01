@@ -1,13 +1,19 @@
 <% if @results["response"]["docs"].empty? %>
     <p>Nothing was found.</p>
 <% else %>
-    <%= render partial: 'catalog/results_list_header' %>
-    <div id="search-results-list" class="list-group list-group-flush">
-        <% @resulting_docs.each_with_index do |result, idx| %>
-            <%= render partial: 'result', locals: {result: result,
-                                                   doc_index: (@current_page-1) * @solr_params[:rows].to_i + idx + 1,
-                                                   highlight: @results["highlighting"][result.id]} %>
-            <hr/>
-        <% end %>
+    <div class="card p-0">
+        <div class="card-header">
+            <%= render partial: 'catalog/results_list_header' %>
+        </div>
+        <div class="card-body">
+            <div id="search-results-list" class="list-group list-group-flush">
+                <% @resulting_docs.each_with_index do |result, idx| %>
+                    <%= render partial: 'result', locals: {result: result,
+                                                           doc_index: (@current_page-1) * @solr_params[:rows].to_i + idx + 1,
+                                                           highlight: @results["highlighting"][result.id]} %>
+                    <hr/>
+                <% end %>
+            </div>
+        </div>
     </div>
 <% end %>

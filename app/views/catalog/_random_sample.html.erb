@@ -1,0 +1,6 @@
+<div id="random-sample-list" class="list-group list-group-flush">
+    <% resulting_docs.each_with_index do |result, idx| %>
+        <%= render partial: 'result', locals: {result: result, doc_index: idx+1, highlight: nil } %>
+        <hr/>
+    <% end %>
+</div>
