@@ -26,6 +26,50 @@ class DatasetController < ApplicationController
         end
     end
 
+    def rename_dataset
+        dataset = Dataset.find(params[:id])
+        dataset.title = params[:title]
+        begin
+            dataset.save!
+            render json: {status: 'ok'}
+        rescue ActiveRecord::RecordNotUnique
+            render json: {status: "error", message: "A dataset with this title already exists."}
+        rescue ActiveRecord::RecordInvalid
+            render json: {status: "error", message: "The title should not be blank."}
+        end
+    end
+
+    def import_dataset
+        to_copy = Dataset.find params[:original_dataset_id]
+        render json: {status: "error", message: "This dataset is not public."} unless to_copy.public?
+        new_dataset = Dataset.new
+        new_dataset.user_id = current_user.id
+        new_dataset.title = params[:title]
+        to_copy.documents.each do |doc|
+            if doc['type'] == "compound"
+                ca = CompoundArticle.find(doc['id']).dup
+                ca.user = current_user
+                begin
+                    ca.save!
+                rescue ActiveRecord::RecordNotUnique
+                    ca.title = "_#{(0...8).map { (65 + rand(26)).chr }.join}_#{ca.title}"
+                    ca.save!
+                end
+                new_dataset.documents << {id: ca.id, type: "compound"}
+            else
+                new_dataset.documents << doc
+            end
+        end
+        begin
+            new_dataset.save!
+            render json: {status: 'ok'}
+        rescue ActiveRecord::RecordNotUnique
+            render json: {status: "error", message: "A dataset with this title already exists."}
+        rescue ActiveRecord::RecordInvalid
+            render json: {status: "error", message: "The title should not be blank."}
+        end
+    end
+
     def delete_dataset
         dataset = Dataset.find(params[:dataset_id])
         dataset_id = dataset.id

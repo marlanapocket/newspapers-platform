@@ -15,6 +15,38 @@ export class DatasetAPI {
             }
         })
     }
+    static rename_dataset(id, title, callback) {
+        $.ajax({
+            type: "POST",
+            url: "/dataset/rename",
+            data: {id: id, title: title},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
+    static import_dataset(id, title, callback) {
+        $.ajax({
+            type: "POST",
+            url: "/dataset/import",
+            data: {original_dataset_id: id, title: title},
+            headers: {
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (data, textStatus, jqXHR) => {
+                callback(data)
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
+            }
+        })
+    }
 
     static delete_dataset(datasetId, callback) {
         $.ajax({

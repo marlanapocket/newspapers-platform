@@ -31,6 +31,8 @@ Rails.application.routes.draw do
     post "/dataset/toggle_sharing_status", to: "dataset#toggle_sharing_status"
     post "/dataset/:id/paginate", to: "dataset#paginate"
     post '/dataset/create', to: 'dataset#create_dataset'
+    post '/dataset/rename', to: 'dataset#rename_dataset'
+    post '/dataset/import', to: 'dataset#import_dataset'
     post '/dataset/delete', to: 'dataset#delete_dataset'
 
     get '/experiments', to: 'experiment#index'

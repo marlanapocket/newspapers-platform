@@ -1,0 +1,22 @@
+<div class="modal fade" id="createDatasetModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create a new dataset</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label for="dataset-title" class="form-label">Give a name to your new dataset:</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon3">Dataset title</span>
+                    <input type="text" class="form-control" id="dataset-title" autocomplete="off">
+                </div>
+                <span id="message"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="create-dataset-button" type="button" class="btn btn-primary" data-action="click->datasets#createDataset">Create</button>
+            </div>
+        </div>
+    </div>
+</div>

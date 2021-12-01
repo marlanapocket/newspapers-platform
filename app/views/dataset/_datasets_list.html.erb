@@ -4,8 +4,8 @@
     </div>
     <div class="card-body">
         <ul class="list-group">
-            <% current_user.datasets.each do |dataset| %>
-                <li class="list-group-item d-flex justify-content-between align-items-center" data-dataset-id="<%= dataset.id %>" data-dataset-name="<%= dataset.title %>">
+            <% current_user.datasets.order(:created_at).each do |dataset| %>
+                <li class="dataset-item list-group-item d-flex justify-content-between align-items-center" data-dataset-id="<%= dataset.id %>" data-dataset-name="<%= dataset.title %>">
                     <div class="w-25">
                         <a href="/dataset/<%= dataset.id %>"><%= dataset.title %></a>
                     </div>
@@ -14,13 +14,21 @@
                         <span class="badge bg-primary rounded-pill"><%= dataset.nb_articles %> articles</span>
                         <span class="badge bg-primary rounded-pill"><%= dataset.nb_compound_articles %> compound articles</span>
                     </div>
-                    <button type="button"
-                            class="btn btn-danger px-2 d-flex align-items-center justify-content-between"
-                            data-action="click->datasets#deleteDataset">
-                        <i class="me-2 fas fa-trash"></i>Delete
-                    </button>
+                    <div class="d-inline-flex">
+                        <button type="button"
+                                class="btn btn-sm btn-danger px-2 d-flex align-items-center justify-content-between me-2"
+                                data-action="click->datasets#deleteDataset">
+                            <i class="me-2 fas fa-trash"></i>Delete
+                        </button>
+                        <button type="button"
+                                data-bs-toggle="modal" data-bs-target="#renameDatasetModal" data-bs-dataset-id="<%= dataset.id %>"
+                                class="btn btn-sm btn-info px-2 d-flex align-items-center justify-content-between">
+                            <i class="me-2 fas fa-edit"></i>Rename
+                        </button>
+                    </div>
                 </li>
             <% end %>
         </ul>
     </div>
 </div>
+<%= render partial: 'rename_dataset_modal' %>
