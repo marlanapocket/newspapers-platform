@@ -16,27 +16,22 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="btn-group" id="doctype_selection">
-                        <input type="radio" class="btn-check" name="doctype" id="check_articles" autocomplete="off" checked>
+                        <input type="radio" class="btn-check" name="doctype" data-doctype="article" id="check_articles" autocomplete="off" checked>
                         <label class="btn btn-outline-primary" for="check_articles">Articles</label>
 
-                        <input type="radio" class="btn-check" name="doctype" id="check_issues" autocomplete="off">
+                        <input type="radio" class="btn-check" name="doctype" data-doctype="issue" id="check_issues" autocomplete="off">
                         <label class="btn btn-outline-primary" for="check_issues">Issues</label>
 
-                        <input type="radio" class="btn-check" name="doctype" id="check_compounds" autocomplete="off">
+                        <input type="radio" class="btn-check" name="doctype" data-doctype="compound" id="check_compounds" autocomplete="off">
                         <label class="btn btn-outline-primary" for="check_compounds">Compound articles</label>
                     </div>
-                    <div id="results_navigation">
-                        <%#= render partial: 'dataset/pagination', locals: {current_page: @current_page, nb_pages: nb_pages} %>
-                    </div>
-                    <div id="dataset_sort_select">
-                        <select class="form-select">
+                    <div id="results_navigation"></div>
+                    <div class="d-inline-flex">
+                        <select id="dataset_sort_select" class="form-select">
                             <option selected disabled>Sort by...</option>
-                            <option data-sort="default" data-order="asc">Default (Asc)</option>
-                            <option data-sort="default" data-order="desc">Default (Desc)</option>
-                            <option data-sort="date" data-order="asc">Date (Asc)</option>
-                            <option data-sort="date" data-order="desc">Date (Desc)</option>
-                            <option data-sort="relevancy" data-order="asc">Relevancy (Asc)</option>
-                            <option data-sort="relevancy" data-order="desc">Relevancy (Desc</option>
+                            <option data-sort="default" data-order="asc">Default</option>
+                            <option data-sort="<%= t("newspapers.solr_fields.date") %>" data-order="asc">Date (Asc)</option>
+                            <option data-sort="<%= t("newspapers.solr_fields.date") %>" data-order="desc">Date (Desc)</option>
                         </select>
                     </div>
                 </div>

@@ -10,20 +10,14 @@ export default class extends Controller {
         this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, "article")
         this.load_named_entities()
         $("#doctype_selection input").on("change", (event) => {
-            switch($(event.currentTarget).attr('id')) {
-                case "check_articles":
-                    this.currentPageValue = 1
-                    this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, "article")
-                    break
-                case "check_issues":
-                    this.currentPageValue = 1
-                    this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, "issue")
-                    break
-                case "check_compounds":
-                    this.currentPageValue = 1
-                    this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, "compound")
-                    break
-            }
+            this.currentPageValue = 1
+            this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, $(event.currentTarget).data("doctype"))
+        })
+        $("#dataset_sort_select").on("change", (event) => {
+            this.sortValue = $("#dataset_sort_select :selected").data("sort")
+            this.sortOrderValue = $("#dataset_sort_select :selected").data("order")
+            this.currentPageValue = 1
+            this.loadDocuments(this.idValue, this.currentPageValue, this.perPageValue, this.sortValue, this.sortOrderValue, $("#doctype_selection input:checked").data("doctype"))
         })
     }
 

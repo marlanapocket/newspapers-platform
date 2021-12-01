@@ -7,10 +7,6 @@ export default class extends Controller {
 
     connect() {
         this.initModals()
-
-        $("body").on("click", ".import_public_dataset", event => {
-            console.log(event.target.dataset['datasetId'])
-        })
     }
 
     initModals() {
