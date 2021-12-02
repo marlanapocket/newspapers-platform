@@ -88,7 +88,8 @@ class CatalogController < ApplicationController
     def named_entities_for_dataset
         dataset = Dataset.find(params[:dataset_id])
         named_entities = dataset.named_entities
-        render partial: 'named_entities/named_entities', locals: {named_entities: named_entities}
+        named_entities_labels = helpers.get_linked_entities named_entities.map{ |k,v| v.keys }.flatten.uniq
+        render partial: 'named_entities/named_entities', locals: {named_entities: named_entities, linked_entities: named_entities_labels}
     end
 
     def paginate_facets
