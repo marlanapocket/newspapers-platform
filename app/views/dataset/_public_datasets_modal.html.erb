@@ -17,29 +17,28 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <% Dataset.where(public: true).each_with_index do |d, idx| %>
-                        <% if d.user_id != current_user.id %>
-                            <tr>
-                                <th scope="row"><%= idx+1 %></th>
-                                <td><%= d.title %></td>
-                                <td>
-                                    <span class="badge bg-primary rounded-pill"><%= d.nb_issues %> issues</span>
-                                    <span class="badge bg-primary rounded-pill"><%= d.nb_articles %> articles</span>
-                                    <span class="badge bg-primary rounded-pill"><%= d.nb_compound_articles %> compound articles</span>
-                                </td>
-                                <td>
-                                    <% user = User.find(d.user_id) %>
-                                    <%= user.email[0...user.email.index('@')] %>
-                                </td>
-                                <td>
-                                    <button data-dataset-id="<%= d.id %>" class="import_public_dataset btn btn-sm btn-outline-secondary"
-                                            data-bs-target="#confirmPublicDatasetImportModal" data-bs-toggle="modal" data-bs-dismiss="modal"
-                                            data-bs-title="<%= d.title %>" data-bs-user="<%= user.email[0...user.email.index('@')] %>" data-bs-dataset-id="<%= d.id %>">
-                                        Import to your datasets
-                                    </button>
-                                </td>
-                            </tr>
-                        <% end %>
+                    <% Dataset.where.not(user_id: current_user.id).where(public: true).each_with_index do |d, idx| %>
+                        <tr>
+                            <th scope="row"><%= idx+1 %></th>
+                            <td><%= d.title %></td>
+                            <td>
+                                <span class="badge bg-primary rounded-pill"><%= d.nb_issues %> issues</span>
+                                <span class="badge bg-primary rounded-pill"><%= d.nb_articles %> articles</span>
+                                <span class="badge bg-primary rounded-pill"><%= d.nb_compound_articles %> compound articles</span>
+                            </td>
+                            <td>
+                                <% user = User.find(d.user_id) %>
+                                <% username = user.email[0...user.email.index('@')] %>
+                                <%= username %>
+                            </td>
+                            <td>
+                                <button data-dataset-id="<%= d.id %>" class="import_public_dataset btn btn-sm btn-outline-secondary"
+                                        data-bs-target="#confirmPublicDatasetImportModal" data-bs-toggle="modal" data-bs-dismiss="modal"
+                                        data-bs-title="<%= d.title %>" data-bs-user="<%= username %>" data-bs-dataset-id="<%= d.id %>">
+                                    Import to your datasets
+                                </button>
+                            </td>
+                        </tr>
                     <% end %>
                     </tbody>
                 </table>

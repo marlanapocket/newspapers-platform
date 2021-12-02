@@ -95,8 +95,10 @@ class Dataset < ActiveRecord::Base
     def named_entities
         article_ids = self.documents.select {|d| d['type'] == 'article' }.map{|d| d['id']}
         issue_ids = self.documents.select {|d| d['type'] == 'issue' }.map{|d| d['id']}
+        parts_ids = self.documents.select {|d| d['type'] == 'compound' }.map{|d| CompoundArticle.find(d['id']).parts}.flatten.uniq
         nems = []
         nems = SolrSearcher.query({q: "*:*", fq: "article_id_ssi:(#{article_ids.join(' OR ')})", rows: 1000000})['response']['docs'] unless article_ids.empty?
+        nems += SolrSearcher.query({q: "*:*", fq: "article_id_ssi:(#{parts_ids.join(' OR ')})", rows: 1000000})['response']['docs'] unless parts_ids.empty?
         nems += SolrSearcher.query({q: "*:*", fq: "issue_id_ssi:(#{issue_ids.join(' OR ')})", rows: 1000000})['response']['docs'] unless issue_ids.empty?
         output = {LOC: {}, PER: {}, ORG: {}, HumanProd: {}}
         nems.select {|ne_solr| ne_solr['type_ssi'] == "LOC"}.each do |ne_solr|

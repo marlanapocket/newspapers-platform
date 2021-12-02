@@ -157,9 +157,16 @@ class CatalogController < ApplicationController
     def delete_compound
         compound = CompoundArticle.find(params[:compound_id])
         issue_id = compound.issue_id
+        current_user.datasets.each do |dataset|
+            if dataset.documents.any?{|doc| doc['id'].to_s == compound.id.to_s}
+                dataset.documents = dataset.documents.select{|doc| doc['id'].to_s != compound.id.to_s}
+                dataset.save!
+            end
+        end
         compound.destroy
         out = {}
         out[:html] = render_to_string(layout: false, partial: "compound_articles_panel", locals: {issue_id: issue_id})
+        out[:datasets] = render_to_string(layout: false, partial: "manage_datasets_content_show_page")
         render json: out
     end
 

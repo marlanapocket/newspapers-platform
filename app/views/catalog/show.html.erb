@@ -18,7 +18,9 @@
             <div id="compound_articles_list">
                 <%= render partial: "compound_articles_panel", locals: {issue_id: @issue.id} %>
             </div>
-            <%= render partial: 'catalog/manage_datasets_content_show_page' %>
+            <div id="manage_datasets_content">
+                <%= render partial: 'catalog/manage_datasets_content_show_page' %>
+            </div>
             <%= render partial: 'named_entities_panel' %>
         </div>
         <div id="viewer_container" class="col-6">

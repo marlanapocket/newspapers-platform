@@ -9,7 +9,6 @@ export default class extends Controller {
 
     isDragged = false
     viewer = null
-    named_entities = null
     selectedCompound = null
 
     connect() {
@@ -27,8 +26,7 @@ export default class extends Controller {
             this.selectedArticlesValue = [selectedParam]
         }
         this.setup_viewer()
-        this.named_entities = this.load_named_entities([this.issueIdValue])
-        this.display_named_entities((this.selectedArticlesValue.length == 0) ? this.issueIdValue : this.selectedArticlesValue[0])
+        this.load_named_entities([this.issueIdValue])
         this.setup_mention_click()
         this.setup_compound()
         this.sortable = new Sortable(document.getElementById("compound_list"), {
@@ -66,7 +64,8 @@ export default class extends Controller {
         // Open the modal to validate and create the compound article
         $("#create_compound_button").on("click", (event) => {
             const article_parts = new Map(this.selectedArticlesValue.map((artid) => {
-                return [artid, $(`#${artid}`).data('text')]
+                const text = this.articlesValue.filter(elt => {return elt.id == artid})[0].all_text
+                return [artid, text]
             }))
             if(article_parts.length !== 0) {
                 SearchAPI.confirm_compond_creation(Object.fromEntries(article_parts), (data) => {
@@ -100,10 +99,13 @@ export default class extends Controller {
         $("#compound_articles_list").on("click", ".delete_compound_article", (event) => {
             const parent_li = $(event.target).parents('li')
             const compoundId = parent_li.data('compound-id')
-            this.unselect_compound_article(compoundId)
-            SearchAPI.delete_compound_article(compoundId, (data) => {
-                $("#compound_articles_list").html(data.html)
-            })
+            if (confirm(`Are you sure you want to delete this compound article ? It will also be deleted from the datasets it belongs to.`)) {
+                this.unselect_compound_article(compoundId)
+                SearchAPI.delete_compound_article(compoundId, (data) => {
+                    $("#compound_articles_list").html(data.html)
+                    $("#manage_datasets_content").html(data.datasets)
+                })
+            }
             return false
         })
         // Compound article selection
@@ -292,10 +294,6 @@ export default class extends Controller {
         })
     }
 
-    display_named_entities(docId) {
-        console.log(this.named_entities)
-    }
-
     selectWorkingDataset(event) {
         const datasetID = parseInt($(event.target).find("option:selected").val())
         DatasetAPI.setCurrentWorkingDataset(datasetID, (data) => {})
@@ -391,13 +389,15 @@ export default class extends Controller {
         this.viewer.addHandler("page", (data) => {
             this.currentPageValue = data.page + 1
             this.currentPageTarget.innerHTML = this.currentPageValue
-            $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
-            this.load_named_entities([this.issueIdValue])
-            this.selectedArticlesValue = []
-            if (window.history.replaceState) {
-                let url = new URL(window.location.href)
-                url.searchParams.delete('selected')
-                window.history.replaceState(null, '', url.toString())
+            if(!this.compoundModeValue) {
+                $('#named-entities-panel').find(".card-body").html("<div class='spinner-border'></div>")
+                this.load_named_entities([this.issueIdValue])
+                this.selectedArticlesValue = []
+                if (window.history.replaceState) {
+                    let url = new URL(window.location.href)
+                    url.searchParams.delete('selected')
+                    window.history.replaceState(null, '', url.toString())
+                }
             }
         })
 
@@ -410,16 +410,26 @@ export default class extends Controller {
                     let bbox = article.bbox
                     let loc = this.viewer.viewport.imageToViewportRectangle(bbox[0], bbox[1], bbox[2], bbox[3])
                     let article_class = null
-                    if(this.selectedArticlesValue[0] == article.id) {
-                        this.display_mask(loc)
-                        article_class = "article_overlay_selected"
-                    }
-                    else {
-                        if(this.selectedCompound !== null && this.selectedCompound.parts.includes(article.id)) {
+                    if(this.compoundModeValue) {
+                        if(this.selectedArticlesValue.includes(article.id)) {
                             article_class = "article_overlay_compound_selected"
                         }
                         else {
                             article_class = "article_overlay"
+                        }
+                    }
+                    else {
+                        if(this.selectedArticlesValue[0] == article.id) {
+                            this.display_mask(loc)
+                            article_class = "article_overlay_selected"
+                        }
+                        else {
+                            if(this.selectedCompound !== null && this.selectedCompound.parts.includes(article.id)) {
+                                article_class = "article_overlay_compound_selected"
+                            }
+                            else {
+                                article_class = "article_overlay"
+                            }
                         }
                     }
                     let elt = $(`<div id="${article.id}" class="${article_class}"></div>`)

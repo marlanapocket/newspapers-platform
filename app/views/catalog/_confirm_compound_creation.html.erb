@@ -8,7 +8,7 @@
             <h4>Overview of the compound article</h4>
             <div>
                 <% article_parts.each do |article_id, article_text| %>
-                    <p class="text-start"><%= article_text[1...-1].gsub("\\n", " ").html_safe %></p>
+                    <p class="text-start"><%= article_text.gsub("\\n", " ").html_safe %></p>
                 <% end %>
             </div>
             <hr/>
