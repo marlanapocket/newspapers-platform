@@ -27,6 +27,7 @@ gem 'jbuilder', '~> 2.7'
 gem 'rsolr'
 gem 'sidekiq', '~> 6.0'
 gem 'pragmatic_tokenizer'
+gem 'activerecord-session_store'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'

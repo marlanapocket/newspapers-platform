@@ -50,22 +50,24 @@ class CatalogController < ApplicationController
     end
 
     def show
-        if params[:id].include? "_article_"
-            @article = Article.from_solr params[:id]
-            @issue = Issue.from_solr @article.issue_id, with_pages=true, with_articles=true
-        else
-            @article = nil
-            @issue = Issue.from_solr params[:id], with_pages=true, with_articles=true
-        end
+        @issue = Issue.from_solr params[:id], with_pages=true, with_articles=true
+        session['named_entities'] = Issue.named_entities @issue.id
+        session['named_entities_labels'] = helpers.get_linked_entities session['named_entities'].map{ |k,v| v.keys }.flatten.uniq
     end
 
     def named_entities_for_docs
         named_entities = {LOC: {}, PER: {}, ORG: {}, HumanProd: {}}
         params[:docs_ids].each do |doc_id|
             if doc_id.index('_article_').nil?
-                doc_named_entities = Issue.named_entities doc_id
-            else
-                doc_named_entities = Article.named_entities doc_id
+                doc_named_entities = session['named_entities']
+            else # if article, filter stored list
+                doc_named_entities = session['named_entities'].map{ |ne_type, ne_list|
+                    [ne_type,ne_list.select{ |linked_id, namedentities|
+                        namedentities.any?{ |ne|
+                            ne['article_id_ssi'] == doc_id
+                        }
+                    }.map{ |k,v| [k,v.select{ |ne| ne['article_id_ssi'] == doc_id }] }.to_h]
+                }.to_h
             end
             named_entities[:LOC] = named_entities[:LOC].merge(doc_named_entities[:LOC]) do |key,oldval,newval|
                 oldval.concat newval
@@ -80,7 +82,7 @@ class CatalogController < ApplicationController
                 oldval.concat newval
             end
         end
-        render partial: 'named_entities/named_entities', locals: {named_entities: named_entities}
+        render partial: 'named_entities/named_entities', locals: {named_entities: named_entities, linked_entities: session['named_entities_labels']}
     end
 
     def named_entities_for_dataset
