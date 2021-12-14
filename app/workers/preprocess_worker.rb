@@ -16,7 +16,7 @@ class PreprocessWorker
               type: "completion_rate",
               tool_id: tool.id,
               experiment_id: experiment_id,
-              completion: ((idx/(docs.size-1).to_f)*100).to_i
+              completion: ((idx/(docs.size).to_f)*100).to_i
             }
             ActionCable.server.broadcast("notifications.#{user_id}", out) if idx%20 == 0
 

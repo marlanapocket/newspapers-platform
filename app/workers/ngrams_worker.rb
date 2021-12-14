@@ -43,7 +43,7 @@ class NgramsWorker
               type: "completion_rate",
               tool_id: tool_id,
               experiment_id: experiment_id,
-              completion: ((idx/(documents.size-1).to_f)*100).to_i
+              completion: ((idx/(documents.size).to_f)*100).to_i
             }
             ActionCable.server.broadcast("notifications.#{user_id}", out) if idx%20 == 0
             ngrams = document.split.each_cons(n).to_a
