@@ -46,7 +46,7 @@ class Article
     def get_thumbnail
         if Rails.configuration.iiif_sources[:local].include? self.newspaper
             pagenum = self.canvases_parts[0][self.canvases_parts[0].rindex('_')+1...self.canvases_parts[0].rindex('#')].to_i
-            self.get_iiif_url("http://iiif.newseye.eu/iiif/#{self.newspaper}/#{self.issue_id}_page_#{pagenum}.ptif")
+            self.get_iiif_url("https://iiif.newseye.eu/iiif/#{self.newspaper}/#{self.issue_id}_page_#{pagenum}.ptif")
         elsif Rails.configuration.iiif_sources[:external].include? self.newspaper
             self.thumbnail_url
         elsif Rails.configuration.iiif_sources[:external_onb].include? self.newspaper
