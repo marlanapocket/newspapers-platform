@@ -10,7 +10,7 @@
     <div class="row" data-controller="viewer"
          data-viewer-issue-id-value="<%= @issue.id %>"
          data-viewer-nbpages-value="<%= @issue.nb_pages %>"
-         data-viewer-pages-value="<%= @issue.pages.map{|p| "#{p.iiif_url}/info.json" }.to_json %>"
+         data-viewer-pages-value="<%=  @issue.get_iiif_urls.to_json %>"
          data-viewer-articles-value="<%= @issue.articles.map{|art| art }.to_json %>"
          data-viewer-current-page-value="1"
          data-viewer-selected-articles-value="[]">

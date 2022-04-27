@@ -2,9 +2,13 @@ class DatasetController < ApplicationController
 
     before_action :authenticate_user!
 
+    ##
+    # List all datasets
     def index
     end
 
+    ##
+    # Display a single dataset
     def show
         @dataset = Dataset.find(params[:id])
         @current_page = params[:page] || 1
@@ -12,6 +16,8 @@ class DatasetController < ApplicationController
         session[:working_dataset] = @dataset.id
     end
 
+    ##
+    # Create a new empty dataset
     def create_dataset
         dataset = Dataset.new
         dataset.user = current_user
@@ -26,6 +32,8 @@ class DatasetController < ApplicationController
         end
     end
 
+    ##
+    # Rename an existing dataset
     def rename_dataset
         dataset = Dataset.find(params[:id])
         dataset.title = params[:title]
@@ -39,6 +47,8 @@ class DatasetController < ApplicationController
         end
     end
 
+    ##
+    # Import a public dataset
     def import_dataset
         to_copy = Dataset.find params[:original_dataset_id]
         render json: {status: "error", message: "This dataset is not public."} unless to_copy.public?
@@ -70,6 +80,8 @@ class DatasetController < ApplicationController
         end
     end
 
+    ##
+    # Delete an existing dataset
     def delete_dataset
         dataset = Dataset.find(params[:dataset_id])
         dataset_id = dataset.id
@@ -83,12 +95,16 @@ class DatasetController < ApplicationController
         end
     end
 
+    ##
+    # Update the view of the list of datasets
     def update_datasets_list
         respond_to do |format|
             format.js
         end
     end
 
+    ##
+    #
     def set_working_dataset
         session[:working_dataset] = params[:dataset_id]
         @title = Dataset.find(session[:working_dataset]).title

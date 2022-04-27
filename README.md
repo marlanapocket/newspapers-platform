@@ -3,10 +3,59 @@
 
 This is a webapp that makes newspapers data available to the public. Users can search and analyse collections of newspapers.
 
+## IIIF server
+### Installation
+Install iipimage-server (https://iipimage.sourceforge.io). 
+### Configure IIPImage as a service
+Create a `iipsrv.service` file in `/lib/systemd/system/` with the following content (modify the ExecStart path to the iip server binary):
+```bash
+[Install]
+WantedBy=multi-user.target
+
+[Unit]
+Description=IIPImage server
+After=network.target
+Documentation=https://iipimage.sourceforge.io man:iipsrv(8)
+
+[Service]
+User=www-data
+Group=www-data
+EnvironmentFile=/etc/default/iipsrv
+ExecStart=/path/to/iipsrv.fcgi --bind 0.0.0.0:9000
+Restart=on-failure
+```
+The configurations of this Image server can be put in a file (`/etc/default/iipsrv`):
+```bash
+VERBOSITY=5
+LOGFILE=/var/log/iipsrv.log
+MAX_IMAGE_CACHE_SIZE=10
+JPEG_QUALITY=90
+MAX_CVT=5000
+MEMCACHED_SERVERS=localhost
+CORS=*
+FILESYSTEM_PREFIX=/home/axel/images/
+```
+### Configure web server
+Add this to your nginx configuration:
+```bash
+merge_slashes off;
+rewrite ^/iiif/(.*) /fcgi-bin/iipsrv.fcgi?IIIF=%2F$1 last;
+location /fcgi-bin/iipsrv.fcgi {
+	fastcgi_pass 	localhost:9000;
+	fastcgi_param   PATH_INFO $fastcgi_script_name;
+        fastcgi_param   REQUEST_METHOD $request_method;
+        fastcgi_param   QUERY_STRING $query_string;
+        fastcgi_param   CONTENT_TYPE $content_type;
+        fastcgi_param   CONTENT_LENGTH $content_length;
+        fastcgi_param   SERVER_PROTOCOL $server_protocol;
+        fastcgi_param   REQUEST_URI $request_uri;
+        fastcgi_param   HTTPS $https if_not_empty;
+}
+```
 
 ## Deployment
 ### First steps
-The application run on Ruby 3.0.1. You can install it using rvm.
+The application runs on Ruby 3.0.1. You can install it using rvm.
 ```bash
   rvm install "ruby-3.0.1"
 ```

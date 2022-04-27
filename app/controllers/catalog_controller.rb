@@ -6,6 +6,8 @@ class CatalogController < ApplicationController
 
     end
 
+    ##
+    # Creates a search query and submit it to the index. Retrieve and displays results + metadata.
     def index
         if params[:q]
             @search_type = params[:search_type].nil? ? "exact" : params[:search_type]
@@ -49,12 +51,16 @@ class CatalogController < ApplicationController
         end
     end
 
+    ##
+    # Display an issue
     def show
         @issue = Issue.from_solr params[:id], with_pages=true, with_articles=true
         session['named_entities'] = Issue.named_entities @issue.id
         session['named_entities_labels'] = helpers.get_linked_entities session['named_entities'].map{ |k,v| v.keys }.flatten.uniq
     end
 
+    ##
+    # Retrieve named entities for a list of documents (issue and/or articles)
     def named_entities_for_docs
         named_entities = {LOC: {}, PER: {}, ORG: {}, HumanProd: {}}
         params[:docs_ids].each do |doc_id|
@@ -85,6 +91,8 @@ class CatalogController < ApplicationController
         render partial: 'named_entities/named_entities', locals: {named_entities: named_entities, linked_entities: session['named_entities_labels']}
     end
 
+    ##
+    # Retrieve named entities for a dataset
     def named_entities_for_dataset
         dataset = Dataset.find(params[:dataset_id])
         named_entities = dataset.named_entities
@@ -92,6 +100,8 @@ class CatalogController < ApplicationController
         render partial: 'named_entities/named_entities', locals: {named_entities: named_entities, linked_entities: named_entities_labels}
     end
 
+    ##
+    # Retrieve and display paginated facets
     def paginate_facets
         out = {}
         if params[:field_name] != ""
@@ -117,24 +127,29 @@ class CatalogController < ApplicationController
                   per_page: 15
                 })
             end
-
         end
         out[:pagination] = render_to_string(layout: false, partial: 'facet_pagination', locals: {nb_pages: params[:nb_pages].to_i, current_page: params[:current_page].to_i})
         render json: out
     end
 
+    ##
+    # Open modal for date frequencies histogram in wide format
     def wide_dates_histogram
         out = {}
         out[:modal_content] = render_to_string(layout: false, partial: "wide_dates_histogram")
         render json: out
     end
 
+    ##
+    # Open Modal to confirm the creation of a compound article
     def confirm_compound_creation
         out = {}
         out[:modal_content] = render_to_string(layout: false, partial: "confirm_compound_creation", locals: {article_parts: params[:article_parts]})
         render json: out
     end
 
+    ##
+    # Create a new compound article
     def create_compound
         compound = CompoundArticle.new
         compound.user = current_user
@@ -157,6 +172,8 @@ class CatalogController < ApplicationController
         end
     end
 
+    ##
+    # Delete an existing compound
     def delete_compound
         compound = CompoundArticle.find(params[:compound_id])
         issue_id = compound.issue_id
@@ -173,6 +190,8 @@ class CatalogController < ApplicationController
         render json: out
     end
 
+    ##
+    # Retrieve and display a random sample of the result of a search
     def random_sample
         search_params = session['search_params'].with_indifferent_access
         search_params[:fq] = search_params[:fq].select {|elt| !elt.start_with? "has_model_ssim:" } if search_params[:fq]
@@ -188,7 +207,6 @@ class CatalogController < ApplicationController
                 Issue.from_solr_doc solr_doc
             end
         end
-        puts results
         render json: {content: render_to_string(layout: false, partial: "random_sample", locals: {resulting_docs: results}) }
     end
 

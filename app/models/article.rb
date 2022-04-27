@@ -28,15 +28,30 @@ class Article
         solr_doc['title_ssi'] = self.title
         solr_doc["language_ssi"] = self.language
         solr_doc["all_text_t#{self.language}_siv"] = self.all_text
+        solr_doc["all_text_unstemmed_t#{self.language}_siv"] = self.all_text
         solr_doc['date_created_ssi'] = self.date_created
         solr_doc['date_created_dtsi'] = DateTime.parse(self.date_created).strftime('%Y-%m-%dT%H:%M:%SZ')
         solr_doc['year_isi'] = solr_doc['date_created_ssi'][0..3].to_i
+        d = DateTime.parse solr_doc["date_created_dtsi"]
+        solr_doc['month_isi'] = d.month
+        solr_doc['day_isi'] = d.wday
         solr_doc['from_issue_ssi'] = self.issue_id
         solr_doc['member_of_collection_ids_ssim'] = self.newspaper
         solr_doc['canvases_parts_ssm'] = self.canvases_parts
         solr_doc['thumbnail_url_ss'] =  self.get_iiif_url(page_iiif_url)
         solr_doc['has_model_ssim'] = 'Article'
         solr_doc
+    end
+
+    def get_thumbnail
+        if Rails.configuration.iiif_sources[:local].include? self.newspaper
+            pagenum = self.canvases_parts[0][self.canvases_parts[0].rindex('_')+1...self.canvases_parts[0].rindex('#')].to_i
+            self.get_iiif_url("http://iiif.newseye.eu/iiif/#{self.newspaper}/#{self.issue_id}_page_#{pagenum}.ptif")
+        elsif Rails.configuration.iiif_sources[:external].include? self.newspaper
+            self.thumbnail_url
+        elsif Rails.configuration.iiif_sources[:external_onb].include? self.newspaper
+            self.thumbnail_url
+        end
     end
 
     def get_location

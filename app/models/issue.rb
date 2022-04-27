@@ -47,9 +47,36 @@ class Issue
         solr_doc['thumbnail_url_ss'] =  self.thumbnail_url
         solr_doc['member_ids_ssim'] =  self.pages.map(&:id)
         solr_doc['year_isi'] = solr_doc['date_created_ssi'][0..3].to_i
+        d = DateTime.parse solr_doc["date_created_dtsi"]
+        solr_doc['month_isi'] = d.month
+        solr_doc['day_isi'] = d.wday
         solr_doc["member_of_collection_ids_ssim"] = self.newspaper
         solr_doc["all_text_t#{self.language}_siv"] = self.all_text
+        solr_doc["all_text_unstemmed_t#{self.language}_siv"] = self.all_text
         solr_doc
+    end
+
+    def get_thumbnail
+        if Rails.configuration.iiif_sources[:local].include? self.newspaper
+            "http://iiif.newseye.eu/iiif/#{self.newspaper}/#{self.id}_page_1.ptif/full/200,/0/default.jpg"
+        elsif Rails.configuration.iiif_sources[:external].include? self.newspaper
+            iiif_pages = self.pages.map{ |p| "#{p.iiif_url}/info.json" }  # to change
+        elsif Rails.configuration.iiif_sources[:external_onb].include? self.newspaper
+            iiif_pages = self.pages.map{ |p| "#{p.iiif_url}/info.json" }  # to change
+        end
+    end
+
+    def get_iiif_urls
+        if Rails.configuration.iiif_sources[:local].include? self.newspaper
+            iiif_pages = self.pages.map do |p|
+                "http://iiif.newseye.eu/iiif/#{self.newspaper}/#{self.id}_page_#{p.page_number}.ptif/info.json"
+            end
+        elsif Rails.configuration.iiif_sources[:external].include? self.newspaper
+            iiif_pages = self.pages.map{ |p| "#{p.iiif_url}/info.json" }
+        elsif Rails.configuration.iiif_sources[:external_onb].include? self.newspaper
+            iiif_pages = self.pages.map{ |p| "#{p.iiif_url}/info.json" }
+        end
+        iiif_pages
     end
 
     def self.named_entities(issue_id)

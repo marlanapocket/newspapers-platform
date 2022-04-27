@@ -23,5 +23,6 @@ module NewspapersPlatform
             config.auths = config_for('auths')
         end
         config.active_job.queue_adapter = :sidekiq
+        config.iiif_sources = config_for("iiif_sources")
     end
 end

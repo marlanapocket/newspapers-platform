@@ -1,0 +1,47 @@
+development:
+    external_onb:
+        - innsbrucker_nachrichten
+        - illustrierte_kronen_zeitung
+        - neue_freie_presse
+        - arbeiter_zeitung
+
+    external:
+        - le_matin
+        - le_gaulois
+        - la_presse
+        - l_oeuvre
+        - new_york_herald
+        - la_fronde
+        - marie_claire
+
+    local:
+        - journal_de_l_ouest
+        - aura
+        - helsingin_sanomat
+        - paivalehti
+        - sanomia_turusta
+        - suometar
+
+production:
+    external_onb:
+        - innsbrucker_nachrichten
+        - illustrierte_kronen_zeitung
+        - neue_freie_presse
+        - arbeiter_zeitung
+
+    external:
+        - le_matin
+        - le_gaulois
+        - la_presse
+        - l_oeuvre
+        - new_york_herald
+        - la_fronde
+        - marie_claire
+
+    local:
+        - journal_de_l_ouest
+        - aura
+        - helsingin_sanomat
+        - paivalehti
+        - sanomia_turusta
+        - suometar

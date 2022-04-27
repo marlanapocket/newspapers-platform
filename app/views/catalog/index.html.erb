@@ -3,7 +3,7 @@
 <div class="row" data-controller="search-results">
     <div id="sidebar" class="col-3">
         <% if @results %>
-            <%= render partial: 'sidebar' %>
+            <%= render partial: 'sidebar' if @results["response"]["numFound"] > 0 %>
         <% end %>
     </div>
     <div class="col-9">
